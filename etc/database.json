@@ -1,0 +1,43 @@
+{
+	"list.agents":{
+		"description":"list all available agent control identifier by campaign",
+		"arguments":{},
+		"required":[]
+	},
+	"list.records":{
+		"description":"list all available data records by agent control identifier",
+		"arguments":{
+			"acid":"agent control identifier to filter by"
+		},
+		"required":[
+			"acid"
+		]
+	},
+	"dump.agent":{
+		"description":"list all metadata for given agent control identifier",
+		"arguments":{
+			"acid":"agent control identifier to filter by"
+		},
+		"required":[
+			"acid"
+		]
+	},
+	"dump.record":{
+		"description":"list all data associated with exfil record",
+		"arguments":{
+			"record":"record ID to filter by"
+		},
+		"required":[
+			"record"
+		]
+	},
+	"query.output":{
+		"description":"run string search against exfil record output field",
+		"arguments":{
+			"query":"query to run"
+		},
+		"required":[
+			"query"
+		]
+	}
+}

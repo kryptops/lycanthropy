@@ -1,0 +1,56 @@
+{
+	"linux.procs":{
+		"description":"get processes running as root",
+		"arguments":{
+			"acid":"agent to run the module"
+		},
+		"required":[
+			"acid"
+		]
+	},
+        "linux.packages":{
+                "description":"get installed packages",
+                "arguments":{
+			"acid":"agent to run the module"
+                },
+		"required":[
+			"acid"
+		]
+        },
+        "linux.textpass":{
+                "description":"search for possible cleartext passwords",
+                "arguments":{
+			"acid":"agent to run the module"
+                },
+		"required":[
+			"acid"
+		]
+        },
+        "windows.msi":{
+                "description":"check if msi will install elevated",
+                "arguments":{
+			"acid":"agent to run the module"
+                },
+		"required":[
+			"acid"
+		]
+        },
+        "windows.textpass":{
+                "description":"search for common cleartext password locations",
+                "arguments":{
+			"acid":"agent to run the module"
+                },
+		"required":[
+			"acid"
+		]
+        },
+        "windows.services":{
+                "description":"list services",
+                "arguments":{
+			"acid":"agent to run the module"
+                },
+		"required":[
+			"acid"
+		]
+        }
+}

@@ -1,0 +1,34 @@
+{
+	"use":{
+		"description":"switch to a different console view [console,control,manage,database,monitor,privs]",
+		"arguments":{}
+	},
+	"back":{
+		"description":"return to the root console view",
+		"arguments":{}
+	},
+	"help":{
+		"description":"display this message or list command usage with 'function=<directive>'",
+		"arguments":{}
+	},
+	"exit":{
+		"description":"exit the console",
+		"arguments":{}
+	},
+	"run":{
+		"description":"runs current module directive",
+		"arguments":{}
+	},
+	"load":{
+		"description":"selects module directive for use from the current view context",
+		"arguments":{}
+	},
+	"show":{
+		"description":"show json form for current module directive",
+		"arguments":{}
+	},
+	"set":{
+		"description":"set value for argument variable for current module directive",
+		"arguments":{}
+	}
+}

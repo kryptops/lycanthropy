@@ -1,0 +1,8 @@
+termcolor
+pyjwt
+sqlalchemy
+flask
+cryptography
+mysqlclient
+dnslib
+psutil

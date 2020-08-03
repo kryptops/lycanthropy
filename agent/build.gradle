@@ -1,0 +1,38 @@
+//apply plugin: 'eclipse'
+apply plugin: 'java'
+
+version = 0.1 
+sourceCompatibility = 1.8
+compileJava.options.forkOptions.executable = '/usr/lib/jvm/java-8-openjdk-amd64/bin/javac'
+
+
+jar {
+	manifest {
+		attributes 'Main-Class':'agent.Main'
+	}
+	from {
+		configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+	}
+	baseName 'buildstub'
+}
+
+repositories {
+	mavenCentral()
+}
+
+sourceSets {
+	main {
+		java {
+			srcDir 'src'
+		}
+		
+		resources {
+			srcDir project.getProperty('rscDirPath')
+		}
+	}
+}
+
+dependencies {
+	compile 'com.google.code.gson:gson:2.8.0'
+}
+

@@ -1,0 +1,19 @@
+{
+	"secret":"Qx02hb#@7845asdH23mCdF56><?",
+	"prefixes":[
+		"6c79"
+	],
+	"domain":{
+		"name":"ly.canthropy.com",
+		"subdomain":"ly"
+	},
+	"keytypes":{
+		"data":"ccKey",
+		"auth":"tcKey",
+		"dist":"ccKey",
+		"heartbeat":"ccKey",
+		"kex":"tcKey",
+		"ctrl":"ccKey",
+		"conf":"tcKey"
+	}
+}

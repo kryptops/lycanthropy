@@ -1,0 +1,9 @@
+#################################################
+#                W O L F M O N                  #
+#                                               #
+#  WOLFMON MANAGES DATA OUTPUT AND LOGGING FOR  #
+#  LYCANTHROPY. USE THIS WINDOW TO MONITOR THE  #
+#  RESULTS OF MODULES EXECUTED ON LYCANTHROPY   #
+#  AGENTS.                                      #
+#                                               #
+#################################################

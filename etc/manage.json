@@ -1,0 +1,59 @@
+{
+	"add.user":{
+		"description":"add operator to lycanthropy (password will be generated automatically)",
+		"arguments":{
+			"username":"username to add (alphanumeric characters only)",
+			"roles":"comma-separated roles to provision [manager, operator]",
+			"campaigns":"comma-separated campaign partitions to provision"
+		},
+		"required":[
+			"username",
+			"roles"
+		]
+	},
+	"del.user":{
+		"description":"delete operator from lycanthropy",
+		"arguments":{
+			"username":"username to delete"
+		},
+		"required":[
+			"username"
+		]
+	},
+	"add.campaign":{
+		"description":"add campaign to lycanthropy",
+		"arguments":{
+			"operators":"comma-separated list of usernames who require partition access (they must have the operator role)",
+			"core":"comma-separated list of core packages for the agent to request (control and metadata are automatic)",
+			"name":"name for partition, leave blank for automatic generation"
+		},
+		"required":[
+			"operators"
+		]
+	},
+	"del.campaign":{
+		"description":"delete campaign from lycanthropy",
+		"arguments":{
+			"name":"name of partition to delete"
+		},
+		"required":[
+			"name"
+		]
+	},
+	"list.campaigns":{
+		"description":"list campaigns that the user has access to",
+		"arguments":{},
+		"required":[]
+	},
+	"build.run":{
+		"description":"build agent jars for deployment",
+		"arguments":{
+			"campaign":"name of partition to generate the build for",
+			"batch":"how many agents to build (maximum 10 | WARNING : maximum concurrent builds will take longer to build, recommend building on demand instead)"
+		},
+		"required":[
+			"campaign",
+			"batch"
+		]
+	}
+}

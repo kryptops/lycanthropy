@@ -1,0 +1,7 @@
+{
+	"wolfmon.restart":{
+		"description":"reboot the wolfmon terminal",
+		"arguments":{},
+		"required":[]
+	}
+}

