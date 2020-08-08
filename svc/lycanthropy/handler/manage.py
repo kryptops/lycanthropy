@@ -30,9 +30,8 @@ def buildRun(arguments,context,connector):
     buildKey = base64.b64encode(rawKey.encode('utf-8')).decode('utf-8')
     if int(arguments['batch']) > 10:
         return {'output':{'error':'maximum build limit exceeded'}, 'context': 'manage(build.run)', 'form': restoredForm}
-    for build in range(1,int(arguments['batch'])+1):
-        buildThread = threading.Thread(target=lycanthropy.dist.builder.buildAgent,args=(rawKey,campaignBuilder,))
-        buildThread.run()
+    # ADD POST REQUEST TO DOCKER BUILD SERVER
+
     #lycanthropy.dist.builder.buildAgent(decodedKey, decodedID)
     retrievalUrl = 'https://{}:{}/5/0/{}/{}/lycanthropy.jar?buildID=null'.format(
         connector['interface'],

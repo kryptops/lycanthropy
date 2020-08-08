@@ -5,7 +5,7 @@ if ! service --status-all | grep -Fq 'mysql'; then
 fi
 
 echo "INSTALLING PIP DEPENDENCIES"
-python3 -m pip install -r requirements.txt
+python3 -m pip install -r svc/requirements.txt
 
 echo "COMPILING REFERENCE JAR"
 cd agent
@@ -28,6 +28,6 @@ if ! service docker status | grep '\(running\)'; then
   service docker start
 fi
 
-docker build -t moonlightSRV - < Dockerfile
-docker --name moonlightSRV -v `pwd`:/opt/svc -v `pwd`/../agent:/opt/agent -p 56111:56111
+docker build -t moonlightsrv - < Dockerfile
+docker run --name moonlightsrv -v `pwd`:/opt/svc -v `pwd`/../agent:/opt/agent -p 56111:56111 -d=true moonlightsrv
 cd ..
