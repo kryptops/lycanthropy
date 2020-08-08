@@ -1,5 +1,5 @@
 echo "INSTALLING SYSTEM DEPENDENCIES"
-apt update && apt install -y python3 python3-pip openjdk-8-jdk gradle libmysqlclient-dev xterm
+apt update && apt install -y python3 python3-pip openjdk-8-jdk gradle libmysqlclient-dev xterm docker.io
 if ! service --status-all | grep -Fq 'mysql'; then
   apt install -y mariadb-server
 fi
@@ -20,4 +20,14 @@ cd ..
 echo "CONFIGURING NS DAEMON"
 cd svc
 python3 daemonsetup.py
+cd ..
+
+echo "CONSTRUCTING BUILD SERVER"
+cd svc
+if ! service docker status | grep '\(running\)'; then
+  service docker start
+fi
+
+docker build -t moonlightSRV - < Dockerfile
+docker --name moonlightSRV -v `pwd`:/opt/svc -v `pwd`/../agent:/opt/agent -p 56111:56111
 cd ..
