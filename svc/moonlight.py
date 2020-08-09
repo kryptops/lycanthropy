@@ -11,7 +11,7 @@ app = Flask(__name__)
 def badRequest(e):
     return make_response(jsonify({'error':'bad request'}),400)
 
-@app.route('/ml.srv/receiveBuild/<campaign>')
+@app.route('/ml.srv/receiveBuild/<campaign>',methods=['POST'])
 def receiveBuild(campaign):
     try:
         buildObj = request.json

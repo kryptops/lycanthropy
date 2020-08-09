@@ -1,5 +1,6 @@
 from sqlalchemy import create_engine,text
 import os
+import sys
 import time
 import json
 import getpass
@@ -30,7 +31,7 @@ def dbSetup(engine):
             mkTable(tables[table],engine)
 
 def startEngine(password,dbURL):
-    engine = create_engine('mysql://root:{}@localhost:3306/{}'.format(password,dbURL))
+    engine = create_engine('mysql://root:{}@localhost:30306/{}'.format(password,dbURL))
     return engine
 
 def secureServer(engine):
@@ -38,19 +39,13 @@ def secureServer(engine):
     #DELETE FROM mysql.user WHERE User='';
     #DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost','127.0.0.1','::1');
     #FLUSH PRIVILEGES
-    newRootPass = getpass.getpass('[>] enter new password for mysql root user :')
-    time.sleep(3)
-    rootParams = {'password':newRootPass}
-
     coupling = engine.connect()
     coupling.execute(text("""UPDATE mysql.user SET Password=PASSWORD(:password) WHERE User='root'"""),**rootParams)
     coupling.execute("""DELETE FROM mysql.user WHERE User=''""")
     coupling.execute("""DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost','127.0.0.1','::1')""")
     coupling.execute("""FLUSH PRIVILEGES""")
     coupling.close()
-    engine.dispose()
-    newEngine = startEngine(newRootPass,'')
-    return newRootPass,newEngine
+    return engine
 
 
 
@@ -62,26 +57,7 @@ def addCoreDatabase(engine,password):
     dbSetup(setupEngine)
     return engine
 
-def dbRootPass():
-    while True:
-        passStatus = input('[?] does the root account have a password [y/n]? ')
 
-        if passStatus[0].lower() == 'y':
-            dbPass = getpass.getpass('[>] enter the root password : ')
-            try:
-                engine = startEngine(dbPass,'')
-                return engine
-            except:
-                print('[!] the provided credentials were incorrect')
-        elif passStatus[0].lower() == 'n':
-            print('[!] proceeding with default (blank) password for root')
-            try:
-                engine = startEngine('','')
-                return engine
-            except:
-                print('[!] ERROR! Blank root password invalid')
-        else:
-            print('[!] ERROR! invalid option "{}"'.format(passStatus))
 
 
 def addServiceAccount(engine):
@@ -106,7 +82,7 @@ def addCliUser(username,password,engine):
 
 def lycanthropyUser(engine):
 
-    user = input('[>] enter name of admin user: ')
+    user = input('[>] enter name for C2 admin user: ')
     finalPassword = None
     print('[!] REMINDER! The password you are about to enter will NOT be preserved in plaintext by the server, so remember what you enter')
     time.sleep(3)
@@ -132,11 +108,12 @@ def chkStatus():
 
 if __name__=='__main__':
     status = chkStatus()
+    rootPass = sys.argv[1]
     if not status:
         os.popen('service mysql start')
 
     print('[!] initializing database ... ')
-    engine = dbRootPass()
+    engine = startEngine(rootPass,'')
     print('[!] securing server ... ')
     password,engine1 = secureServer(engine)
     print('[!] adding lycanthropy database ... ')

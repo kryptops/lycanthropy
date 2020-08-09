@@ -12,7 +12,7 @@ import lycanthropy.auth.login
 
 def mkEngine():
     sqlConfig = json.load(open('../etc/db.json','r'))
-    engine = create_engine('mysql://lycanthropy:{}@localhost:3306/lycanthropy'.format(sqlConfig['password']))
+    engine = create_engine('mysql://lycanthropy:{}@localhost:30306/lycanthropy'.format(sqlConfig['password']))
     return engine
 
 def getTables():
