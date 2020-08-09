@@ -26,7 +26,7 @@ def receiveBuild(campaign):
         if buildBatch > 5:
             buildBatch = 5
         for build in range(1, buildBatch + 1):
-            buildThread = threading.Thread(target=lycanthropy.dist.builder.buildAgent, args=(buildKey, buildID,))
+            buildThread = threading.Thread(target=lycanthropy.dist.builder.buildAgent, args=(decodedKey, decodedID,))
             buildThread.run()
         return {'moonlight.srv.status':'staged {} builds for {}'.format(str(buildBatch),campaign)}
     else:
