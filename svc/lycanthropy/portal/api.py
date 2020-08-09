@@ -46,6 +46,13 @@ class apiBroker():
         )
         return contextFuncs
 
+class buildBroker():
+    def sendPost(self,uri,data):
+        return requests.post(
+            uri,
+            json=data
+        )
+
 class streamAccessManager():
     def __init__(self):
         self.functionMap = {
