@@ -40,7 +40,6 @@ def secureServer(engine):
     #DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost','127.0.0.1','::1');
     #FLUSH PRIVILEGES
     coupling = engine.connect()
-    coupling.execute(text("""UPDATE mysql.user SET Password=PASSWORD(:password) WHERE User='root'"""),**rootParams)
     coupling.execute("""DELETE FROM mysql.user WHERE User=''""")
     coupling.execute("""DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost','127.0.0.1','::1')""")
     coupling.execute("""FLUSH PRIVILEGES""")
