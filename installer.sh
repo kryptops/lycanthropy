@@ -38,5 +38,5 @@ cd ..
 echo -e "\e[92mSPOOLING BUILD SERVER"
 cd svc
 
-docker run --name moonlightsrv -v `pwd`:/opt/svc -v `pwd`/../agent:/opt/agent -p 56111:56111 -d=true --rm moonlightsrv
+docker run --name moonlightsrv -v `pwd`/..:/opt -p 56111:56111 -d=true --rm moonlightsrv
 cd ..
