@@ -32,7 +32,7 @@ def dbSetup(engine):
             mkTable(tables[table],engine)
 
 def startEngine(password,dbURL):
-    engine = create_engine('mysql://root:{}@localhost:30306/{}'.format(password,dbURL))
+    engine = create_engine('mysql://root:{}@{}:3306/{}'.format(password,lycanthropy.daemon.util.getAddr(),dbURL))
     return engine
 
 def secureServer(engine):
