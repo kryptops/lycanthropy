@@ -1,5 +1,7 @@
 RAND=`python3 -c "import random;x=[];[x.append(random.choice('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%*^')) for i in range(23)];print(''.join(x))"`
+cd svc
 LOCALADDR=`python3 -c "import lycanthropy.daemon.util;print(lycanthropy.daemon.util.getAddr())"`
+cd ..
 
 echo -e "\e[92mINSTALLING SYSTEM DEPENDENCIES\e[0m"
 apt update && apt install -y python3 python3-pip openjdk-8-jdk gradle libmysqlclient-dev xterm docker.io
@@ -25,7 +27,10 @@ cd ..
 
 echo -e "\e[92mPERFORMING DATABASE SETUP\e[0m"
 cd svc
-echo "bind-address = `echo $LOCALADDR`" >> /etc/mysql/my.cnf
+if ! cat /etc/mysql/my.cnf | grep '[mysqld]'; then
+  echo "[mysqld]" >> /etc/mysql/my.cnf
+  echo "    bind-address = 0.0.0.0" >> /etc/mysql/my.cnf
+fi
 echo `echo $LOCALADDR` >> ../etc/sqladdr
 service mysql start
 python3 dbsetup.py $RAND

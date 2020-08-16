@@ -35,17 +35,20 @@ def startEngine(password,dbURL):
     engine = create_engine('mysql://root:{}@{}:3306/{}'.format(password,lycanthropy.daemon.util.getAddr(),dbURL))
     return engine
 
-def secureServer(engine):
+def secureServer(password,engine):
     #UPDATE mysql.user SET Password=PASSWORD() WHERE User='root';
     #DELETE FROM mysql.user WHERE User='';
     #DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost','127.0.0.1','::1');
     #FLUSH PRIVILEGES
     coupling = engine.connect()
     coupling.execute("""DELETE FROM mysql.user WHERE User=''""")
-    coupling.execute("""DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost','127.0.0.1','::1')""")
+    #coupling.execute("""DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost','127.0.0.1','::1')""")
+    coupling.execute("""SET PASSWORD FOR root=PASSWORD(:password)""",{'password':password})
     coupling.execute("""FLUSH PRIVILEGES""")
     coupling.close()
-    return engine
+    engine.dispose()
+    newEngine = startEngine(password,'')
+    return newEngine
 
 
 
@@ -56,8 +59,6 @@ def addCoreDatabase(engine,password):
     setupEngine = startEngine(password,'lycanthropy')
     dbSetup(setupEngine)
     return engine
-
-
 
 
 def addServiceAccount(engine):
@@ -113,9 +114,9 @@ if __name__=='__main__':
         os.popen('service mysql start')
 
     print('[!] initializing database ... ')
-    engine = startEngine(rootPass,'')
+    engine = startEngine('','')
     print('[!] securing server ... ')
-    engine1 = secureServer(engine)
+    engine1 = secureServer(rootPass,engine)
     print('[!] adding lycanthropy database ... ')
     addCoreDatabase(engine1,rootPass)
     print('[!] adding lycanthropy service account ... ')
