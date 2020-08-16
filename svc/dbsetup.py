@@ -66,13 +66,8 @@ def addServiceAccount(engine):
     svcPass = lycanthropy.crypto.mkRandom(24)
     svcParams = {'password': svcPass}
     coupling = engine.connect()
-    coupling.execute(text("""CREATE USER 'lycanthropy'@'localhost' IDENTIFIED BY :password"""),**svcParams)
-    coupling.execute(
-        text("""CREATE USER 'lycanthropy'@'{}' IDENTIFIED BY :password""".format(lycanthropy.daemon.util.getAddr())),
-        **svcParams
-    )
-    coupling.execute("""GRANT ALL PRIVILEGES ON lycanthropy.* TO 'lycanthropy'@'localhost'""")
-    coupling.execute("""GRANT ALL PRIVILEGES ON LYCANTHROPY.* TO 'lycanthropy'@'{}'""".format(lycanthropy.daemon.util.getAddr()))
+    coupling.execute(text("""CREATE USER lycanthropy IDENTIFIED BY :password"""),**svcParams)
+    coupling.execute("""GRANT ALL PRIVILEGES ON lycanthropy.* TO lycanthropy""")
     coupling.close()
     dbConf['password'] = svcPass
     json.dump(dbConf, open('../etc/db.json','w'), indent=4)
