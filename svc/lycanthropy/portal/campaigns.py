@@ -110,6 +110,8 @@ def buildPackages(campaignObject):
         )
 
 def mkCampaign(arguments,context):
+    if 'campaign' not in os.listdir('.'):
+        os.mkdir('./campaign')
     errors = []
     campaign = {}
     campaign['moniker'] = getName(arguments['name'],context)

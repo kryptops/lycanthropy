@@ -157,8 +157,7 @@ def listBuilds(buildKey,buildID):
                 return {'error':'invalid build key'}
     return {'error':'could not find buildID'}
 
-def retrieveBuilds(buildKey,buildID,target):
-    for campaign in os.listdir('campaign'):
+def chkBuildAccess(buildKey,buildID,campaign):
         campaignConfig = json.load(
             open(
                 'campaign/{}/config.json'.format(campaign),
@@ -167,11 +166,19 @@ def retrieveBuilds(buildKey,buildID,target):
         )
         if buildID == campaignConfig['buildID']:
             if buildKey in campaignConfig['keys']:
-                targetDir = 'campaign/{}/build/{}'.format(campaign,target)
-                if 'final' in os.listdir(targetDir):
-                    return '{}/final/libs'.format(targetDir)
-                else:
-                    return {'error':'build is not available for retrieval'}
+                return campaignConfig
+        return {'error':'not in campaign'}
+
+
+def retrieveBuilds(buildKey,buildID,target):
+    for campaign in os.listdir('campaign'):
+        campaignConfig = chkBuildAccess(buildKey, buildID,campaign)
+        if 'error' not in campaignConfig:
+            targetDir = 'campaign/{}/build/{}'.format(campaign,target)
+            if 'final' in os.listdir(targetDir):
+                return '{}/final/libs'.format(targetDir)
+            else:
+                return {'error':'build is not available for retrieval'}
     return {'error':'unable to process request'}
 
 def destroyBuild(path):
