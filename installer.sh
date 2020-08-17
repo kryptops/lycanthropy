@@ -26,7 +26,10 @@ fi
 docker build -t moonlightsrv - < moonlight.docker
 cd ..
 
-echo $RAND
+echo -e "\e[92mTHE ROOT PASSWORD FOR THE DATABASE SERVER WILL BE RESET\e[0m"
+echo -e "\e[92mNEW PASSWORD FOLLOWS :\e[0m $RAND"
+echo -e "\e[92mSLEEPING SO YOU CAN COPY IT\[0m"
+sleep 10
 
 echo -e "\e[92mPERFORMING DATABASE SETUP\e[0m"
 cd svc
@@ -35,7 +38,7 @@ if ! cat /etc/mysql/my.cnf | grep '\[mysqld\]'; then
   echo "[mysqld]" >> /etc/mysql/my.cnf
   echo "    bind-address = 0.0.0.0" >> /etc/mysql/my.cnf
 fi
-echo `echo $LOCALADDR` >> ../etc/sqladdr
+echo `echo $LOCALADDR` >> ../etc/sqladdr.cnf
 service mysql start
 python3 dbsetup.py $RAND
 cd ..
