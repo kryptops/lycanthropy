@@ -31,8 +31,8 @@ def dbSetup(engine):
         if table not in str(tableStates):
             mkTable(tables[table],engine)
 
-def startEngine(password,dbURL):
-    engine = create_engine('mysql://root:{}@{}:3306/{}'.format(password,lycanthropy.daemon.util.getAddr(),dbURL))
+def startEngine(password,dbURL,dbHost):
+    engine = create_engine('mysql://root:{}@{}:3306/{}'.format(password,dbHost,dbURL))
     return engine
 
 def secureServer(password,engine):
@@ -43,11 +43,11 @@ def secureServer(password,engine):
     coupling = engine.connect()
     coupling.execute("""DELETE FROM mysql.user WHERE User=''""")
     #coupling.execute("""DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost','127.0.0.1','::1')""")
-    coupling.execute("""SET PASSWORD FOR root=PASSWORD(:password)""",{'password':password})
+    coupling.execute("""SET PASSWORD FOR root=PASSWORD(':password')""",{'password':password})
     coupling.execute("""FLUSH PRIVILEGES""")
     coupling.close()
     engine.dispose()
-    newEngine = startEngine(password,'')
+    newEngine = startEngine(password,'','localhost')
     return newEngine
 
 
@@ -56,7 +56,7 @@ def addCoreDatabase(engine,password):
     coupling = engine.connect()
     coupling.execute("""CREATE DATABASE lycanthropy""")
     coupling.close()
-    setupEngine = startEngine(password,'lycanthropy')
+    setupEngine = startEngine(password,'lycanthropy','localhost')
     dbSetup(setupEngine)
     return engine
 
@@ -66,6 +66,7 @@ def addServiceAccount(engine):
     dbConf = json.load(open('../etc/db.json', 'r'))
     svcPass = lycanthropy.crypto.mkRandom(24)
     svcParams = {'password': svcPass}
+    print(svcParams)
     coupling = engine.connect()
     coupling.execute(text("""CREATE USER lycanthropy IDENTIFIED BY :password"""),**svcParams)
     coupling.execute("""GRANT ALL PRIVILEGES ON lycanthropy.* TO lycanthropy""")
@@ -114,7 +115,7 @@ if __name__=='__main__':
         os.popen('service mysql start')
 
     print('[!] initializing database ... ')
-    engine = startEngine('','')
+    engine = startEngine('','','localhost')
     print('[!] securing server ... ')
     engine1 = secureServer(rootPass,engine)
     print('[!] adding lycanthropy database ... ')
