@@ -27,6 +27,11 @@ cd lycanthropy
 cd svc
 python3 lysys.py
 ```
+On a client install that can access the api server, run...
+
+```
+python3 lytty.py
+```
 
 ## Acknowledgements
 Special thanks to <a href="https://twitter.com/romz0mbie">@romz0mbie</a>, who prototyped the logo for lycanthropy
