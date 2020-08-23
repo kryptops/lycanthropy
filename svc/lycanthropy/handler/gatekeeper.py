@@ -26,8 +26,10 @@ def interpret(directive,arguments,context,connector):
     #you can only access specific commands from a context
     #need to make sure use and others are still available from other contexts
     restoredForm = lycanthropy.portal.api.restoreForm(directive, context, arguments)
-    print(directive)
     fieldChk = lycanthropy.portal.api.chkFieldDefaults(context, directive, arguments)
+    if 'acid' in arguments:
+        caseSensitive = arguments['acid'].upper()
+        arguments['acid'] = caseSensitive
     if 'error' in fieldChk:
         return {'output': fieldChk, 'context': context, 'form': restoredForm}
     else:

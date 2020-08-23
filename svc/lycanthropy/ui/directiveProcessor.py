@@ -9,7 +9,10 @@ class localDirectives():
         self.functionMap = {
             "show":self.show,
             "set":self.set,
-            "run":self.run
+            "run":self.run,
+            "go":self.run,
+            "exploit":self.run,
+            "options":self.show
         }
 
     def show(self,arguments,context,session):

@@ -172,7 +172,7 @@ class coreServer():
         if status == 1:
             return referencedReq
 
-        if unpackedReq['pkgID'] != 'PCR' and unpackedReq['pkgID'] != 'PBC' and 'PIR' not in unpackedReq['pkgID'].split('|'):
+        if unpackedReq['pkgID'] != 'PCR' and unpackedReq['pkgID'] != 'PBC' and 'PIR' not in unpackedReq['pkgID'].split('|') and 'PRR' not in unpackedReq['pkgID'].split('|'):
             msgResponse = self.getResponse(referencedReq)
             #first response is buffer descriptor:
             #{'bufferSize':len(buffer),'bufferKey':msgID}
@@ -188,6 +188,15 @@ class coreServer():
         elif unpackedReq['pkgID'] == 'PBC':
             self.responseBuffer.pop(referencedReq['distKey'])
             return self.makeResponseGeneric(referencedReq, '{"index":-1}')
+        elif 'PRR' in unpackedReq['pkgID'].split('|'):
+            requiredIndex = unpackedReq['pkgID'].split('|')[1]
+            responseBuffer = self.responseBuffer[referencedReq['distKey']]
+            if requiredIndex == len(responseBuffer['data']):
+                #segment final, send conclusion
+                return self.makeResponseGeneric(referencedReq, '{"index":-1}')
+            nextBuffer = responseBuffer['data'][requiredIndex]
+            msgResponse = {'index':requiredIndex,'data':nextBuffer}
+            return self.makeResponseGeneric(referencedReq, msgResponse)
         elif unpackedReq['pkgID'] == 'PCR':
             responseBuffer = self.responseBuffer[referencedReq['distKey']]
             #find the next buffer segment and tag it with its position in the buffer

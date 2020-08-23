@@ -28,20 +28,50 @@ public class Dist {
 		ArrayList nullified = Netw.onomancy(made);
 	}
 	
+	public static Hashtable errorizer(Hashtable bufferDescriptor, int lastIndex) throws NoSuchAlgorithmException, NamingException, Exception {
+		String nonce = Util.strand(12);
+		Hashtable nextSegment = new Hashtable();
+		String transmissionCode = ".PCR";
+		nextSegment.put("error","none");
+		int txCount = 0;
+		while (txCount <= 10) {
+			int errorCondition = 0;
+			try {
+				if (errorCondition != 0) {
+					transmissionCode = ".PRR_" + Integer.toString(lastIndex);
+				}
+				String data = bufferDescriptor.get("bufferKey").toString() + transmissionCode; 
+				ArrayList<String> made = broker(data,Crypt.bake(),nonce);
+				nextSegment = receive(Netw.onomancy(made),nonce);
+				return nextSegment;
+				
+			} catch (Exception e) {
+				errorCondition = 1;
+			}
+		}
+		nextSegment.put("error", "0x9320089104");
+		return nextSegment;
+		
+	}
+		
 	public static Hashtable retrieve(Hashtable bufferDescriptor) throws NamingException, Exception {
 		Double length = (Double) bufferDescriptor.get("bufferSize");
 		int bufferSize = length.intValue();
 		String[] packageBuffer = new String[bufferSize];
+		int lastIndex = 0;
 		
 		while (true) {
 			//get buffers based on buffer Descriptor
-			String nonce = Util.strand(12);
-			String data = bufferDescriptor.get("bufferKey").toString() + ".PCR"; 
-			ArrayList<String> made = broker(data,Crypt.bake(),nonce);
-			Hashtable nextSegment = receive(Netw.onomancy(made),nonce);
+			
+			Hashtable nextSegment = errorizer(bufferDescriptor, lastIndex);
+			if (nextSegment.containsKey("error")) {
+				return nextSegment;
+			}
 			
 			Double index = (Double) nextSegment.get("index");
 			int segmentIndex = index.intValue();
+			//preserve the index for error handling
+			lastIndex = segmentIndex;
 			//int segmentIndex = Integer.parseInt(nextSegment.get("index").toString());
 			
 			if (segmentIndex == -1) {
@@ -60,6 +90,7 @@ public class Dist {
 	public static String parse(ArrayList<String> response, String nonce) throws Exception {
 		String rebuilt = new String(Util.rebuild(response));
 		//clean up the response
+		//clean might be unnecessary
 		String cleanRebuilt = Util.clean(rebuilt);
 		//convert raw array to hashtable
 		String decryptedResponse = new String(Crypt.decrypt(Base64.getDecoder().decode(cleanRebuilt), nonce.getBytes()));
