@@ -15,11 +15,11 @@ for sock in psutil.net_connections():
         sys.exit()
 
 #instantiate dns daemon thread
-print(colored("STARTING THREADED DNS SERVER ... ","RED"))
+print(colored("STARTING THREADED DNS SERVER ... ","red"))
 daemonThread = threading.Thread(target=ns_daemon.runServer,args=('127.0.0.1',))
 
 #create https api process
-print(colored("STARTING API AS SUBPROCESSES ... ","RED"))
+print(colored("STARTING API AS SUBPROCESSES ... ","red"))
 subprocess.Popen(['/bin/bash','-c','python3 portal.py'])
 
 #wait to start ns_daemon

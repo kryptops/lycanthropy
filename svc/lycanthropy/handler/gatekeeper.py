@@ -5,7 +5,7 @@ import lycanthropy.handler.control
 import lycanthropy.handler.manage
 import lycanthropy.handler.monitor
 import lycanthropy.handler.database
-import lycanthropy.handler.privs
+import lycanthropy.handler.windows
 
 
 def format(directive):

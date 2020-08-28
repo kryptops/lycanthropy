@@ -189,6 +189,7 @@ class coreServer():
             self.responseBuffer.pop(referencedReq['distKey'])
             return self.makeResponseGeneric(referencedReq, '{"index":-1}')
         elif 'PRR' in unpackedReq['pkgID'].split('|'):
+            print('PRR received')
             requiredIndex = unpackedReq['pkgID'].split('|')[1]
             responseBuffer = self.responseBuffer[referencedReq['distKey']]
             if requiredIndex == len(responseBuffer['data']):

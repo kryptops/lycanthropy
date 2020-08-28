@@ -46,6 +46,27 @@ class apiBroker():
         )
         return contextFuncs
 
+    def passGeneric(self,arguments,connector,method,jobID):
+        acid = arguments['acid']
+        arguments.pop('acid')
+        apiDirective = {
+            'pkgName':'control',
+            'pkgMeth':method,
+            'jobID':jobID,
+        }
+        for object in arguments:
+            apiDirective[object] = arguments[object]
+        apiResponse = lycanthropy.portal.api.apiBroker().sendPost(
+            'https://{}:{}/lycanthropy/api/{}'.format(
+                connector['interface'],
+                connector['port'],
+                acid
+            ),
+            apiDirective,
+            connector['apiCookie']
+        )
+        return apiResponse
+
 class buildBroker():
     def sendPost(self,uri,data):
         return requests.post(

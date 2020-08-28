@@ -1,6 +1,6 @@
 {
 	"use":{
-		"description":"switch to a different console view [console,control,manage,database,monitor,privs]",
+		"description":"switch to a different console view [console,control,manage,database,monitor,windows]",
 		"arguments":{}
 	},
 	"back":{

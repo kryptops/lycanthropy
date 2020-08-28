@@ -11,27 +11,6 @@ import lycanthropy.ui.util
 
 
 
-def passGeneric(arguments,connector,method,jobID):
-    acid = arguments['acid']
-    arguments.pop('acid')
-    apiDirective = {
-        'pkgName':'control',
-        'pkgMeth':method,
-        'jobID':jobID,
-    }
-    for object in arguments:
-        apiDirective[object] = arguments[object]
-    apiResponse = lycanthropy.portal.api.apiBroker().sendPost(
-        'https://{}:{}/lycanthropy/api/{}'.format(
-            connector['interface'],
-            connector['port'],
-            acid
-        ),
-        apiDirective,
-        connector['apiCookie']
-    )
-    return apiResponse
-
 def agentPurge(arguments,context,connector):
     restoredForm = lycanthropy.portal.api.restoreForm('agent.purge', context, arguments)
     retrVal = lycanthropy.sql.agent.purgeAgent(arguments['acid'])
@@ -43,7 +22,7 @@ def agentHalt(arguments,context,connector):
     restoredForm = lycanthropy.portal.api.restoreForm('agent.halt', context, arguments)
     if not lycanthropy.portal.api.accessChk(connector,'operator'):
         return {'output': {'error': 'you do not have the correct role to run this command'}, 'context': 'control(agent.halt)', 'form': restoredForm}
-    apiResponse = passGeneric(arguments,connector,'agentHalt',lycanthropy.crypto.mkRandom(6))
+    apiResponse = lycanthropy.portal.api.apiBroker().passGeneric(arguments,connector,'agentHalt',lycanthropy.crypto.mkRandom(6))
     return {'output': apiResponse.content.decode('utf-8'), 'context': 'control(agent.halt)', 'form': restoredForm}
 
 def agentList(arguments,context,connector):
@@ -64,14 +43,14 @@ def agentSessionize(arguments,context,connector):
     restoredForm = lycanthropy.portal.api.restoreForm('agent.sessionize', context, arguments)
     if not lycanthropy.portal.api.accessChk(connector,'operator'):
         return {'output': {'error': 'you do not have the correct role to run this command'}, 'context': 'control(agent.sessionize)', 'form': restoredForm}
-    apiResponse = passGeneric(arguments,connector,'agentSessionize',lycanthropy.crypto.mkRandom(6))
+    apiResponse = lycanthropy.portal.api.apiBroker().passGeneric(arguments,connector,'agentSessionize',lycanthropy.crypto.mkRandom(6))
     return {'output': apiResponse.content.decode('utf-8'), 'context': 'control(agent.sessionize)', 'form': restoredForm}
 
 def agentNetconfig(arguments,context,connector):
     restoredForm = lycanthropy.portal.api.restoreForm('agent.netconfig', context, arguments)
     if not lycanthropy.portal.api.accessChk(connector,'operator'):
         return {'output': {'error': 'you do not have the correct role to run this command'}, 'context': 'control(agent.netconfig)', 'form': restoredForm}
-    apiResponse = passGeneric(arguments,connector,'agentNetconfig',lycanthropy.crypto.mkRandom(6))
+    apiResponse = lycanthropy.portal.api.apiBroker().passGeneric(arguments,connector,'agentNetconfig',lycanthropy.crypto.mkRandom(6))
     return {'output': apiResponse.content.decode('utf-8'), 'context': 'control(agent.netconfig)', 'form': restoredForm}
 
 def agentPushmod(arguments,context,connector):
@@ -83,7 +62,7 @@ def agentPushmod(arguments,context,connector):
     for pkgName in pkgManifest:
         if pkgName == className:
             arguments['package'] = pkgManifest[pkgName]['id']
-    apiResponse = passGeneric(arguments,connector,'agentPushmod',lycanthropy.crypto.mkRandom(6))
+    apiResponse = lycanthropy.portal.api.apiBroker().passGeneric(arguments,connector,'agentPushmod',lycanthropy.crypto.mkRandom(6))
     return {'output': apiResponse.content.decode('utf-8'), 'context': 'control(agent.pushmod)', 'form': restoredForm}
 
 def agentListmod(arguments,context,connector):
@@ -119,28 +98,28 @@ def enumRoots(arguments,context,connector):
     restoredForm = lycanthropy.portal.api.restoreForm('enum.roots', context, arguments)
     if not lycanthropy.portal.api.accessChk(connector,'operator'):
         return {'output': {'error': 'you do not have the correct role to run this command'}, 'context': 'control(enum.roots)', 'form': restoredForm}
-    apiResponse = passGeneric(arguments,connector,'enumRoots',lycanthropy.crypto.mkRandom(6))
+    apiResponse = lycanthropy.portal.api.apiBroker().passGeneric(arguments,connector,'enumRoots',lycanthropy.crypto.mkRandom(6))
     return {'output': apiResponse.content.decode('utf-8'), 'context': 'control(enum.roots)', 'form': restoredForm}
 
 def enumDirectories(arguments,context,connector):
     restoredForm = lycanthropy.portal.api.restoreForm('enum.directories', context, arguments)
     if not lycanthropy.portal.api.accessChk(connector,'operator'):
         return {'output': {'error': 'you do not have the correct role to run this command'}, 'context': 'control(enum.directories)', 'form': restoredForm}
-    apiResponse = passGeneric(arguments,connector,'enumDirectories',lycanthropy.crypto.mkRandom(6))
+    apiResponse = lycanthropy.portal.api.apiBroker().passGeneric(arguments,connector,'enumDirectories',lycanthropy.crypto.mkRandom(6))
     return {'output': apiResponse.content.decode('utf-8'), 'context': 'control(enum.directories)', 'form': restoredForm}
 
 def filePush(arguments,context,connector):
     restoredForm = lycanthropy.portal.api.restoreForm('file.push', context, arguments)
     if not lycanthropy.portal.api.accessChk(connector,'operator'):
         return {'output': {'error': 'you do not have the correct role to run this command'}, 'context': 'control(file.push)', 'form': restoredForm}
-    apiResponse = passGeneric(arguments,connector,'filePush',lycanthropy.crypto.mkRandom(6))
+    apiResponse = lycanthropy.portal.api.apiBroker().passGeneric(arguments,connector,'filePush',lycanthropy.crypto.mkRandom(6))
     return {'output': apiResponse.content.decode('utf-8'), 'context': 'control(file.push)', 'form': restoredForm}
 
 def filePull(arguments,context,connector):
     restoredForm = lycanthropy.portal.api.restoreForm('file.pull', context, arguments)
     if not lycanthropy.portal.api.accessChk(connector,'operator'):
         return {'output': {'error': 'you do not have the correct role to run this command'}, 'context': 'control(file.pull)', 'form': restoredForm}
-    apiResponse = passGeneric(arguments,connector,'filePull',lycanthropy.crypto.mkRandom(6))
+    apiResponse = lycanthropy.portal.api.apiBroker().passGeneric(arguments,connector,'filePull',lycanthropy.crypto.mkRandom(6))
     return {'output': apiResponse.content.decode('utf-8'), 'context': 'control(file.pull)', 'form': restoredForm}
 
 def execCommand(arguments,context,connector):
@@ -161,5 +140,5 @@ def execCommand(arguments,context,connector):
     else:
         finalArguments['command'] = modCommand
 
-    apiResponse = passGeneric(finalArguments,connector,'execCommand',jobID)
+    apiResponse = lycanthropy.portal.api.apiBroker().passGeneric(finalArguments,connector,'execCommand',jobID)
     return {'output': apiResponse.content.decode('utf-8'), 'context': 'control(exec.command)', 'form': restoredForm}
