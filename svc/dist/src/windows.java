@@ -64,7 +64,7 @@ enum Win32_Share_Values {
     Caption
 }
 
-public class Windows {
+public class windows {
     public static Hashtable wmiHotfix(Hashtable args) {
         String wmiOut = new String();
         Hashtable taskOut = new Hashtable();
