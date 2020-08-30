@@ -58,7 +58,7 @@ def pareConfig(jsonConfig):
 
 def idBuild(sequenceNum):
     finalID = "ABID-"
-    suffixLength = 5-len(sequenceNum)
+    suffixLength = 5-len(str(sequenceNum))
     for x in range(suffixLength):
         finalID+="0"
     finalID += str(sequenceNum)
