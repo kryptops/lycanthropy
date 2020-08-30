@@ -9,6 +9,8 @@ import sys
 import time
 
 
+
+
 for sock in psutil.net_connections():
     if sock.laddr.port == 53:
         print(colored("error : ","red",attrs=['bold']),colored("a service is running on port 53 - deactivate the service to proceed","red"))

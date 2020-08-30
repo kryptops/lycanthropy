@@ -3,7 +3,7 @@ import lycanthropy.portal.api
 
 #CLEAN UP PRIORITIZATION
 
-def wmiHofix(arguments,context,connector):
+def wmiHotfix(arguments,context,connector):
     restoredForm = lycanthropy.portal.api.restoreForm('wmi.hotfix', context, arguments)
     if not lycanthropy.portal.api.accessChk(connector,'operator'):
         return {'output': {'error': 'you do not have the correct role to run this command'}, 'context': 'windows(wmi.hotfix)', 'form': restoredForm}

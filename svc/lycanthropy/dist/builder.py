@@ -56,6 +56,13 @@ def pareConfig(jsonConfig):
     newConfig['subDomain'] = domainName[0]
     return newConfig
 
+def idBuild(sequenceNum):
+    finalID = "ABID-"
+    suffixLength = 5-len(sequenceNum)
+    for x in range(suffixLength):
+        finalID+="0"
+    finalID += str(sequenceNum)
+    return finalID
 
 def stageBuild(jsonConfig,campaign):
     buildDirs = os.listdir('campaign/{}/build'.format(campaign))
@@ -67,7 +74,8 @@ def stageBuild(jsonConfig,campaign):
         buildNew = buildLatest + 1
     else:
         buildNew = 1
-    finalDir = 'campaign/{}/build/{}'.format(campaign,str(buildNew))
+
+    finalDir = 'campaign/{}/build/{}'.format(campaign,idBuild(buildNew))
     os.mkdir(finalDir)
     os.mkdir('{}/resources'.format(finalDir))
     configHandle = open('{}/resources/config.json'.format(finalDir),'w')

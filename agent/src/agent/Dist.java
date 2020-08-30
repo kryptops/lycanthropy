@@ -34,20 +34,23 @@ public class Dist {
 		String transmissionCode = ".PCR";
 		nextSegment.put("error","none");
 		int txCount = 0;
+		int errorCondition = 0;
 		while (txCount <= 10) {
-			int errorCondition = 0;
+			
 			try {
 				if (errorCondition != 0) {
-					transmissionCode = ".PRR_" + Integer.toString(lastIndex);
+					transmissionCode = ".PRR|" + Integer.toString(lastIndex);
 				}
 				String data = bufferDescriptor.get("bufferKey").toString() + transmissionCode; 
 				ArrayList<String> made = broker(data,Crypt.bake(),nonce);
 				nextSegment = receive(Netw.onomancy(made),nonce);
+				errorCondition = 0;
 				return nextSegment;
 				
 			} catch (Exception e) {
 				errorCondition = 1;
 			}
+			txCount++;
 		}
 		nextSegment.put("error", "0x9320089104");
 		return nextSegment;
@@ -81,8 +84,8 @@ public class Dist {
 			} else {
 				packageBuffer[segmentIndex] = nextSegment.get("data").toString();
 			}
-			int jitterActual = Util.numrand((int) Main.config.get("jitterMin"), (int) Main.config.get("jitterMax"));
-			TimeUnit.MILLISECONDS.sleep(jitterActual);
+			//int jitterActual = Util.numrand((int) Main.config.get("jitterMin"), (int) Main.config.get("jitterMax"));
+			//TimeUnit.MILLISECONDS.sleep(jitterActual);
 		}
 		
 	}
@@ -91,9 +94,9 @@ public class Dist {
 		String rebuilt = new String(Util.rebuild(response));
 		//clean up the response
 		//clean might be unnecessary
-		String cleanRebuilt = Util.clean(rebuilt);
+		//String cleanRebuilt = Util.clean(rebuilt);
 		//convert raw array to hashtable
-		String decryptedResponse = new String(Crypt.decrypt(Base64.getDecoder().decode(cleanRebuilt), nonce.getBytes()));
+		String decryptedResponse = new String(Crypt.decrypt(Base64.getDecoder().decode(rebuilt), nonce.getBytes()));
 		return decryptedResponse;
 	}
 	
@@ -116,7 +119,7 @@ public class Dist {
 		
 		//return module package
 		receive(Netw.onomancy(initializer),nonce);
-		TimeUnit.MILLISECONDS.sleep(1000*15);
+		TimeUnit.MILLISECONDS.sleep(1000*5);
 		ArrayList<String> made = broker(data,etc,nonce);
 		Hashtable tabifiedDescriptor = receive(Netw.onomancy(made),nonce);
 		return retrieve(tabifiedDescriptor);

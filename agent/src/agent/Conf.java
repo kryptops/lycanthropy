@@ -50,8 +50,8 @@ public class Conf {
 			} else {
 				packageBuffer[segmentIndex] = nextSegment.get("data").toString();
 			}
-			int jitterActual = Util.numrand((int) Main.config.get("jitterMin"), (int) Main.config.get("jitterMax"));
-			TimeUnit.MILLISECONDS.sleep(jitterActual);
+			//int jitterActual = Util.numrand((int) Main.config.get("jitterMin"), (int) Main.config.get("jitterMax"));
+			//TimeUnit.MILLISECONDS.sleep(jitterActual);
 		}
 		
 	}
@@ -59,9 +59,9 @@ public class Conf {
 	public static String parse(ArrayList<String> response, String nonce) throws Exception {
 		String rebuilt = new String(Util.rebuild(response));
 		//clean up the response
-		String cleanRebuilt = Util.clean(rebuilt);
+		//String cleanRebuilt = Util.clean(rebuilt);
 		//convert raw array to hashtable
-		String decryptedResponse = new String(Crypt.decrypt(Base64.getDecoder().decode(cleanRebuilt), nonce.getBytes()));
+		String decryptedResponse = new String(Crypt.decrypt(Base64.getDecoder().decode(rebuilt), nonce.getBytes()));
 		return decryptedResponse;
 	}
 	

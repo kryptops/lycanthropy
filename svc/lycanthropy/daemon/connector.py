@@ -25,7 +25,8 @@ def getCommand(ctrlKey,acid,gateway):
 
 def getConfig(confKey,acid,gateway):
     #returns existing commands for acid
-    uri = '/4/0/{}/{}'.format(confKey,acid)
+    fmtKey = base64.urlsafe_b64encode(base64.b64decode(confKey)).decode('utf-8')
+    uri = '/4/0/{}/{}'.format(fmtKey,acid)
     return requests.get(
         'https://{}:56114{}'.format(gateway,uri),
         verify=False
@@ -45,9 +46,10 @@ def postAuth(acid,postData,gateway):
 
 def getFile(acid,distKey,file,gateway):
     #returns bytes object
+    fmtKey = base64.urlsafe_b64encode(base64.b64decode(distKey)).decode('utf-8')
     rtype = lycanthropy.daemon.util.chkRtype(file)
     fmtFile = file.split('|')[0]
-    uri = '/2/0/{}/{}?_key={}&_rtype={}'.format(acid,fmtFile,distKey,rtype)
+    uri = '/2/0/{}/{}?_key={}&_rtype={}'.format(acid,fmtFile,fmtKey,rtype)
 
     distResponse = requests.get(
         'https://{}:56114{}'.format(gateway,uri),
