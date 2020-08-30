@@ -22,6 +22,21 @@ public class Proc {
 		return dirDescriptor;
 	}
 	
+	public static void needle(String taskHandle) {
+		class threader implements Runnable {
+			@Override
+			public void run() {
+				try {
+					//Hashtable dirResult = (Hashtable) ((Method) directiveCall.get("method")).invoke((Class) directiveCall.get("class"),dirArgs);
+					Hashtable streamStatus = Netw.send("Data", null, taskHandle , null);
+				} catch (IllegalAccessException | IllegalArgumentException | NoSuchMethodException | ClassNotFoundException | InvocationTargetException e) {
+					e.printStackTrace();
+				}
+				
+			}
+		}
+	}
+	
 	public static void thread(Hashtable directiveCall, Hashtable dirArgs, String taskID) {
 		class threader implements Runnable {
 			@Override
