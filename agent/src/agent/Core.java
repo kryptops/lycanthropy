@@ -39,6 +39,20 @@ public class Core {
 		return finalConf;
 	}
 
+	public static Runnable channelRunner(String taskHandle) {
+		Runnable channelThread = new Runnable() {
+			public void run() {
+				try {
+					//Hashtable dirResult = (Hashtable) ((Method) directiveCall.get("method")).invoke((Class) directiveCall.get("class"),dirArgs);
+					Hashtable streamStatus = Netw.send("Data", null, taskHandle , null);
+				} catch (IllegalAccessException | IllegalArgumentException | NoSuchMethodException | ClassNotFoundException | InvocationTargetException e) {
+					e.printStackTrace();
+				}
+				
+			}
+		};
+		return channelThread;
+	}
 	
 	public static void weaver() throws ClassNotFoundException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		Enumeration jobs = Main.schtasks.keys();
@@ -47,8 +61,9 @@ public class Core {
 		while (jobs.hasMoreElements()) {
 			
 			if (Main.channels <= (int) Main.config.get("maxChannel")) {
+				taskHandle = (String) jobs.nextElement();
 				if (maxChk == 0) {
-					taskHandle = (String) jobs.nextElement();
+					Proc.needle(channelRunner(taskHandle));
 				} else {
 					maxChk = 0;
 				}
