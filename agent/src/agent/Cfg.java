@@ -52,6 +52,7 @@ public class Cfg {
 		confTemplate.put("distKey","");
 		confTemplate.put("sigKey","");
 		confTemplate.put("maxRtxc", 5);
+		confTemplate.put("maxChannel", 5);
 		confTemplate.put("ccKey",Base64.getDecoder().decode(configTable.get("ccKey").toString()));
 		confTemplate.put("acid", configTable.get("acid"));
 		confTemplate.put("password",configTable.get("password"));

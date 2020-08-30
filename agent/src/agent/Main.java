@@ -16,6 +16,7 @@ public class Main {
 	static public ArrayList taskManifest = new ArrayList();
 	static public int egress = 0;
 	static public int session = 0;
+	static public int channels = 0;
 	public static void main(String[] args) throws ClassNotFoundException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, InterruptedException, NoSuchAlgorithmException, IOException {
 		config = Cfg.initConfig();
 		Hashtable finalConfig = Core.setup();

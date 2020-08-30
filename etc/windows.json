@@ -1,0 +1,84 @@
+{
+        "wmi.hotfix":{
+                "description":"list installed hotfixes on the local windows host",
+                "arguments":{
+                        "acid":"agent to run wmi method"
+                },
+                "required":[
+                        "acid"
+                ]
+        },
+        "wmi.service":{
+                "description":"list configured services on the local windows host",
+                "arguments":{
+                        "acid":"agent to run wmi method"
+                },
+                "required":[
+                        "acid"
+                ]
+        },
+        "wmi.user":{
+                "description":"list user accounts on the local windows host",
+                "arguments":{
+                        "acid":"agent to run wmi method"
+                },
+                "required":[
+                        "acid"
+                ]
+        },
+        "wmi.installed":{
+                "description":"list installed programs on the local windows host",
+                "arguments":{
+                        "acid":"agent to run wmi method"
+                },
+                "required":[
+                        "acid"
+                ]
+        },
+        "wmi.autorun":{
+                "description":"list startup commands on the local windows host",
+                "arguments":{
+                        "acid":"agent to run wmi method"
+                },
+                "required":[
+                        "acid"
+                ]
+        },
+        "wmi.process":{
+                "description":"list running processes on the local windows host",
+                "arguments":{
+                        "acid":"agent to run wmi method"
+                },
+                "required":[
+                        "acid"
+                ]
+        },
+        "wmi.environment":{
+                "description":"list environment variables on the local windows host",
+                "arguments":{
+                        "acid":"agent to run wmi method"
+                },
+                "required":[
+                        "acid"
+                ]
+        },
+        "wmi.share":{
+                "description":"list shares on the local windows host",
+                "arguments":{
+                        "acid":"agent to run wmi method"
+                },
+                "required":[
+                        "acid"
+                ]
+        },
+        "asynckeystate.logger":{
+                "description":"log keystrokes on the local windows host",
+                "arguments":{
+                        "acid":"agent to run wmi method"
+                },
+                "required":[
+                        "acid"
+                ]
+        },
+
+}

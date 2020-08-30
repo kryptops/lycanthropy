@@ -3,7 +3,7 @@ import lycanthropy.handler.gatekeeper
 
 def use(arguments,context,connector):
     #this needs to change because this is no longer how it works
-    legalCon = ['console','control','manage','database','monitor','privs']
+    legalCon = ['console','control','manage','database','monitor','windows']
     if arguments['1'] in legalCon:
         return {'output':'\n','context':arguments['1']}
     else:
