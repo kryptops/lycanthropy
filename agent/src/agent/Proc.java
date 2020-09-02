@@ -21,27 +21,11 @@ public class Proc {
 		dirDescriptor.put("method",packageEntry);
 		return dirDescriptor;
 	}
+
 	
-	public static void thread(Hashtable directiveCall, Hashtable dirArgs, String taskID) {
-		class threader implements Runnable {
-			@Override
-			public void run() {
-				try {
-					//Hashtable dirResult = (Hashtable) ((Method) directiveCall.get("method")).invoke((Class) directiveCall.get("class"),dirArgs);
-					Hashtable dirResult = (Hashtable) ((Method) directiveCall.get("method")).invoke(Hashtable.class,dirArgs);
-					dirResult.put("status","complete");
-					dirResult.put("class", dirArgs.get("pkgName"));
-					dirResult.put("module",dirArgs.get("pkgMeth"));
-					dirResult.put("jobID",taskID);
-					Main.schtasks.put(taskID,dirResult);
-				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-					e.printStackTrace();
-				}
-				
-			}
-		}
-		threader executor = new threader();
-		Thread invocation = new Thread(executor);
+	//public static void thread(Hashtable directiveCall, Hashtable dirArgs, String taskID) {
+	public static void needle(Runnable methodRuntime) {
+		Thread invocation = new Thread(methodRuntime);
 		invocation.start();
 	}
 	
@@ -63,7 +47,23 @@ public class Proc {
 				Main.schtasks.put(taskID, errorTable);
 			} else {
 				Hashtable dirDescriptor = retrieve(pkgName,pkgMeth);
-				thread(dirDescriptor,agentDirective,taskID);
+				Runnable methodRuntime = new Runnable() {
+					public void run() {
+						try {
+							//Hashtable dirResult = (Hashtable) ((Method) directiveCall.get("method")).invoke((Class) directiveCall.get("class"),dirArgs);
+							Hashtable dirResult = (Hashtable) ((Method) dirDescriptor.get("method")).invoke(Hashtable.class,agentDirective);
+							dirResult.put("status","complete");
+							dirResult.put("class", agentDirective.get("pkgName"));
+							dirResult.put("module",agentDirective.get("pkgMeth"));
+							dirResult.put("jobID",taskID);
+							Main.schtasks.put(taskID,dirResult);
+						} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+							e.printStackTrace();
+						}
+						
+					}
+				};
+				needle(methodRuntime);
 			}			
 		}
 

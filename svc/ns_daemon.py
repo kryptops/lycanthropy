@@ -194,7 +194,7 @@ class coreServer():
             if requiredIndex == len(responseBuffer['data']):
                 #segment final, send conclusion
                 return self.makeResponseGeneric(referencedReq, '{"index":-1}')
-            nextBuffer = responseBuffer['data'][requiredIndex]
+            nextBuffer = responseBuffer['data'][int(requiredIndex)]
             msgResponse = {'index':requiredIndex,'data':nextBuffer}
             return self.makeResponseGeneric(referencedReq, msgResponse)
         elif unpackedReq['pkgID'] == 'PCR':
@@ -203,7 +203,7 @@ class coreServer():
             if responseBuffer['index'] == len(responseBuffer['data']):
                 #segment final, send conclusion
                 return self.makeResponseGeneric(referencedReq, '{"index":-1}')
-            nextBuffer = responseBuffer['data'][responseBuffer['index']]
+            nextBuffer = responseBuffer['data'][int(responseBuffer['index'])]
             msgResponse = {'index':responseBuffer['index'],'data':nextBuffer}
             #pop the buffer segment off the buffer
             self.responseBuffer[referencedReq['distKey']]['index'] += 1
@@ -267,7 +267,7 @@ class coreServer():
                 #segment final, send conclusion
 
                 return self.makeResponseGeneric(referencedReq, '{"index":-1}')
-            nextBuffer = responseBuffer['data'][responseBuffer['index']]
+            nextBuffer = responseBuffer['data'][int(responseBuffer['index'])]
             msgResponse = {'index':responseBuffer['index'],'data':nextBuffer}
 
             #pop the buffer segment off the buffer

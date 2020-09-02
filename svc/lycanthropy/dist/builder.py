@@ -69,7 +69,7 @@ def stageBuild(jsonConfig,campaign):
     buildSet = []
     if len(buildDirs) > 0:
         for subDir in buildDirs:
-            buildSet.append(int(subDir))
+            buildSet.append(int(subDir.split("-")[1]))
         buildLatest = max(buildSet)
         buildNew = buildLatest + 1
     else:
