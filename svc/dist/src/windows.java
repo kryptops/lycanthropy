@@ -3,6 +3,9 @@ package agent;
 import com.sun.jna.platform.win32.COM.WbemcliUtil;
 import com.sun.jna.platform.win32.Ole32;
 import com.sun.jna.platform.win32.User32;
+import static com.sun.jna.platform.win32.Win32VK.*;
+import static com.sun.jna.platform.win32.WinUser.*;
+import com.sun.jna.platform.win32.Win32VK;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
