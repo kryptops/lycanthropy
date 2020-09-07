@@ -28,7 +28,7 @@ public class Conf {
 	}
 	
 	public static Hashtable retrieve(Hashtable bufferDescriptor) throws NamingException, Exception {
-		Double length = (Double) bufferDescriptor.get("bufferSize");
+		Double length = Double.parseDouble(bufferDescriptor.get("bufferSize").toString());
 		int bufferSize = length.intValue();
 		String[] packageBuffer = new String[bufferSize];
 		
@@ -39,7 +39,7 @@ public class Conf {
 			ArrayList<String> made = broker(data,Crypt.bake(),nonce);
 			Hashtable nextSegment = receive(Netw.onomancy(made),nonce);
 			
-			Double index = (Double) nextSegment.get("index");
+			Double index = Double.parseDouble(nextSegment.get("index").toString());
 			int segmentIndex = index.intValue();
 			//int segmentIndex = Integer.parseInt(nextSegment.get("index").toString());
 			

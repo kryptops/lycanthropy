@@ -58,7 +58,7 @@ public class Dist {
 	}
 		
 	public static Hashtable retrieve(Hashtable bufferDescriptor) throws NamingException, Exception {
-		Double length = (Double) bufferDescriptor.get("bufferSize");
+		Double length = Double.parseDouble(bufferDescriptor.get("bufferSize").toString());
 		int bufferSize = length.intValue();
 		String[] packageBuffer = new String[bufferSize];
 		int lastIndex = 0;
@@ -71,7 +71,9 @@ public class Dist {
 				return nextSegment;
 			}
 			
-			Double index = (Double) nextSegment.get("index");
+			
+			
+			Double index = Double.parseDouble(nextSegment.get("index").toString());
 			int segmentIndex = index.intValue();
 			//preserve the index for error handling
 			lastIndex = segmentIndex;
