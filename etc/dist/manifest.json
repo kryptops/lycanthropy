@@ -15,7 +15,7 @@
 		],
 		"default":"True"
 	},
-	"privs":{
+	"windows":{
 		"id":"5c12e90a-9908-d346-0045-ec8d910750e0",
 		"author":"kryptops",
 		"methods":[],

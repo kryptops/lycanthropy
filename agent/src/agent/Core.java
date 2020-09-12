@@ -61,13 +61,14 @@ public class Core {
 		while (jobs.hasMoreElements()) {
 			
 			if (Main.channels <= (int) Main.config.get("maxChannel")) {
-				taskHandle = (String) jobs.nextElement();
+				
 				if (maxChk == 0) {
+					taskHandle = (String) jobs.nextElement();
 					Proc.needle(channelRunner(taskHandle));
 				} else {
 					maxChk = 0;
 				}
-				Util.detask(taskHandle);
+				
 			} else {
 				maxChk = 1;
 			}
