@@ -438,7 +438,7 @@ public class windows {
             }
 
         }
-        return keyStrokes.toString();
+        return keyStrokes.toString().replace(String.valueOf(Character.MIN_VALUE),"");
     }
 
     public static String currentWindow(User32 user32) {
