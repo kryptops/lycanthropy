@@ -16,72 +16,20 @@ import static com.sun.jna.platform.win32.WinUser.MAPVK_VSC_TO_VK_EX;
 
 
 public class windows {
-    enum Win32_HotFix_Values {
-        HotFixID,
-        InstalledOn
-    }
 
-    enum Win32_Service_Values {
-        StartName,
-        DisplayName,
-        State,
-        PathName,
-        Description,
-        StartMode
-    }
-
-    enum Win32_UserAccount_Values {
-        Name,
-        SID,
-        AccountType,
-        Disabled,
-        Description,
-        Domain
-    }
-    enum Win32_Product_Values {
-        Name,
-        Version,
-        Vendor,
-        PackageName,
-        InstallState
-    }
-
-    enum Win32_Autorun_Values {
-        Name,
-        Location,
-        Command
-    }
-
-    enum Win32_Process_Values {
-        Name,
-        ProcessID,
-        CommandLine
-    }
-
-    enum Win32_Environment_Values {
-        Name,
-        UserName,
-        VariableValue
-    }
-
-    enum Win32_Share_Values {
-        Name,
-        Path,
-        Caption
-    }
 
     public static Hashtable wmiHotfix(Hashtable args) {
         String wmiOut = new String();
         Hashtable taskOut = new Hashtable();
         if (System.getProperty("os.name").toLowerCase().contains("windows")) {
             ArrayList wmiResult = new ArrayList();
-            WbemcliUtil.WmiQuery<Win32_HotFix_Values> serialNumberQuery = new WbemcliUtil.WmiQuery<Win32_HotFix_Values>("Win32_QuickFixEngineering", Win32_HotFix_Values.class);
+            WbemcliUtil.WmiQuery<Modlib.Win32_HotFix_Values> serialNumberQuery = new WbemcliUtil.WmiQuery<Modlib.Win32_HotFix_Values>("Win32_QuickFixEngineering", Modlib.Win32_HotFix_Values.class);
             Ole32.INSTANCE.CoInitializeEx(null, Ole32.COINIT_MULTITHREADED);
-            WbemcliUtil.WmiResult<Win32_HotFix_Values> result = serialNumberQuery.execute();
+            WbemcliUtil.WmiResult<Modlib.Win32_HotFix_Values> result = serialNumberQuery.execute();
             for (int i = 0; i < result.getResultCount(); i++) {
                 Hashtable hotfixTable = new Hashtable();
-                hotfixTable.put("HotFixID",result.getValue(Win32_HotFix_Values.HotFixID, i));
-                hotfixTable.put("InstalledOn",result.getValue(Win32_HotFix_Values.InstalledOn, i));
+                hotfixTable.put("HotFixID",result.getValue(Modlib.Win32_HotFix_Values.HotFixID, i));
+                hotfixTable.put("InstalledOn",result.getValue(Modlib.Win32_HotFix_Values.InstalledOn, i));
                 wmiResult.add(hotfixTable);
             }
             Ole32.INSTANCE.CoUninitialize();
@@ -99,19 +47,19 @@ public class windows {
         Hashtable taskOut = new Hashtable();
         if (System.getProperty("os.name").toLowerCase().contains("windows")) {
             ArrayList wmiResult = new ArrayList();
-            WbemcliUtil.WmiQuery<Win32_Service_Values> serialServiceQuery = new WbemcliUtil.WmiQuery<Win32_Service_Values>("Win32_Service", Win32_Service_Values.class);
+            WbemcliUtil.WmiQuery<Modlib.Win32_Service_Values> serialServiceQuery = new WbemcliUtil.WmiQuery<Modlib.Win32_Service_Values>("Win32_Service", Modlib.Win32_Service_Values.class);
             Ole32.INSTANCE.CoInitializeEx(null, Ole32.COINIT_MULTITHREADED);
 
-            WbemcliUtil.WmiResult<Win32_Service_Values> result = serialServiceQuery.execute();
+            WbemcliUtil.WmiResult<Modlib.Win32_Service_Values> result = serialServiceQuery.execute();
             for (int i = 0; i < result.getResultCount(); i++) {
                 Hashtable serviceTable = new Hashtable();
                 String[] objIndex = new String[] {"DisplayName","StartName","State","PathName","StartMode"};
                 String[] objProperties = new String[] {
-                        (String) result.getValue(Win32_Service_Values.DisplayName, i),
-                        (String) result.getValue(Win32_Service_Values.StartName, i),
-                        (String) result.getValue(Win32_Service_Values.State, i),
-                        (String) result.getValue(Win32_Service_Values.PathName, i),
-                        (String)result.getValue(Win32_Service_Values.StartMode, i)
+                        (String) result.getValue(Modlib.Win32_Service_Values.DisplayName, i),
+                        (String) result.getValue(Modlib.Win32_Service_Values.StartName, i),
+                        (String) result.getValue(Modlib.Win32_Service_Values.State, i),
+                        (String) result.getValue(Modlib.Win32_Service_Values.PathName, i),
+                        (String)result.getValue(Modlib.Win32_Service_Values.StartMode, i)
                 };
                 for (int s = 0; s < objProperties.length; s++) {
                     try {
@@ -136,18 +84,18 @@ public class windows {
         Hashtable taskOut = new Hashtable();
         if (System.getProperty("os.name").toLowerCase().contains("windows")) {
             ArrayList wmiResult = new ArrayList();
-            WbemcliUtil.WmiQuery<Win32_UserAccount_Values> serialServiceQuery = new WbemcliUtil.WmiQuery<Win32_UserAccount_Values>("Win32_UserAccount",Win32_UserAccount_Values.class);
+            WbemcliUtil.WmiQuery<Modlib.Win32_UserAccount_Values> serialServiceQuery = new WbemcliUtil.WmiQuery<Modlib.Win32_UserAccount_Values>("Win32_UserAccount",Modlib.Win32_UserAccount_Values.class);
             Ole32.INSTANCE.CoInitializeEx(null, Ole32.COINIT_MULTITHREADED);
 
-            WbemcliUtil.WmiResult<Win32_UserAccount_Values> result = serialServiceQuery.execute();
+            WbemcliUtil.WmiResult<Modlib.Win32_UserAccount_Values> result = serialServiceQuery.execute();
             for (int i = 0; i < result.getResultCount(); i++) {
                 Hashtable accountTable = new Hashtable();
-                accountTable.put("Name",result.getValue(Win32_UserAccount_Values.Name, i));
-                accountTable.put("SID",result.getValue(Win32_UserAccount_Values.SID, i));
-                accountTable.put("AccountType",result.getValue(Win32_UserAccount_Values.AccountType, i));
-                accountTable.put("Disabled",result.getValue(Win32_UserAccount_Values.Disabled, i));
-                accountTable.put("Description",result.getValue(Win32_UserAccount_Values.Description, i));
-                accountTable.put("Domain",result.getValue(Win32_UserAccount_Values.Domain, i));
+                accountTable.put("Name",result.getValue(Modlib.Win32_UserAccount_Values.Name, i));
+                accountTable.put("SID",result.getValue(Modlib.Win32_UserAccount_Values.SID, i));
+                accountTable.put("AccountType",result.getValue(Modlib.Win32_UserAccount_Values.AccountType, i));
+                accountTable.put("Disabled",result.getValue(Modlib.Win32_UserAccount_Values.Disabled, i));
+                accountTable.put("Description",result.getValue(Modlib.Win32_UserAccount_Values.Description, i));
+                accountTable.put("Domain",result.getValue(Modlib.Win32_UserAccount_Values.Domain, i));
                 wmiResult.add(accountTable);
             }
             Ole32.INSTANCE.CoUninitialize();
@@ -164,17 +112,17 @@ public class windows {
         Hashtable taskOut = new Hashtable();
         if (System.getProperty("os.name").toLowerCase().contains("windows")) {
             ArrayList wmiResult = new ArrayList();
-            WbemcliUtil.WmiQuery<Win32_Product_Values> serialServiceQuery = new WbemcliUtil.WmiQuery<Win32_Product_Values>("Win32_Product",Win32_Product_Values.class);
+            WbemcliUtil.WmiQuery<Modlib.Win32_Product_Values> serialServiceQuery = new WbemcliUtil.WmiQuery<Modlib.Win32_Product_Values>("Win32_Product",Modlib.Win32_Product_Values.class);
             Ole32.INSTANCE.CoInitializeEx(null, Ole32.COINIT_MULTITHREADED);
 
-            WbemcliUtil.WmiResult<Win32_Product_Values> result = serialServiceQuery.execute();
+            WbemcliUtil.WmiResult<Modlib.Win32_Product_Values> result = serialServiceQuery.execute();
             for (int i = 0; i < result.getResultCount(); i++) {
                 Hashtable packageTable = new Hashtable();
-                packageTable.put("Name",result.getValue(Win32_Product_Values.Name, i));
-                packageTable.put("Version",result.getValue(Win32_Product_Values.Version, i));
-                packageTable.put("Vendor",result.getValue(Win32_Product_Values.Vendor, i));
-                packageTable.put("PackageName",result.getValue(Win32_Product_Values.PackageName, i));
-                packageTable.put("InstallState",result.getValue(Win32_Product_Values.InstallState, i));
+                packageTable.put("Name",result.getValue(Modlib.Win32_Product_Values.Name, i));
+                packageTable.put("Version",result.getValue(Modlib.Win32_Product_Values.Version, i));
+                packageTable.put("Vendor",result.getValue(Modlib.Win32_Product_Values.Vendor, i));
+                packageTable.put("PackageName",result.getValue(Modlib.Win32_Product_Values.PackageName, i));
+                packageTable.put("InstallState",result.getValue(Modlib.Win32_Product_Values.InstallState, i));
                 wmiResult.add(packageTable);
             }
             Ole32.INSTANCE.CoUninitialize();
@@ -192,15 +140,15 @@ public class windows {
         Hashtable taskOut = new Hashtable();
         if (System.getProperty("os.name").toLowerCase().contains("windows")) {
             ArrayList wmiResult = new ArrayList();
-            WbemcliUtil.WmiQuery<Win32_Autorun_Values> serialServiceQuery = new WbemcliUtil.WmiQuery<Win32_Autorun_Values>("Win32_Startupcommand",Win32_Autorun_Values.class);
+            WbemcliUtil.WmiQuery<Modlib.Win32_Autorun_Values> serialServiceQuery = new WbemcliUtil.WmiQuery<Modlib.Win32_Autorun_Values>("Win32_Startupcommand",Modlib.Win32_Autorun_Values.class);
             Ole32.INSTANCE.CoInitializeEx(null, Ole32.COINIT_MULTITHREADED);
 
-            WbemcliUtil.WmiResult<Win32_Autorun_Values> result = serialServiceQuery.execute();
+            WbemcliUtil.WmiResult<Modlib.Win32_Autorun_Values> result = serialServiceQuery.execute();
             for (int i = 0; i < result.getResultCount(); i++) {
                 Hashtable autorunTable = new Hashtable();
-                autorunTable.put("Name",result.getValue(Win32_Autorun_Values.Name, i));
-                autorunTable.put("Location",result.getValue(Win32_Autorun_Values.Location, i));
-                autorunTable.put("Command",result.getValue(Win32_Autorun_Values.Command, i));
+                autorunTable.put("Name",result.getValue(Modlib.Win32_Autorun_Values.Name, i));
+                autorunTable.put("Location",result.getValue(Modlib.Win32_Autorun_Values.Location, i));
+                autorunTable.put("Command",result.getValue(Modlib.Win32_Autorun_Values.Command, i));
                 wmiResult.add(autorunTable);
             }
             Ole32.INSTANCE.CoUninitialize();
@@ -218,15 +166,15 @@ public class windows {
         Hashtable taskOut = new Hashtable();
         if (System.getProperty("os.name").toLowerCase().contains("windows")) {
             ArrayList wmiResult = new ArrayList();
-            WbemcliUtil.WmiQuery<Win32_Process_Values> serialServiceQuery = new WbemcliUtil.WmiQuery<Win32_Process_Values>("Win32_Process",Win32_Process_Values.class);
+            WbemcliUtil.WmiQuery<Modlib.Win32_Process_Values> serialServiceQuery = new WbemcliUtil.WmiQuery<Modlib.Win32_Process_Values>("Win32_Process",Modlib.Win32_Process_Values.class);
             Ole32.INSTANCE.CoInitializeEx(null, Ole32.COINIT_MULTITHREADED);
 
-            WbemcliUtil.WmiResult<Win32_Process_Values> result = serialServiceQuery.execute();
+            WbemcliUtil.WmiResult<Modlib.Win32_Process_Values> result = serialServiceQuery.execute();
             for (int i = 0; i < result.getResultCount(); i++) {
                 Hashtable procTable = new Hashtable();
-                procTable.put("Name",result.getValue(Win32_Process_Values.Name, i));
-                procTable.put("ProcessID",result.getValue(Win32_Process_Values.ProcessID, i));
-                String command = (String) result.getValue(Win32_Process_Values.CommandLine, i);
+                procTable.put("Name",result.getValue(Modlib.Win32_Process_Values.Name, i));
+                procTable.put("ProcessID",result.getValue(Modlib.Win32_Process_Values.ProcessID, i));
+                String command = (String) result.getValue(Modlib.Win32_Process_Values.CommandLine, i);
                 if (command == null) {
                     procTable.put("CommandLine", "[]");
                 } else {
@@ -249,14 +197,14 @@ public class windows {
         Hashtable taskOut = new Hashtable();
         if (System.getProperty("os.name").toLowerCase().contains("windows")) {
             ArrayList wmiResult = new ArrayList();
-            WbemcliUtil.WmiQuery<Win32_Environment_Values> serialServiceQuery = new WbemcliUtil.WmiQuery<Win32_Environment_Values>("Win32_Environment",Win32_Environment_Values.class);
+            WbemcliUtil.WmiQuery<Modlib.Win32_Environment_Values> serialServiceQuery = new WbemcliUtil.WmiQuery<Modlib.Win32_Environment_Values>("Win32_Environment",Modlib.Win32_Environment_Values.class);
             Ole32.INSTANCE.CoInitializeEx(null, Ole32.COINIT_MULTITHREADED);
 
-            WbemcliUtil.WmiResult<Win32_Environment_Values> result = serialServiceQuery.execute();
+            WbemcliUtil.WmiResult<Modlib.Win32_Environment_Values> result = serialServiceQuery.execute();
             for (int i = 0; i < result.getResultCount(); i++) {
                 Hashtable envTable = new Hashtable();
-                envTable.put("Name",result.getValue(Win32_Environment_Values.Name, i));
-                envTable.put("VariableValue",result.getValue(Win32_Environment_Values.VariableValue, i));
+                envTable.put("Name",result.getValue(Modlib.Win32_Environment_Values.Name, i));
+                envTable.put("VariableValue",result.getValue(Modlib.Win32_Environment_Values.VariableValue, i));
                 wmiResult.add(envTable);
             }
             Ole32.INSTANCE.CoUninitialize();
@@ -274,15 +222,15 @@ public class windows {
         Hashtable taskOut = new Hashtable();
         if (System.getProperty("os.name").toLowerCase().contains("windows")) {
             ArrayList wmiResult = new ArrayList();
-            WbemcliUtil.WmiQuery<Win32_Share_Values> serialServiceQuery = new WbemcliUtil.WmiQuery<Win32_Share_Values>("Win32_Share",Win32_Share_Values.class);
+            WbemcliUtil.WmiQuery<Modlib.Win32_Share_Values> serialServiceQuery = new WbemcliUtil.WmiQuery<Modlib.Win32_Share_Values>("Win32_Share",Modlib.Win32_Share_Values.class);
             Ole32.INSTANCE.CoInitializeEx(null, Ole32.COINIT_MULTITHREADED);
 
-            WbemcliUtil.WmiResult<Win32_Share_Values> result = serialServiceQuery.execute();
+            WbemcliUtil.WmiResult<Modlib.Win32_Share_Values> result = serialServiceQuery.execute();
             for (int i = 0; i < result.getResultCount(); i++) {
                 Hashtable shareTable = new Hashtable();
-                shareTable.put("Name",result.getValue(Win32_Share_Values.Name, i));
-                shareTable.put("Path",result.getValue(Win32_Share_Values.Path, i));
-                shareTable.put("Caption",result.getValue(Win32_Share_Values.Caption, i));
+                shareTable.put("Name",result.getValue(Modlib.Win32_Share_Values.Name, i));
+                shareTable.put("Path",result.getValue(Modlib.Win32_Share_Values.Path, i));
+                shareTable.put("Caption",result.getValue(Modlib.Win32_Share_Values.Caption, i));
                 wmiResult.add(shareTable);
             }
             Ole32.INSTANCE.CoUninitialize();
