@@ -120,14 +120,17 @@ class coreServer():
         return 0,unpackedReq
 
     def makeResponseGeneric(self,unpackedReq,msgResponse):
-        return lycanthropy.daemon.messager.makeRecordArray(
-            str(msgResponse),
-            self.messages[unpackedReq['msgID']]['acid'],
-            self.messages[unpackedReq['msgID']]['nonce'],
-            self.config['keytypes'][unpackedReq['type']],
-            self.messages[unpackedReq['msgID']],
-            random.choice(self.config['prefixes'])
-        )
+        try:
+            return lycanthropy.daemon.messager.makeRecordArray(
+                str(msgResponse),
+                self.messages[unpackedReq['msgID']]['acid'],
+                self.messages[unpackedReq['msgID']]['nonce'],
+                self.config['keytypes'][unpackedReq['type']],
+                self.messages[unpackedReq['msgID']],
+                random.choice(self.config['prefixes'])
+            )
+        except:
+            print('error making generic response')
 
     def makeResponseBuffered(self,unpackedReq,msgResponse):
         #store buffers under the message id
