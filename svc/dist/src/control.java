@@ -69,7 +69,6 @@ public class control {
 			System.out.println(exitCode);
 			taskOut.put("error","commandLineError");
 		}
-		System.out.println(output);
 		taskOut.put("output",output.toString());
 		return taskOut;
 	}
