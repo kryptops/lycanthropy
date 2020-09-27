@@ -395,10 +395,16 @@ def portalData(acid):
 def portalApi(ctrlKey,acid):
     #api endpoint
     if lycanthropy.portal.agent.verify(acid, ctrlKey, 'ctrlKey'):
-        campaignMembership = lycanthropy.portal.categorize.find(acid)
+        try:
+            campaignMembership = lycanthropy.portal.categorize.find(acid)
+        except:
+            abort(403)
 
-        nexti = lycan.api[campaignMembership][acid][0]
-        lycan.api[campaignMembership][acid].pop(0)
+        try:
+            nexti = lycan.api[campaignMembership][acid][0]
+            lycan.api[campaignMembership][acid].pop(0)
+        except:
+            nexti = {'error':'task was not found'}
         return nexti
     else:
         abort(401)

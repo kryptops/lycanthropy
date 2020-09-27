@@ -17,7 +17,7 @@ def getHeartbeat(acid,gateway):
 def getCommand(acid,ctrlKey,gateway):
     #returns existing commands for acid
     fmtKey = base64.urlsafe_b64encode(base64.b64decode(ctrlKey)).decode('utf-8')
-    uri = '/0/1/{}/{}'.format(fmtKey,acid)
+    uri = '/0/1/{}/{}'.format(acid,fmtKey)
     return requests.get(
         'https://{}:56114{}'.format(gateway,uri),
         verify=False

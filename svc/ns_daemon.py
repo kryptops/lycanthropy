@@ -345,7 +345,10 @@ class coreServer():
         elif msgStatus['action'] == 'teardown':
             if unpackedReq['msgID'] in self.messages:
                 print("popping : " + str(self.messages[unpackedReq['msgID']]))
-                self.messages.pop(unpackedReq['msgID'])
+                try:
+                    self.messages.pop(unpackedReq['msgID'])
+                except KeyError:
+                    print('no message to pop')
         #print('processed:' + processedMessage)
         return processedMessage
 
