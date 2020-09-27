@@ -1,5 +1,20 @@
 RAND=`python3 -c "import random;x=[];[x.append(random.choice('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%*^')) for i in range(23)];print(''.join(x))"`
 
+if ! which netstat; then
+  apt install net-tools
+fi
+
+if netstat -antup | grep 53; then
+  echo -e "\e[31m    WARNING!!!\e[0m"
+  echo -e "\e[31m    THERE IS A SERVICE RUNNING ON :53. PLEASE HALT THIS SERVICE BEFORE STARTING THE LYCANTHROPY SERVER.\e[0m"
+  sleep 2
+fi
+
+if cat /etc/resolv.conf | grep 127.0.0; then
+  echo -e "\e[31m    WARNING!!!\e[0m"
+  echo -e "\e[31m    THERE IS A POINTER TO LOCALHOST IN /etc/resolv.conf. THIS MUST BE CHANGED FOR THE NS_DAEMON TO FUNCTION.\e[0m"
+  sleep 2
+fi
 
 echo -e "\e[92mINSTALLING SYSTEM DEPENDENCIES\e[0m"
 apt update && apt install -y python3 python3-pip openjdk-8-jdk gradle libmysqlclient-dev xterm docker.io
