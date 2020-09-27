@@ -46,11 +46,11 @@ class apiBroker():
         )
         return contextFuncs
 
-    def passGeneric(self,arguments,connector,method,jobID):
+    def passGeneric(self,arguments,connector,method,jobID,pkgName):
         acid = arguments['acid']
         arguments.pop('acid')
         apiDirective = {
-            'pkgName':'control',
+            'pkgName':pkgName,
             'pkgMeth':method,
             'jobID':jobID,
         }
@@ -98,7 +98,7 @@ class dataProcessingHandlers():
         self.functionMap = {
             'metadata':self.metadata,
             'control':self.control,
-            'privs':self.privs
+            'windows':self.windows
         }
 
     def metadata(self,campaign,data):
@@ -147,20 +147,16 @@ class dataProcessingHandlers():
         )
         return '{"streamStatus":"complete"}'
 
-    def privs(self,campaign,data):
-        print(data)
-        if data['output'] == 'error : the class you specified has not been loaded on the agent':
-            return '{"streamStatus":"complete"}'
-        else:
-            lycanthropy.sql.agent.storeData(
-                campaign,
-                data['acid'],
-                data['module'],
-                timestamp(),
-                data['jobID'],
-                data['output']
-            )
-            return '{"streamStatus":"complete"}'
+    def windows(self,campaign,data):
+        lycanthropy.sql.agent.storeData(
+            campaign,
+            data['acid'],
+            data['module'],
+            timestamp(),
+            data['jobID'],
+            data['output']
+        )
+        return '{"streamStatus":"complete"}'
 
 
 

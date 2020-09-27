@@ -398,7 +398,7 @@ def portalApi(ctrlKey,acid):
         campaignMembership = lycanthropy.portal.categorize.find(acid)
 
         nexti = lycan.api[campaignMembership][acid][0]
-
+        lycan.api[campaignMembership][acid].pop(0)
         return nexti
     else:
         abort(401)
@@ -475,11 +475,11 @@ def pacemakerMain(acid):
         directiveActual = []
         acidObj = lycan.api[campaignMembership][acid]
         for jobItem in acidObj:
-            if lycanthropy.portal.api.chkSatisfied(jobItem,acid):
-                jobIdx = lycan.api[campaignMembership][acid].index(jobItem)
-                lycan.api[campaignMembership][acid].pop(jobIdx)
-            else:
-                directiveActual.append(jobItem)
+            #if lycanthropy.portal.api.chkSatisfied(jobItem,acid):
+            #    jobIdx = lycan.api[campaignMembership][acid].index(jobItem)
+            #    lycan.api[campaignMembership][acid].pop(jobIdx)
+            #else:
+            directiveActual.append(jobItem)
         lycan.pulse[acid] = int(time.time())
         lycanthropy.portal.api.updateAgentStates(lycan.pulse)
         return {
