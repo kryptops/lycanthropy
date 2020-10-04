@@ -158,6 +158,16 @@ class dataProcessingHandlers():
         )
         return '{"streamStatus":"complete"}'
 
+    def posix(self,campaign,data):
+        lycanthropy.sql.agent.storeData(
+            campaign,
+            data['acid'],
+            data['module'],
+            timestamp(),
+            data['jobID'],
+            data['output']
+        )
+        return '{"streamStatus":"complete"}'
 
 
 def timestamp():
