@@ -1,0 +1,47 @@
+{
+	"systemSudoers":{
+                "description":"list members of the sudoers group",
+                "arguments":{
+                        "acid":"agent to run method"
+                },
+                "required":[
+                        "acid"
+                ]
+	},
+	"systemGroups":{
+                "description":"list local groups",
+                "arguments":{
+                        "acid":"agent to run method"
+                },
+                "required":[
+                        "acid"
+                ]
+	},
+	"systemUsers":{
+                "description":"list local users",
+                "arguments":{
+                        "acid":"agent to run method"
+                },
+                "required":[
+                        "acid"
+                ]
+	},
+	"systemNetstat":{
+                "description":"map local sockets and remote connections",
+                "arguments":{
+                        "acid":"agent to run method"
+                },
+                "required":[
+                        "acid"
+                ]
+	},
+	"fileSensitive":{
+                "description":"list permissions on sensitive files",
+                "arguments":{
+                        "acid":"agent to run method"
+                },
+                "required":[
+                        "acid"
+                ]
+	}
+}

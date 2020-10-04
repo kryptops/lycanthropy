@@ -25,7 +25,6 @@ class interpreterFormatting():
         return '/c',command
 
     def powershell(self,command):
-        newCommand = '&'+command
         return '',command
 
     def pycli(self,command):
