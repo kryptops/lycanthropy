@@ -14,7 +14,7 @@ def derive(epoch,acid,keyType):
             raw[keyType]
         )
     ).encode('utf-8')
-    return base64.b64encode(derivedBytes).decode('utf-8')
+    return base64.urlsafe_b64encode(derivedBytes).decode('utf-8')
 
 def verify(acid,key,keyType):
     for skewer in lycanthropy.auth.cookie.skew():

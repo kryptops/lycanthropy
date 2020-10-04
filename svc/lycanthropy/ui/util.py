@@ -25,7 +25,6 @@ class interpreterFormatting():
         return '/c',command
 
     def powershell(self,command):
-        newCommand = '&'+command
         return '',command
 
     def pycli(self,command):
@@ -74,7 +73,7 @@ def mkSubscription(filter,stream,temp):
     return reducer
 
 def startWolfmon():
-    subprocess.Popen(['/bin/bash', '-c', "xterm -sl 10000 -fa 'Monospace' -fs 11 -e /bin/bash -c 'python3 wolfmon.py'"])
+    subprocess.Popen(['/bin/bash', '-c', "xterm -maximized -sl 10000 -fa 'Monospace' -fs 11 -e /bin/bash -c 'python3 wolfmon.py'"])
 
 def chkModLocals(output,session):
     retargs = output[2]

@@ -130,11 +130,8 @@ class objStructure():
             msgObj[component] = unpacked[component]
         return msgObj
 
-def prepRaw(data,acid,nonce,keyType,unpackedReq):
-    if 'rawKey' in unpackedReq:
-        rawKey = unpackedReq['rawKey']
-    else:
-        rawKey = lycanthropy.crypto.kex(acid, keyType)
+def prepRaw(data,acid,nonce,keyType):
+    rawKey = lycanthropy.crypto.kex(acid, keyType)
     key = base64.b64decode(rawKey)
     encrypted = lycanthropy.crypto.dance(0,data.encode('utf-8'),key,nonce.encode('utf-8'))
     return base64.b64encode(encrypted).decode('utf-8')
@@ -175,9 +172,9 @@ def resolveDuplication(record,array):
         else:
             continue
 
-def makeRecordArray(data,acid,nonce,keyType,unpackedReq,prefix):
+def makeRecordArray(data,acid,nonce,keyType,prefix):
     #parse to A records
-    data = prepRaw(data,acid,nonce,keyType,unpackedReq)
+    data = prepRaw(data,acid,nonce,keyType)
 
     recordArray = []
     currentRecord = []

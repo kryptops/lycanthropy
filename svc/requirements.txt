@@ -6,3 +6,4 @@ cryptography
 mysqlclient
 dnslib
 psutil
+docker

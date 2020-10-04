@@ -36,6 +36,7 @@ public class Data {
 		Hashtable svrParams = Netw.send("Kex",messageID,sendData,nonce);
 		ArrayList<String> made = make(sendData,messageID,etc,nonce);
 		//blank receive method to ensure proper behavior
+		Util.detask(data);
 		return receive(Netw.onomancy(made),nonce);
 	}
 }
