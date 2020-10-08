@@ -6,7 +6,7 @@ import lycanthropy.handler.manage
 import lycanthropy.handler.monitor
 import lycanthropy.handler.database
 import lycanthropy.handler.windows
-
+import lycanthropy.handler.posix
 
 def format(directive):
     if '.' in directive:

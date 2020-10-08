@@ -176,11 +176,15 @@ class coreServer():
         return self.makeResponseGeneric(unpackedReq,msgResponse)
 
     def auth(self,unpackedReq,msgStatus):
-        msgResponse = self.getResponse(msgStatus)
-        jsonMsg = json.loads(msgResponse)
-        if unpackedReq['acid'] not in self.sessions and 'cookieDough' in jsonMsg:
-            self.sessions[unpackedReq['acid']] = jsonMsg['cookieDough']
-        return self.makeResponseGeneric(msgStatus,msgResponse)
+        if 'nonce' not in msgStatus:
+            print('Error authenticating')
+            return
+        else:
+            msgResponse = self.getResponse(msgStatus)
+            jsonMsg = json.loads(msgResponse)
+            if unpackedReq['acid'] not in self.sessions and 'cookieDough' in jsonMsg:
+                self.sessions[unpackedReq['acid']] = jsonMsg['cookieDough']
+            return self.makeResponseGeneric(msgStatus,msgResponse)
 
     def dist(self,unpackedReq,msgStatus):
         #ADD BUFFERING FEATURES
