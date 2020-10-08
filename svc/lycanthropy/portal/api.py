@@ -98,7 +98,8 @@ class dataProcessingHandlers():
         self.functionMap = {
             'metadata':self.metadata,
             'control':self.control,
-            'windows':self.windows
+            'windows':self.windows,
+            'posix':self.posix
         }
 
     def metadata(self,campaign,data):
