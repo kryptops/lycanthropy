@@ -290,18 +290,17 @@ def initialize():
 
 if __name__ == "__main__":
     initialize()
-    bannerText = open(
+    banner = open(
         'lycanthropy/ui/monitor.txt',
         'r'
     ).read()
-    banner = bannerText.replace(
-        '#', colored(
-            '#',
-            'red'
-        )
-    )
+
     print(
-        banner
+        colored(
+            banner,
+            "green",
+            attrs=['bold']
+        )
     )
     print(
         colored(' :  ','red') + colored(
@@ -310,4 +309,3 @@ if __name__ == "__main__":
         )
     )
     app.run(host='127.0.0.1',port=56091,ssl_context='adhoc')
-
