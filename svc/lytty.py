@@ -125,11 +125,17 @@ def getAuth():
 
 
 if __name__ == "__main__":
-    lycanthropy.ui.util.startWolfmon()
-    time.sleep(4)
+
     config = {
         'context':'console'
     }
+
+    getAuth()
+    try:
+        lycanthropy.ui.util.forwardSession(session)
+    except:
+        print(colored("ERROR: No monitor console to connect to. Run python3 wolfmon.py in another terminal before re-running lytty.","red",attrs=['bold']))
+        sys.exit()
     print(
         colored(
             open('lycanthropy/ui/banner.txt').read(),
@@ -137,6 +143,4 @@ if __name__ == "__main__":
             attrs=['bold']
         )
     )
-    getAuth()
-    lycanthropy.ui.util.forwardSession(session)
     getInput(config)
