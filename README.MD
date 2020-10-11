@@ -30,6 +30,7 @@ python3 lysys.py
 On a client install that can access the api server, run...
 
 ```
+python3 wolfmon.py
 python3 lytty.py
 ```
 
