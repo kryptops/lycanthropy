@@ -241,7 +241,7 @@ class coreServer():
             return self.makeAuthFail(
                 unpackedReq
             )
-        status,referencedReq = self.makeAuthSuccess(unpackedReq)
+        status,referencedReq = self.makeAuthSuccess(msgStatus)
         if status == 1:
             return referencedReq
         msgResponse = self.getResponse(referencedReq)
@@ -252,7 +252,7 @@ class coreServer():
             return self.makeAuthFail(
                 unpackedReq
             )
-        status,referencedReq = self.makeAuthSuccess(unpackedReq)
+        status,referencedReq = self.makeAuthSuccess(msgStatus)
         if status == 1:
             return referencedReq
 
@@ -265,7 +265,7 @@ class coreServer():
             return self.makeAuthFail(
                 unpackedReq
             )
-        status,referencedReq = self.makeAuthSuccess(unpackedReq)
+        status,referencedReq = self.makeAuthSuccess(msgStatus)
         if status == 1:
             return referencedReq
 

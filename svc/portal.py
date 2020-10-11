@@ -281,12 +281,11 @@ def retrieveMonitoring():
 
 
                             lycan.monitoring[match['stream']]['events'][mtcIdx]['tags'].append(wdIdentity)
-
                             if len(lycan.monitoring[match['stream']]['events'][mtcIdx]['tags']) == len(lycan.monitors):
                                 lycan.monitoring[match['stream']]['events'].pop(mtcIdx)
 
                     if resultCount > 0:
-
+                        
                         return make_response(jsonify(subscriptionReceiver),200)
                     if int(time.time()) >= canaryStamp+120:
                         return make_response(jsonify([{'output':{'tags':[]}}]),200)
@@ -305,8 +304,8 @@ def receiveMonitoring(streamID):
 
         if streamProvisioner(eventData,request.cookies['_lmt']):
             eventData['tags'] = []
-            lycan.monitoring[streamID]['events'].append(eventData)
-            print(eventData)
+            if eventData not in lycan.monitoring[streamID]['events']:
+                lycan.monitoring[streamID]['events'].append(eventData)
             return {'status':'200'},200
         else:
             abort(403)
