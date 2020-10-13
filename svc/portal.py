@@ -287,7 +287,7 @@ def retrieveMonitoring():
                     if resultCount > 0:
                         
                         return make_response(jsonify(subscriptionReceiver),200)
-                    if int(time.time()) >= canaryStamp+120:
+                    if int(time.time()) >= canaryStamp+15:
                         return make_response(jsonify([{'output':{'tags':[]}}]),200)
 
         else:
