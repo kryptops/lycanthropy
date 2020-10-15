@@ -1,12 +1,12 @@
 package agent;
 
 public class Modlib {
-    enum Win32_HotFix_Values {
+    public enum Win32_HotFix_Values {
         HotFixID,
         InstalledOn
     }
 
-    enum Win32_Service_Values {
+    public enum Win32_Service_Values {
         StartName,
         DisplayName,
         State,
@@ -15,7 +15,7 @@ public class Modlib {
         StartMode
     }
 
-    enum Win32_UserAccount_Values {
+    public enum Win32_UserAccount_Values {
         Name,
         SID,
         AccountType,
@@ -23,7 +23,7 @@ public class Modlib {
         Description,
         Domain
     }
-    enum Win32_Product_Values {
+    public enum Win32_Product_Values {
         Name,
         Version,
         Vendor,
@@ -31,25 +31,25 @@ public class Modlib {
         InstallState
     }
 
-    enum Win32_Autorun_Values {
+    public enum Win32_Autorun_Values {
         Name,
         Location,
         Command
     }
 
-    enum Win32_Process_Values {
+    public enum Win32_Process_Values {
         Name,
         ProcessID,
         CommandLine
     }
 
-    enum Win32_Environment_Values {
+    public enum Win32_Environment_Values {
         Name,
         UserName,
         VariableValue
     }
 
-    enum Win32_Share_Values {
+    public enum Win32_Share_Values {
         Name,
         Path,
         Caption
