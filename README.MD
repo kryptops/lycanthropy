@@ -27,10 +27,15 @@ cd lycanthropy
 cd svc
 python3 lysys.py
 ```
-On a client install that can access the api server (or from a terminal on the api server), run...
+On an install that can access the api server (or from a terminal on the api server), run...
 
 ```
 python3 wolfmon.py
+```
+
+Then, in another terminal, run...
+
+```
 python3 lytty.py
 ```
 
