@@ -25,6 +25,7 @@ def interpret(directive,arguments,context,connector):
     #use context to seek the command
     #you can only access specific commands from a context
     #need to make sure use and others are still available from other contexts\
+    restoredForm = {}
     try:
         restoredForm = lycanthropy.portal.api.restoreForm(directive, context, arguments)
         fieldChk = lycanthropy.portal.api.chkFieldDefaults(context, directive, arguments)

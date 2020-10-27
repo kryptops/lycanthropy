@@ -169,3 +169,39 @@ def sendAuth(username,password,gateway):
 
     )
     return authPost.content
+
+def postFile(session,campaign,file):
+    try:
+        filePost = requests.post(
+            'https://{}:56114/lycanthropy/{}/fileStore/{}'.format(session.api,campaign,file.split('/')[-1]),
+            json={"fileData":base64.b64encode(open(file,'rb').read()).decode('utf-8')},
+            cookies={
+                'LYSESSID':session.token,
+                'APIUSER':base64.b64encode(
+                    session.username.encode('utf-8')
+                ).decode('utf-8')
+            },
+            headers={
+                'Content-Type': 'application/json'
+            },
+            verify=False
+        )
+        return filePost
+    except:
+        return {'error':'could not push file'}
+
+def syncFile(session,campaign,file):
+    fileGet = requests.get(
+        'https://{}:56114/lycanthropy/{}/fileStore/{}'.format(session.api,campaign,file),
+        cookies={
+            'LYSESSID': session.token,
+            'APIUSER': base64.b64encode(
+                session.username.encode('utf-8')
+            ).decode('utf-8')
+        },
+        headers={
+            'Content-Type': 'application/json'
+        },
+        verify=False
+    )
+    return fileGet

@@ -159,10 +159,12 @@ class ui():
             for match in monitorOut:
                 if len(match) > 1:
                     match['output'].pop('tags')
+                    try:
+                        parsedOutput = json.loads(match['output']['output'])
+                        match['output']['output'] = parsedOutput
+                    except:
+                        pass
                     print(json.dumps(match['output'],indent=4).replace('\\n','\n').replace('\\r','\r'))
-
-
-
 
 
 
