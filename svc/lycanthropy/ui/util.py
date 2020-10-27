@@ -36,7 +36,8 @@ class modLocals():
             'exit':self.exit,
             'restartWolfmon':self.restartWolfmon,
             'execShell':self.execShell,
-            'fileStage':self.fileStage
+            'fileStage':self.fileStage,
+            'fileSync':self.fileSync
         }
 
     def exit(self,arguments,session):
@@ -59,10 +60,11 @@ class modLocals():
 
     def fileSync(self,arguments,session):
         out = lycanthropy.ui.webClient.syncFile(session,arguments['campaign'],arguments['file'])
-        lycanthropy.ui.util.writeFile(out)
+        lycanthropy.ui.util.writeFile(json.loads(out.content))
         return {'success':'wrote {} to the working directory'.format(arguments['file'])}
 
 def writeFile(fileObj):
+
     filePath = fileObj['path']
     fileData = base64.b64decode(fileObj['data'])
     fileHandle = open(filePath,'wb')
