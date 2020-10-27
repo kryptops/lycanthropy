@@ -189,6 +189,40 @@ def authenticatorMain():
         abort(401)
 
 
+@app.route('/lycanthropy/<campaign>/fileStore/<file>',methods=['POST','GET'])
+def fileMain(campaign,file):
+    wdIdentity = None
+    if 'LYSESSID' in request.cookies and 'APIUSER' in request.cookies:
+        token = request.cookies.get('LYSESSID')
+        apiUser = base64.b64decode(request.cookies.get('APIUSER')).decode('utf-8')
+        remote = request.remote_addr
+        if token in lycan.sessions:
+            if lycanthropy.auth.client.verifyToken(apiUser,lycan.config,token,remote) == False:
+                abort(401)
+        else:
+            abort(401)
+    else:
+        abort(400)
+
+    if request.method == 'POST':
+
+        if request.json != None:
+            uploadData = request.json
+            fileData = base64.b64decode(uploadData['fileData'])
+            fileObj = open('campaign/{}/docroot/{}'.format(campaign,file),'wb')
+            fileObj.write(fileData)
+            fileObj.close()
+            return {'success':'completed write operation for {}'.format(file)}
+        else:
+            abort(400)
+    else:
+        fileHandle = open('campaign/{}/warehouse/{}'.format(campaign,file),'rb')
+        fileObj = {'path':file,'data':base64.b64encode(fileHandle.read()).decode('utf-8')}
+        return fileObj
+
+
+
+
 @app.route('/lycanthropy/ui-handler/<context>/<directive>',methods=['POST'])
 def cmdMain(context,directive):
     #receives commands from lytty
@@ -541,4 +575,4 @@ if __name__=='__main__':
     args = lycan.parseCmdLine()
     lycan.interface = args.interface
     lycan.port = 56114
-    app.run(debug=True,host=args.interface,port=56114,ssl_context=(args.SSLCertFile,args.SSLKeyFile),use_reloader=False)
+    app.run(host=args.interface,port=56114,ssl_context=(args.SSLCertFile,args.SSLKeyFile),use_reloader=False)

@@ -30,7 +30,7 @@ public class windows {
                 Hashtable hotfixTable = new Hashtable();
                 hotfixTable.put("HotFixID",result.getValue(Modlib.Win32_HotFix_Values.HotFixID, i));
                 hotfixTable.put("InstalledOn",result.getValue(Modlib.Win32_HotFix_Values.InstalledOn, i));
-                wmiResult.add(hotfixTable);
+                wmiResult.add(Util.untabify(hotfixTable));
             }
             Ole32.INSTANCE.CoUninitialize();
             wmiOut = wmiResult.toString();
@@ -68,7 +68,7 @@ public class windows {
                         serviceTable.put(objIndex[s],"[]");
                     }
                 }
-                wmiResult.add(serviceTable);
+                wmiResult.add(Util.untabify(serviceTable));
             }
             Ole32.INSTANCE.CoUninitialize();
             wmiOut = wmiResult.toString();
@@ -96,7 +96,7 @@ public class windows {
                 accountTable.put("Disabled",result.getValue(Modlib.Win32_UserAccount_Values.Disabled, i));
                 accountTable.put("Description",result.getValue(Modlib.Win32_UserAccount_Values.Description, i));
                 accountTable.put("Domain",result.getValue(Modlib.Win32_UserAccount_Values.Domain, i));
-                wmiResult.add(accountTable);
+                wmiResult.add(Util.untabify(accountTable));
             }
             Ole32.INSTANCE.CoUninitialize();
             wmiOut = wmiResult.toString();
@@ -123,7 +123,7 @@ public class windows {
                 packageTable.put("Vendor",result.getValue(Modlib.Win32_Product_Values.Vendor, i));
                 packageTable.put("PackageName",result.getValue(Modlib.Win32_Product_Values.PackageName, i));
                 packageTable.put("InstallState",result.getValue(Modlib.Win32_Product_Values.InstallState, i));
-                wmiResult.add(packageTable);
+                wmiResult.add(Util.untabify(packageTable));
             }
             Ole32.INSTANCE.CoUninitialize();
 
@@ -149,7 +149,7 @@ public class windows {
                 autorunTable.put("Name",result.getValue(Modlib.Win32_Autorun_Values.Name, i));
                 autorunTable.put("Location",result.getValue(Modlib.Win32_Autorun_Values.Location, i));
                 autorunTable.put("Command",result.getValue(Modlib.Win32_Autorun_Values.Command, i));
-                wmiResult.add(autorunTable);
+                wmiResult.add(Util.untabify(autorunTable));
             }
             Ole32.INSTANCE.CoUninitialize();
 
@@ -180,7 +180,7 @@ public class windows {
                 } else {
                     procTable.put("CommandLine", command);
                 }
-                wmiResult.add(procTable);
+                wmiResult.add(Util.untabify(procTable));
             }
             Ole32.INSTANCE.CoUninitialize();
 
@@ -205,7 +205,7 @@ public class windows {
                 Hashtable envTable = new Hashtable();
                 envTable.put("Name",result.getValue(Modlib.Win32_Environment_Values.Name, i));
                 envTable.put("VariableValue",result.getValue(Modlib.Win32_Environment_Values.VariableValue, i));
-                wmiResult.add(envTable);
+                wmiResult.add(Util.untabify(envTable));
             }
             Ole32.INSTANCE.CoUninitialize();
             wmiOut = wmiResult.toString();
@@ -231,7 +231,7 @@ public class windows {
                 shareTable.put("Name",result.getValue(Modlib.Win32_Share_Values.Name, i));
                 shareTable.put("Path",result.getValue(Modlib.Win32_Share_Values.Path, i));
                 shareTable.put("Caption",result.getValue(Modlib.Win32_Share_Values.Caption, i));
-                wmiResult.add(shareTable);
+                wmiResult.add(Util.untabify(shareTable));
             }
             Ole32.INSTANCE.CoUninitialize();
             wmiOut = wmiResult.toString();
