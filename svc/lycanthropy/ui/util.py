@@ -61,6 +61,7 @@ class modLocals():
     def fileSync(self,arguments,session):
         out = lycanthropy.ui.webClient.syncFile(session,arguments['campaign'],arguments['file'])
         lycanthropy.ui.util.writeFile(json.loads(out.content))
+
         return {'success':'wrote {} to the working directory'.format(arguments['file'])}
 
 def writeFile(fileObj):
@@ -100,7 +101,7 @@ def chkModLocals(output,session):
     if type(outFunc) == dict:
         return False
     if outFunc in modLocals().functionMap:
-        modLocals().functionMap[outFunc](retargs,session)
+        print(json.dumps(modLocals().functionMap[outFunc](retargs,session),indent=4))
         return True
     return False
 
