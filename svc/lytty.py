@@ -1,6 +1,8 @@
 import lycanthropy.ui.directiveProcessor
 import lycanthropy.ui.webClient
 import lycanthropy.ui.util
+import traceback
+import requests
 import getpass
 import sys
 import json
@@ -71,12 +73,29 @@ def sendInput(directive,config):
 
 def getInput(config):
     #input receiver
-    sendInput(
-        input(
-            colorPrompt(config['context'])
-        ),
-        config
-    )
+    try:
+        sendInput(
+            input(
+                colorPrompt(config['context'])
+            ),
+            config
+        )
+    except KeyboardInterrupt:
+        lycanthropy.ui.webClient.deactivateWolfmon(session.username, session.password)
+        time.sleep(1)
+        sys.exit()
+    except (requests.exceptions.ConnectionError):
+        print(
+            json.dumps(
+                {
+                    'error':'a ui component (api or wolfmon) refused the connection',
+                    'solution':'verify that the api and wolfmon are online and functioning before proceeding'
+                },
+                indent=4
+            )
+        )
+
+
     
 def getAuth():
     global session
