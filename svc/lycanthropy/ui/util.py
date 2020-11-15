@@ -56,7 +56,7 @@ class modLocals():
 
     def fileStage(self,arguments,session):
         out = lycanthropy.ui.webClient.postFile(session,arguments['campaign'],arguments['file'])
-        return out
+        return json.loads(out.content)
 
     def fileSync(self,arguments,session):
         out = lycanthropy.ui.webClient.syncFile(session,arguments['campaign'],arguments['file'])

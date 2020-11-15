@@ -212,12 +212,12 @@ def fileMain(campaign,file):
             fileObj = open('campaign/{}/docroot/{}'.format(campaign,file),'wb')
             fileObj.write(fileData)
             fileObj.close()
-            return {'success':'completed write operation for {}'.format(file)}
+            return make_response(jsonify({'success':'completed write operation for {}'.format(file)}),200)
         else:
             abort(400)
     else:
         fileHandle = open('campaign/{}/warehouse/{}'.format(campaign,file),'rb')
-        fileObj = {'path':file,'data':base64.b64encode(fileHandle.read()).decode('utf-8')}
+        fileObj = make_response(jsonify({'path':file,'data':base64.b64encode(fileHandle.read()).decode('utf-8')}),200)
         return fileObj
 
 
