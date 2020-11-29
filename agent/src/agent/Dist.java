@@ -117,12 +117,24 @@ public class Dist {
 	
 	public static Hashtable dispatch(String msgID, String data, String etc) throws Exception {
 		String nonce = Util.strand(12);
-		ArrayList<String> initializer = broker(data+"|PIR",etc,nonce);
+                String[] fileFields = data.split("\\.");
+                String finalFile = new String();
+                if (fileFields.length > 2) {
+                    String[] mergeFields = new String[fileFields.length-1];
+                    for (int a=1; a < fileFields.length; a++) {
+                        mergeFields[a-1] = fileFields[a];
+                    }
+                    finalFile = String.join(".",mergeFields);
+                } else {
+                    finalFile = fileFields[1];
+                }
+                String reqStr = fileFields[0] + "." + (Base64.getEncoder().encodeToString((finalFile).getBytes()));
+		ArrayList<String> initializer = broker(reqStr+"|PIR",etc,nonce);
 		
 		//return module package
 		receive(Netw.onomancy(initializer),nonce);
 		TimeUnit.MILLISECONDS.sleep(1000*5);
-		ArrayList<String> made = broker(data,etc,nonce);
+		ArrayList<String> made = broker(reqStr,etc,nonce);
 		Hashtable tabifiedDescriptor = receive(Netw.onomancy(made),nonce);
 		return retrieve(tabifiedDescriptor);
 	}
