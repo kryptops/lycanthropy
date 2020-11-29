@@ -374,7 +374,10 @@ class coreServer():
         if unpackedReq['msgID'] not in self.messages:
             if unpackedReq['type'] != 'kex':
                 print('need to backup!')
-                unpackedReq['nonce'] = self.archive[unpackedReq['msgID']]['nonce']
+                try:
+                    unpackedReq['nonce'] = self.archive[unpackedReq['msgID']]['nonce']
+                except:
+                    print('exception while trying to retrieve archived nonce')
                 unpackedReq['acid'] = self.archive[unpackedReq['msgID']]['acid']
             self.messages[unpackedReq['msgID']] = unpackedReq
         # convert delimited fields to table
