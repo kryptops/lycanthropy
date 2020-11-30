@@ -96,6 +96,7 @@ def getInput(config):
         )
 
 
+
     
 def getAuth():
     global session
@@ -130,7 +131,17 @@ def getAuth():
     )
     #make sure exit invalidates the token
     userid,gateway = user.split('@')
-    authToken = lycanthropy.ui.webClient.sendAuth(userid,password,gateway).decode('utf-8')
+    try:
+        authToken = lycanthropy.ui.webClient.sendAuth(userid,password,gateway).decode('utf-8')
+    except (requests.exceptions.ConnectionError):
+        print(
+            json.dumps(
+                {
+                    'error':'the server failed to respond to the authentication attempt'
+                },
+                indent=4
+            )
+        )
 
     session.username = userid
     session.password = password

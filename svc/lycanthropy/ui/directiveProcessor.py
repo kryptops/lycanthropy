@@ -44,6 +44,7 @@ class localDirectives():
         runForm['args'] = session.form[dictKeys[0]]
         fwdDir = lycanthropy.ui.webClient.sendDirective(runForm,parentContext,session)
 
+
         if 'jobID' in fwdDir[0][0]:
             lycanthropy.ui.webClient.subscribeWolfmon(
                 lycanthropy.ui.util.mkSubscription(

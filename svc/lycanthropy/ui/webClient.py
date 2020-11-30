@@ -149,11 +149,12 @@ def sendDirective(directive,context,session):
     #send directive to backend for interpreting
     dirPost = directiveBroker(directive,context,session)
     if dirPost.status_code == 401:
-        session.token = sendAuth(session.username, session.password)
+        session.token = sendAuth(session.username, session.password, session.api).decode('utf-8')
         rePost = directiveBroker(directive,context,session)
         if rePost.status_code == 401:
             print('{"authentication error":"session could not be restored"}')
             sys.exit()
+        dirPost = rePost
     if 'form' in json.loads(dirPost.content):
         session.form = json.loads(dirPost.content)['form']
     return processResponse(dirPost.content),session
