@@ -477,10 +477,13 @@ def distMain(acid,descriptor):
         if fileType == 'load':
             #pkg pull
             byteKey = lycanthropy.portal.agent.derive(descriptor,acid,'distKey')
-            pkgData = lycan.dist[byteKey]
-            if 'errorCode' not in pkgData:
-                return pkgData
-            else:
+            try:
+                pkgData = lycan.dist[byteKey]
+                if 'errorCode' not in pkgData:
+                    return pkgData
+                else:
+                    abort(400)
+            except:
                 abort(400)
         elif fileType == 'pull':
             #download function
@@ -488,10 +491,13 @@ def distMain(acid,descriptor):
 
             #fileData = lycanthropy.dist.inventory.fileSearch(acid,descriptor)
             byteKey = lycanthropy.portal.agent.derive(descriptor, acid, 'distKey')
-            fileData = lycan.dist[byteKey]
-            if 'errorCode' not in fileData:
-                return fileData
-            else:
+            try:
+                fileData = lycan.dist[byteKey]
+                if 'errorCode' not in fileData:
+                    return fileData
+                else:
+                    abort(400)
+            except:
                 abort(400)
         else:
             if fileType == 'pull.queue':
