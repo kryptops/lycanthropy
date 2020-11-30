@@ -19,18 +19,18 @@ def chkRtype(fileRaw):
     if (len(file) == 36 or len(file) == 40) and len(file.split('-')) == 5 and '.' not in file:
         for character in file:
             if character not in uuidLegal:
-                print(character)
-                if 'PIR' in file.split('|'):
-                    print('option-a')
+
+                if 'PIR' in fileRaw.split('|'):
+
                     return 'pull.queue'
                 return 'pull'
-        if 'PIR' in file.split('|'):
+        if 'PIR' in fileRaw.split('|'):
             return 'load.queue'
         return 'load'
 
     else:
-        if 'PIR' in file.split('|'):
-            print('option-b')
+        if 'PIR' in fileRaw.split('|'):
+
             return 'pull.queue'
         return 'pull'
 
