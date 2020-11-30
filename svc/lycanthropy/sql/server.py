@@ -1,6 +1,7 @@
 import lycanthropy.auth.client
 import lycanthropy.sql.broker
 import lycanthropy.sql.security
+import lycanthropy.sql.interface
 import os
 
 def rmUser(user):
