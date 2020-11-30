@@ -31,6 +31,8 @@ def storeData(campaign,acid,module,timestamp,job,output):
 
 
 def storeMeta(acid,hostname,ip,os,arch,integrity,user,cwd,domain,registered):
+    if lycanthropy.sql.security.chkAcid(acid) == False:
+        return {'error':'malformed dataflow'}
     blankQuery = """INSERT INTO metadata(acid, hostname, ip, os, arch, integrity, user, cwd, domain, registered, status) VALUES(:acid, :hostname, :ip, :os, :arch, :integrity, :user, :cwd, :domain, :registered, :status)"""
     return lycanthropy.sql.broker.runQuery(
         blankQuery,

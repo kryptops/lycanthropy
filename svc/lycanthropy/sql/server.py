@@ -38,7 +38,7 @@ def getTables():
     return tables
 
 def storeUser(username,password,campaigns,roles):
-    if username in lycanthropy.sql.agent.getUsers():
+    if lycanthropy.sql.interface.filterUser({'username':username})[0] != []:
         return {'error':'user already exists'}
     if lycanthropy.sql.security.chkOpid(username) == False:
         return {'error':'user does not adhere to character requirements'}
@@ -58,7 +58,7 @@ def storeUser(username,password,campaigns,roles):
         return {'error':'unable to store user'}
 
 def updateAccess(user,campaigns):
-    if user not in lycanthropy.sql.agent.getUsers():
+    if lycanthropy.sql.interface.filterUser({'username':user})[0] == []:
         return {'error':'user does not exist'}
     if lycanthropy.sql.security.chkOpid(user) == False:
         return {'error':'user does not exist'}
