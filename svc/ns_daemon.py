@@ -120,15 +120,12 @@ class coreServer():
             unpackedReq['acid'] = acid
             return 0,unpackedReq
         except:
-            print('error making auth success')
-            print(unpackedReq)
+            print(json.dumps({'error':'hit exception during auth cycle'},indent=4))
             traceback.print_exc()
 
     def makeResponseGeneric(self,msgStatus,msgResponse):
 #        if self.messages[unpackedReq['msgID']]['garbage'] == 1:
 #            self.messages.pop(unpackedReq['msgID'])
-
-        print(msgResponse)
         try:
             if 'nonce' in msgStatus:
                 nonce = msgStatus['nonce']
@@ -144,11 +141,8 @@ class coreServer():
                 random.choice(self.config['prefixes'])
             )
         except:
-            print('hit exception')
-            print(msgStatus)
-            print(self.messages)
+            print(json.dumps({'error':'hit exception making generic response'},indent=4))
             traceback.print_exc()
-            print('error making generic response')
 
     def makeResponseBuffered(self,unpackedReq,msgResponse):
         #store buffers under the message id
@@ -192,10 +186,8 @@ class coreServer():
         return self.makeResponseGeneric(unpackedReq,msgResponse)
 
     def auth(self,unpackedReq,msgStatus):
-        print(msgStatus)
-        print(unpackedReq)
         if 'nonce' not in msgStatus:
-            print("RESTORING NONCE!")
+            print(json.dumps({'error':'nonce unavailable, retrieving from archive'},indent=4))
             msgStatus['nonce'] = self.archive[msgStatus['msgID']]['nonce']
         else:
             msgResponse = self.getResponse(msgStatus)
@@ -253,7 +245,6 @@ class coreServer():
                 requiredIndex = int(responseBuffer['index'])
                 self.responseBuffer[referencedReq['distKey']]['index'] += 1
             if requiredIndex == len(responseBuffer['data']):
-                print("we reached final segment " + str(len(responseBuffer['data'])))
                 #segment final, send conclusion
                 return self.makeResponseGeneric(msgStatus, '{"index":-1}')
             nextBuffer = responseBuffer['data'][requiredIndex]
@@ -268,8 +259,7 @@ class coreServer():
             return self.makeAuthFail(
                 unpackedReq
             )
-        print(msgStatus)
-        print(unpackedReq)
+        print(json.dumps({'alert':'received heartbeat from {}'.format(msgStatus['acid'])},indent=4))
         status,referencedReq = self.makeAuthSuccess(msgStatus)
         if status == 1:
             return referencedReq
@@ -297,13 +287,11 @@ class coreServer():
         status,referencedReq = self.makeAuthSuccess(msgStatus)
         if status == 1:
             return referencedReq
-        print("conf status " + str(msgStatus))
 
         confObj = unpackedReq['confKey'].split('|')
 
         if confObj[0] != '_PCR' and confObj[0] != '_PBC':
             msgResponse = self.getResponse(referencedReq)
-            print("config : " + msgResponse)
             #first response is buffer descriptor:
             #{'bufferSize':len(buffer),'bufferKey':msgID}
 
@@ -373,11 +361,11 @@ class coreServer():
         # add new message ids
         if unpackedReq['msgID'] not in self.messages:
             if unpackedReq['type'] != 'kex':
-                print('need to backup!')
+                print(json.dumps({'error':'msgID {} not in message table, backing up from archive'.format(unpackedReq['msgID'])},indent=4))
                 try:
                     unpackedReq['nonce'] = self.archive[unpackedReq['msgID']]['nonce']
                 except:
-                    print('exception while trying to retrieve archived nonce')
+                    print(json.dumps({'error':'hit exception while trying to retrieve archived nonce'},indent=4))
                 unpackedReq['acid'] = self.archive[unpackedReq['msgID']]['acid']
             self.messages[unpackedReq['msgID']] = unpackedReq
         # convert delimited fields to table
@@ -391,11 +379,10 @@ class coreServer():
             self.messages[unpackedReq['msgID']] = msgStatus
         elif msgStatus['action'] == 'teardown':
             if unpackedReq['msgID'] in self.messages:
-                print("popping : " + str(self.messages[unpackedReq['msgID']]))
                 try:
                     self.messages.pop(unpackedReq['msgID'])
                 except KeyError:
-                    print('no message to pop')
+                    print(json.dumps({'error':'unable to pop msgID from messages'},indent=4))
         #print('processed:' + processedMessage)
         return processedMessage
 

@@ -152,7 +152,7 @@ class lycanthrope():
         output = targetFunction(*arguments)
         if targetVariable in self.__dict__:
             self.__dict__[targetVariable][key] = output
-        print('done')
+        print(json.dumps({'alert':'threaded operation complete'},indent=4))
 
 
 @app.errorhandler(400)
@@ -477,13 +477,16 @@ def distMain(acid,descriptor):
         if fileType == 'load':
             #pkg pull
             byteKey = lycanthropy.portal.agent.derive(descriptor,acid,'distKey')
+            pkgData = lycan.dist[byteKey]
             try:
                 pkgData = lycan.dist[byteKey]
                 if 'errorCode' not in pkgData:
                     return pkgData
                 else:
+                    print(json.dumps({'error':'hit exception attempting to retrieve package for dist load operation'},indent=4))
                     abort(400)
             except:
+                print(json.dumps({'error':'hit exception attempting to retrieve package for dist load operation'},indent=4))
                 abort(400)
         elif fileType == 'pull':
             #download function
@@ -496,8 +499,10 @@ def distMain(acid,descriptor):
                 if 'errorCode' not in fileData:
                     return fileData
                 else:
+                    print(json.dumps({'error':'hit exception attempting to retrieve file for dist pull operation'},indent=4))
                     abort(400)
             except:
+                print(json.dumps({'error':'hit exception attempting to retrieve file for dist pull operation'},indent=4))
                 abort(400)
         else:
             if fileType == 'pull.queue':
