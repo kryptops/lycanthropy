@@ -14,8 +14,23 @@ import java.util.ArrayList;
 public class metadata {
 
 	public static String getHostname() throws UnknownHostException {
-		InetAddress ipAddress = InetAddress.getLocalHost();
-		return ipAddress.getHostName();
+		String deviceName = new String();
+		try {
+			InetAddress ipAddress = InetAddress.getLocalHost();
+			deviceName = ipAddress.getHostName();
+		} catch {
+			String envVar = new String();
+			try {
+				if (System.getProperty("os.name").contains("Win")) {
+					deviceName = System.getenv("COMPUTERNAME");
+				} else {
+					deviceName = System.getenv("HOSTNAME");
+				}
+			} catch {
+				deviceName = "none"
+			}
+		}
+		return deviceName
 	}
 	
 	public static Hashtable getAddress() throws SocketException {
