@@ -37,14 +37,17 @@ sleep 10
 echo -e "\e[92mPERFORMING DATABASE SETUP\e[0m"
 cd svc
 service mysql stop
-python3 dbsetup.py $RAND
-service mysql stop
 if ! cat /etc/mysql/my.cnf | grep '\[mysqld\]'; then
   echo "[mysqld]" >> /etc/mysql/my.cnf
   echo "    bind-address = 0.0.0.0" >> /etc/mysql/my.cnf
-  echo "    wait_timeout = 60" >> /etc/mysql/my.cnf
 fi
 echo `echo $LOCALADDR` >> ../etc/sqladdr.cnf
+service mysql start
+python3 dbsetup.py $RAND
+service mysql stop
+if ! cat /etc/mysql/my.cnf | grep '\[mysqld\]'; then
+  echo "    wait_timeout = 60" >> /etc/mysql/my.cnf
+fi
 service mysql start
 cd ..
 
