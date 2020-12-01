@@ -10,27 +10,38 @@ import java.security.NoSuchAlgorithmException;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
 
 public class metadata {
 
 	public static String getHostname() throws UnknownHostException {
-		String deviceName = new String();
-		try {
-			InetAddress ipAddress = InetAddress.getLocalHost();
-			deviceName = ipAddress.getHostName();
-		} catch {
-			String envVar = new String();
-			try {
-				if (System.getProperty("os.name").contains("Win")) {
-					deviceName = System.getenv("COMPUTERNAME");
-				} else {
-					deviceName = System.getenv("HOSTNAME");
-				}
-			} catch {
-				deviceName = "none"
-			}
-		}
-		return deviceName
+	        String deviceName = new String();
+                try {
+                        InetAddress ipAddress = InetAddress.getLocalHost();
+                        deviceName = ipAddress.getHostName();
+                } catch (Exception e) {
+                        String envVar = new String();
+                        try {
+                                if (System.getProperty("os.name").contains("Win")) {
+                                        deviceName = System.getenv("COMPUTERNAME");
+                                } else {
+                                        StringBuilder fileString = new StringBuilder();
+                                        BufferedReader fileReader = new BufferedReader(new FileReader("/proc/sys/kernel/hostname"));
+                                        String nextLine = fileReader.readLine();
+                                        while (nextLine != null) {
+                                                fileString.append(nextLine);
+                                                nextLine = fileReader.readLine();
+                                        }
+                                        deviceName = fileString.toString();
+                                }
+                        } catch (Exception f) {
+                                deviceName = "na";
+                        }
+                }
+                return deviceName;
 	}
 	
 	public static Hashtable getAddress() throws SocketException {
@@ -90,8 +101,14 @@ public class metadata {
 	}
 	
 	public static String getDomain() throws UnknownHostException {
-		InetAddress ipAddress = InetAddress.getLocalHost();
-		return ipAddress.getCanonicalHostName();
+		String canonicalHostname = new String();
+		try {
+			InetAddress ipAddress = InetAddress.getLocalHost();
+			canonicalHostname = ipAddress.getCanonicalHostName();
+		} catch (Exception e) {
+			canonicalHostname = getHostname().toString();
+		}
+		return canonicalHostname;
 	}
 	
 	public static Hashtable collectMeta(Hashtable args) throws SocketException, UnknownHostException, NoSuchAlgorithmException {
