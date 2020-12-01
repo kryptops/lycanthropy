@@ -6,7 +6,7 @@ import lycanthropy.handler.manage
 import lycanthropy.handler.monitor
 import lycanthropy.handler.database
 import lycanthropy.handler.windows
-
+import lycanthropy.handler.posix
 
 def format(directive):
     if '.' in directive:
@@ -24,9 +24,14 @@ def process(directive,context):
 def interpret(directive,arguments,context,connector):
     #use context to seek the command
     #you can only access specific commands from a context
-    #need to make sure use and others are still available from other contexts
-    restoredForm = lycanthropy.portal.api.restoreForm(directive, context, arguments)
-    fieldChk = lycanthropy.portal.api.chkFieldDefaults(context, directive, arguments)
+    #need to make sure use and others are still available from other contexts\
+    restoredForm = {}
+    try:
+        restoredForm = lycanthropy.portal.api.restoreForm(directive, context, arguments)
+        fieldChk = lycanthropy.portal.api.chkFieldDefaults(context, directive, arguments)
+    except:
+        return {'output': {'error': 'directive is non-existent or not available in this console view'},
+                'context': context, 'form': restoredForm}
     if 'acid' in arguments:
         caseSensitive = arguments['acid'].upper()
         arguments['acid'] = caseSensitive

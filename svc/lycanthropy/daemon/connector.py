@@ -48,7 +48,7 @@ def getFile(acid,distKey,file,gateway):
     #returns bytes object
     fmtKey = base64.urlsafe_b64encode(base64.b64decode(distKey)).decode('utf-8')
     rtype = lycanthropy.daemon.util.chkRtype(file)
-    fmtFile = file.split('|')[0]
+    fmtFile = base64.b64decode(file.split('|')[0]).decode('utf-8')
     uri = '/2/0/{}/{}?_key={}&_rtype={}'.format(acid,fmtFile,fmtKey,rtype)
 
     distResponse = requests.get(

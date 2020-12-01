@@ -35,7 +35,9 @@ class modLocals():
         self.functionMap = {
             'exit':self.exit,
             'restartWolfmon':self.restartWolfmon,
-            'execShell':self.execShell
+            'execShell':self.execShell,
+            'fileStage':self.fileStage,
+            'fileSync':self.fileSync
         }
 
     def exit(self,arguments,session):
@@ -51,6 +53,24 @@ class modLocals():
     def execShell(self,arguments,session):
         out = lycanthropy.ui.shellClient.initialize(arguments)
         return out
+
+    def fileStage(self,arguments,session):
+        out = lycanthropy.ui.webClient.postFile(session,arguments['campaign'],arguments['file'])
+        return json.loads(out.content)
+
+    def fileSync(self,arguments,session):
+        out = lycanthropy.ui.webClient.syncFile(session,arguments['campaign'],arguments['file'])
+        lycanthropy.ui.util.writeFile(json.loads(out.content))
+
+        return {'success':'wrote {} to the working directory'.format(arguments['file'])}
+
+def writeFile(fileObj):
+
+    filePath = fileObj['path']
+    fileData = base64.b64decode(fileObj['data'])
+    fileHandle = open(filePath,'wb')
+    fileHandle.write(fileData)
+    fileHandle.close()
 
 
 def processDownloads(arguments):
@@ -81,7 +101,7 @@ def chkModLocals(output,session):
     if type(outFunc) == dict:
         return False
     if outFunc in modLocals().functionMap:
-        modLocals().functionMap[outFunc](retargs,session)
+        print(json.dumps(modLocals().functionMap[outFunc](retargs,session),indent=4))
         return True
     return False
 

@@ -2,6 +2,7 @@ from textwrap import wrap
 import jwt
 import time
 import psutil
+import base64
 import hashlib
 
 def getHash(data):
@@ -10,25 +11,26 @@ def getHash(data):
     return hashifer.hexdigest()
 
 
-def chkRtype(file):
+def chkRtype(fileRaw):
     rtype = 'null'
+    file = base64.b64decode(fileRaw.split('|')[0].encode('utf-8')).decode('utf-8')
     uuidLegal = 'abcdef0123456789-|PIR'
 
     if (len(file) == 36 or len(file) == 40) and len(file.split('-')) == 5 and '.' not in file:
         for character in file:
             if character not in uuidLegal:
-                print(character)
-                if 'PIR' in file.split('|'):
-                    print('option-a')
+
+                if 'PIR' in fileRaw.split('|'):
+
                     return 'pull.queue'
                 return 'pull'
-        if 'PIR' in file.split('|'):
+        if 'PIR' in fileRaw.split('|'):
             return 'load.queue'
         return 'load'
 
     else:
-        if 'PIR' in file.split('|'):
-            print('option-b')
+        if 'PIR' in fileRaw.split('|'):
+
             return 'pull.queue'
         return 'pull'
 

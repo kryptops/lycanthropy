@@ -1,6 +1,8 @@
 import lycanthropy.ui.directiveProcessor
 import lycanthropy.ui.webClient
 import lycanthropy.ui.util
+import traceback
+import requests
 import getpass
 import sys
 import json
@@ -71,12 +73,30 @@ def sendInput(directive,config):
 
 def getInput(config):
     #input receiver
-    sendInput(
-        input(
-            colorPrompt(config['context'])
-        ),
-        config
-    )
+    try:
+        sendInput(
+            input(
+                colorPrompt(config['context'])
+            ),
+            config
+        )
+    except KeyboardInterrupt:
+        lycanthropy.ui.webClient.deactivateWolfmon(session.username, session.password)
+        time.sleep(1)
+        sys.exit()
+    except (requests.exceptions.ConnectionError):
+        print(
+            json.dumps(
+                {
+                    'error':'a ui component (api or wolfmon) refused the connection',
+                    'solution':'verify that the api and wolfmon are online and functioning before proceeding'
+                },
+                indent=4
+            )
+        )
+
+
+
     
 def getAuth():
     global session
@@ -111,7 +131,17 @@ def getAuth():
     )
     #make sure exit invalidates the token
     userid,gateway = user.split('@')
-    authToken = lycanthropy.ui.webClient.sendAuth(userid,password,gateway).decode('utf-8')
+    try:
+        authToken = lycanthropy.ui.webClient.sendAuth(userid,password,gateway).decode('utf-8')
+    except (requests.exceptions.ConnectionError):
+        print(
+            json.dumps(
+                {
+                    'error':'the server failed to respond to the authentication attempt'
+                },
+                indent=4
+            )
+        )
 
     session.username = userid
     session.password = password
@@ -125,11 +155,17 @@ def getAuth():
 
 
 if __name__ == "__main__":
-    lycanthropy.ui.util.startWolfmon()
-    time.sleep(4)
+
     config = {
         'context':'console'
     }
+
+    getAuth()
+    try:
+        lycanthropy.ui.util.forwardSession(session)
+    except:
+        print(colored("ERROR: No monitor console to connect to. Run python3 wolfmon.py in another terminal before re-running lytty.","red",attrs=['bold']))
+        sys.exit()
     print(
         colored(
             open('lycanthropy/ui/banner.txt').read(),
@@ -137,6 +173,4 @@ if __name__ == "__main__":
             attrs=['bold']
         )
     )
-    getAuth()
-    lycanthropy.ui.util.forwardSession(session)
     getInput(config)

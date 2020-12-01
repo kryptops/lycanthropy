@@ -149,11 +149,12 @@ def sendDirective(directive,context,session):
     #send directive to backend for interpreting
     dirPost = directiveBroker(directive,context,session)
     if dirPost.status_code == 401:
-        session.token = sendAuth(session.username, session.password)
+        session.token = sendAuth(session.username, session.password, session.api).decode('utf-8')
         rePost = directiveBroker(directive,context,session)
         if rePost.status_code == 401:
             print('{"authentication error":"session could not be restored"}')
             sys.exit()
+        dirPost = rePost
     if 'form' in json.loads(dirPost.content):
         session.form = json.loads(dirPost.content)['form']
     return processResponse(dirPost.content),session
@@ -169,3 +170,39 @@ def sendAuth(username,password,gateway):
 
     )
     return authPost.content
+
+def postFile(session,campaign,file):
+    try:
+        filePost = requests.post(
+            'https://{}:56114/lycanthropy/{}/fileStore/{}'.format(session.api,campaign,file.split('/')[-1]),
+            json={"fileData":base64.b64encode(open(file,'rb').read()).decode('utf-8')},
+            cookies={
+                'LYSESSID':session.token,
+                'APIUSER':base64.b64encode(
+                    session.username.encode('utf-8')
+                ).decode('utf-8')
+            },
+            headers={
+                'Content-Type': 'application/json'
+            },
+            verify=False
+        )
+        return filePost
+    except:
+        return {'error':'could not push file'}
+
+def syncFile(session,campaign,file):
+    fileGet = requests.get(
+        'https://{}:56114/lycanthropy/{}/fileStore/{}'.format(session.api,campaign,file),
+        cookies={
+            'LYSESSID': session.token,
+            'APIUSER': base64.b64encode(
+                session.username.encode('utf-8')
+            ).decode('utf-8')
+        },
+        headers={
+            'Content-Type': 'application/json'
+        },
+        verify=False
+    )
+    return fileGet

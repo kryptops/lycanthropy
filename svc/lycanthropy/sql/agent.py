@@ -1,14 +1,17 @@
 import lycanthropy.sql.broker
 import lycanthropy.sql.sanitize
 import lycanthropy.sql.interface
+import lycanthropy.sql.security
 import uuid
 import os
 
 def storeData(campaign,acid,module,timestamp,job,output):
+    if lycanthropy.sql.security.chkAcid(acid) == False:
+        return {'error':'malformed dataflow'}
     if lycanthropy.sql.sanitize.strValidate(campaign) and campaign in os.listdir('campaign'):
         blankQuery = """INSERT INTO campaign(acid, record, module, timestamp, job, campaign, output) VALUES(:acid, :record, :module, :timestamp, :job, :campaign, :output)"""
     else:
-        return {'error':'could not ingest dataflow'}
+        return {'error':'malformed dataflow'}
     try:
         lycanthropy.sql.broker.runQuery(
             blankQuery,
@@ -28,6 +31,8 @@ def storeData(campaign,acid,module,timestamp,job,output):
 
 
 def storeMeta(acid,hostname,ip,os,arch,integrity,user,cwd,domain,registered):
+    if lycanthropy.sql.security.chkAcid(acid) == False:
+        return {'error':'malformed dataflow'}
     blankQuery = """INSERT INTO metadata(acid, hostname, ip, os, arch, integrity, user, cwd, domain, registered, status) VALUES(:acid, :hostname, :ip, :os, :arch, :integrity, :user, :cwd, :domain, :registered, :status)"""
     return lycanthropy.sql.broker.runQuery(
         blankQuery,

@@ -2,21 +2,23 @@
 	"control":{
 		"id":"96d2961f-c5ff-4cb1-8c93-848912562f6e",
 		"author":"kryptops",
-		"methods":[
-			"execCommand"
-		],
+		"methods":[],
 		"default":"True"
 	},
 	"metadata":{
 		"id":"a33a58f8-79b6-4f18-bc4b-a936d71f6414",
 		"author":"kryptops",
-		"methods":[
-			"collectMeta"
-		],
+		"methods":[],
 		"default":"True"
 	},
 	"windows":{
 		"id":"5c12e90a-9908-d346-0045-ec8d910750e0",
+		"author":"kryptops",
+		"methods":[],
+		"default":"False"
+	},
+	"posix":{
+		"id":"",
 		"author":"kryptops",
 		"methods":[],
 		"default":"False"

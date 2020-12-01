@@ -152,7 +152,7 @@ class lycanthrope():
         output = targetFunction(*arguments)
         if targetVariable in self.__dict__:
             self.__dict__[targetVariable][key] = output
-        print('done')
+        print(json.dumps({'alert':'threaded operation complete'},indent=4))
 
 
 @app.errorhandler(400)
@@ -187,6 +187,40 @@ def authenticatorMain():
         return lysessid
     else:
         abort(401)
+
+
+@app.route('/lycanthropy/<campaign>/fileStore/<file>',methods=['POST','GET'])
+def fileMain(campaign,file):
+    wdIdentity = None
+    if 'LYSESSID' in request.cookies and 'APIUSER' in request.cookies:
+        token = request.cookies.get('LYSESSID')
+        apiUser = base64.b64decode(request.cookies.get('APIUSER')).decode('utf-8')
+        remote = request.remote_addr
+        if token in lycan.sessions:
+            if lycanthropy.auth.client.verifyToken(apiUser,lycan.config,token,remote) == False:
+                abort(401)
+        else:
+            abort(401)
+    else:
+        abort(400)
+
+    if request.method == 'POST':
+
+        if request.json != None:
+            uploadData = request.json
+            fileData = base64.b64decode(uploadData['fileData'])
+            fileObj = open('campaign/{}/docroot/{}'.format(campaign,file),'wb')
+            fileObj.write(fileData)
+            fileObj.close()
+            return make_response(jsonify({'success':'completed write operation for {}'.format(file)}),200)
+        else:
+            abort(400)
+    else:
+        fileHandle = open('campaign/{}/warehouse/{}'.format(campaign,file),'rb')
+        fileObj = make_response(jsonify({'path':file,'data':base64.b64encode(fileHandle.read()).decode('utf-8')}),200)
+        return fileObj
+
+
 
 
 @app.route('/lycanthropy/ui-handler/<context>/<directive>',methods=['POST'])
@@ -281,14 +315,13 @@ def retrieveMonitoring():
 
 
                             lycan.monitoring[match['stream']]['events'][mtcIdx]['tags'].append(wdIdentity)
-
                             if len(lycan.monitoring[match['stream']]['events'][mtcIdx]['tags']) == len(lycan.monitors):
                                 lycan.monitoring[match['stream']]['events'].pop(mtcIdx)
 
                     if resultCount > 0:
-
+                        
                         return make_response(jsonify(subscriptionReceiver),200)
-                    if int(time.time()) >= canaryStamp+120:
+                    if int(time.time()) >= canaryStamp+15:
                         return make_response(jsonify([{'output':{'tags':[]}}]),200)
 
         else:
@@ -305,8 +338,8 @@ def receiveMonitoring(streamID):
 
         if streamProvisioner(eventData,request.cookies['_lmt']):
             eventData['tags'] = []
-            lycan.monitoring[streamID]['events'].append(eventData)
-            print(eventData)
+            if eventData not in lycan.monitoring[streamID]['events']:
+                lycan.monitoring[streamID]['events'].append(eventData)
             return {'status':'200'},200
         else:
             abort(403)
@@ -445,9 +478,15 @@ def distMain(acid,descriptor):
             #pkg pull
             byteKey = lycanthropy.portal.agent.derive(descriptor,acid,'distKey')
             pkgData = lycan.dist[byteKey]
-            if 'errorCode' not in pkgData:
-                return pkgData
-            else:
+            try:
+                pkgData = lycan.dist[byteKey]
+                if 'errorCode' not in pkgData:
+                    return pkgData
+                else:
+                    print(json.dumps({'error':'hit exception attempting to retrieve package for dist load operation'},indent=4))
+                    abort(400)
+            except:
+                print(json.dumps({'error':'hit exception attempting to retrieve package for dist load operation'},indent=4))
                 abort(400)
         elif fileType == 'pull':
             #download function
@@ -455,10 +494,15 @@ def distMain(acid,descriptor):
 
             #fileData = lycanthropy.dist.inventory.fileSearch(acid,descriptor)
             byteKey = lycanthropy.portal.agent.derive(descriptor, acid, 'distKey')
-            fileData = lycan.dist[byteKey]
-            if 'errorCode' not in fileData:
-                return fileData
-            else:
+            try:
+                fileData = lycan.dist[byteKey]
+                if 'errorCode' not in fileData:
+                    return fileData
+                else:
+                    print(json.dumps({'error':'hit exception attempting to retrieve file for dist pull operation'},indent=4))
+                    abort(400)
+            except:
+                print(json.dumps({'error':'hit exception attempting to retrieve file for dist pull operation'},indent=4))
                 abort(400)
         else:
             if fileType == 'pull.queue':
@@ -542,4 +586,4 @@ if __name__=='__main__':
     args = lycan.parseCmdLine()
     lycan.interface = args.interface
     lycan.port = 56114
-    app.run(debug=True,host=args.interface,port=56114,ssl_context=(args.SSLCertFile,args.SSLKeyFile),use_reloader=False)
+    app.run(host=args.interface,port=56114,ssl_context=(args.SSLCertFile,args.SSLKeyFile),use_reloader=False)

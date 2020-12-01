@@ -73,6 +73,7 @@ def addUser(arguments,context,connector):
     if not lycanthropy.portal.api.accessChk(connector,'manager'):
         return {'output': {'error': 'you do not have the correct role to run this command'}, 'context': 'manage(add.user)', 'form': restoredForm}
     password = lycanthropy.crypto.mkRandom(14)
+
     userAdd = lycanthropy.sql.server.storeUser(
         arguments['username'],
         lycanthropy.auth.client.mkUser(arguments['username'],password),

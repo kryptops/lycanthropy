@@ -123,7 +123,7 @@
 		"description":"push file to agent",
 		"arguments":{
 			"acid":"agent to receive file",
-			"file":"name of local file to push (must be in the campaign's docroot)",
+			"file":"name of file to push (use file.stage to copy a local file to the api)",
 			"destination":"full path of directory to write file"
 		},
 		"required":[
@@ -136,11 +136,34 @@
 		"description":"pull file from agent (slow upload)",
 		"arguments":{
 			"acid":"agent to send file",
-			"file":"full path of remote file to pull"
+			"file":"full path of remote file to pull (use file.sync to copy the file from the api)"
 		},
 		"required":[
 			"acid",
 			"file"
 		]
+	},
+	"file.stage":{
+		"description":"send file to server for push to agent",
+		"arguments":{
+			"file":"full path of local file to stage",
+			"campaign":"campaign to stage the file for"
+		},
+		"required":[
+			"campaign",
+			"file"
+		]
+	},
+	"file.sync":{
+		"description":"pull file from the campaign warehouse",
+		"arguments":{
+			"file":"name of file to sync",
+			"campaign":"campaign to sync file from"
+		},
+		"required":[
+			"campaign",
+			"file"
+		]
 	}
+
 }

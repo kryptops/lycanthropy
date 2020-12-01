@@ -1,7 +1,7 @@
 <img src="Lycanthropy_Logo.png" width=300>
 
 # L Y C A N T H R O P Y
-[![forthebadge](https://forthebadge.com/images/badges/made-with-java.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/gluten-free.svg)](https://forthebadge.com)
+[![forthebadge](https://forthebadge.com/images/badges/made-with-java.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/gluten-free.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com)
 
 Lycanthropy is a modular post-exploitation tool instrumented with DNS and written in Java, with a distributable client to enable collaborative Red Teaming and Penetration Testing.
 
@@ -27,7 +27,13 @@ cd lycanthropy
 cd svc
 python3 lysys.py
 ```
-On a client install that can access the api server, run...
+On an install that can access the api server (or from a terminal on the api server), run...
+
+```
+python3 wolfmon.py
+```
+
+Then, in another terminal, run...
 
 ```
 python3 lytty.py

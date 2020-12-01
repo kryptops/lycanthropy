@@ -37,9 +37,13 @@ class localDirectives():
         parentContext = context.split('(')[0]
         runForm = {}
         dictKeys = list(session.form.keys())
-        runForm['cmd'] = dictKeys[0]
+        try:
+            runForm['cmd'] = dictKeys[0]
+        except:
+            return {'error':'the command form needs to be reloaded','solution':'re-run the \'load\' command and try again'}
         runForm['args'] = session.form[dictKeys[0]]
         fwdDir = lycanthropy.ui.webClient.sendDirective(runForm,parentContext,session)
+
 
         if 'jobID' in fwdDir[0][0]:
             lycanthropy.ui.webClient.subscribeWolfmon(
