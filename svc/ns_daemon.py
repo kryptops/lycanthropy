@@ -192,8 +192,9 @@ class coreServer():
         else:
             msgResponse = self.getResponse(msgStatus)
             jsonMsg = json.loads(msgResponse)
-            if unpackedReq['acid'] not in self.sessions and 'cookieDough' in jsonMsg:
-                self.sessions[unpackedReq['acid']] = jsonMsg['cookieDough']
+            #commented out line 196 because of conf crash issue
+            #if unpackedReq['acid'] not in self.sessions and 'cookieDough' in jsonMsg:
+            self.sessions[unpackedReq['acid']] = jsonMsg['cookieDough']
             return self.makeResponseGeneric(msgStatus,msgResponse)
 
     def dist(self,unpackedReq,msgStatus):
