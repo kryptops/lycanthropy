@@ -55,5 +55,18 @@
 			"campaign",
 			"batch"
 		]
+	},
+	"mod.load":{
+		"description":"add zipped module to the lycanthropy server for deployment to agents (see project wiki)",
+		"arguments":{
+			"file":"zipped module file to add",
+			"view":"[control,windows,posix,manage]",
+			"signature":"sha256 signature of the zipped module file"
+		},
+		"required":[
+			"file",
+			"view",
+			"signature"
+		]
 	}
 }

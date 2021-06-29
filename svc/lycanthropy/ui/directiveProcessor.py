@@ -42,6 +42,7 @@ class localDirectives():
         except:
             return {'error':'the command form needs to be reloaded','solution':'re-run the \'load\' command and try again'}
         runForm['args'] = session.form[dictKeys[0]]
+        print(runForm)
         fwdDir = lycanthropy.ui.webClient.sendDirective(runForm,parentContext,session)
 
 
@@ -67,6 +68,7 @@ def process(directive,context,session):
                 redirect['args'][str(dirLine.index(word))] = word
     else:
         redirect['args'] = {}
+    print(redirect)
     return interpret(redirect,context,session)
 
 

@@ -23,7 +23,7 @@ def monitoringToken(user,config,remote,identity):
     },
     config['secret'],
     algorithm='HS256'
-    ).decode('utf-8')
+    )
     return token
 
 def apiToken(user,config,remote):
@@ -36,7 +36,7 @@ def apiToken(user,config,remote):
     },
     config['secret'],
     algorithm='HS256'
-    ).decode('utf-8')
+    )
     return token
 
 def getCampaignAccess(user,config,token,remote,wolfmon):
