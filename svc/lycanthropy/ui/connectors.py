@@ -161,13 +161,33 @@ def retrieveCampaignPartitions():
 
     return campaignSet['partitions']
 
+def parseAgents(cmpAgents):
+    strAgent = []
+    for agent in cmpAgents:
+        acidField = "{}{}".format(agent['acid'],"   ")
+        campaignField = "{}{}".format(agent['campaign']," "*(16-len(agent['campaign'])))
+        osField = "{}[{}]{}".format(agent['os'],agent['arch']," "*(28-(len(agent['os'])+5)))
+        userField = "{}{}".format(agent['user']," "*(23-len(agent['user'])))
+        intField = "{}{}".format(agent['integrity']," "*(12-len(agent['integrity'])))
+        hostField = "{}".format(agent['hostname'])
+
+        agentFmt = "{}{}{}{}{}{}".format(acidField,campaignField,osField,userField,intField,hostField)
+        strAgent.append(agentFmt)
+    return strAgent
+
 def enterMonitorLoop():
+    outHandle = wolfObjInstance.handles['wolfmon'].wolfmon
+    cmpAgents = retrieveCampaignAgents()
+    strAgent = parseAgents(cmpAgents)
+    for fmtAgent in strAgent:
+        outHandle.appendPlainText(fmtAgent)
     retrieveMonitorLogs()
 
 def retrieveMonitorLogs():
     while True:
         if wolfObjInstance._running == False:
             break
+
         monitorSession = {
             'subscriptions': wolfObjInstance.subscriptions,
             'api': wolfObjInstance.api,
