@@ -3,6 +3,8 @@
 # L Y C A N T H R O P Y
 [![forthebadge](https://forthebadge.com/images/badges/made-with-java.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/gluten-free.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com)
 
+Note: The current version of Lycanthropy is in an extremely fragile state due to over-engineering on networking components. Efforts are being made to re-engineer broken code to be more stable. 
+
 Lycanthropy is a modular post-exploitation tool instrumented with DNS and written in Java, with a distributable client to enable collaborative Red Teaming and Penetration Testing.
 
 ## Features
