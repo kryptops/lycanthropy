@@ -95,6 +95,15 @@ def getObj(subscription):
     )
     return subscriber
 
+def monitorApiInit():
+    try:
+        requests.get(
+            'https://127.0.0.1:56091/wolfmon/api/monitoring/initiateThread',
+            verify=False,
+            timeout=0.1
+        )
+    except:
+        pass
 
 def monitorApiBroker(monitoringSession):
     monGet = requests.post(

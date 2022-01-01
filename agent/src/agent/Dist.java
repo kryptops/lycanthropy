@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Hashtable;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.naming.NamingException;
@@ -34,7 +35,7 @@ public class Dist {
 		String transmissionCode = ".PCR";
 		nextSegment.put("error","none");
 		int txCount = 0;
-		int errorCondition = 0;
+		int errorCondition = Integer.parseInt(bufferDescriptor.get("ErrorDefault").toString());
 		while (txCount <= 10) {
 			
 			try {
@@ -48,6 +49,7 @@ public class Dist {
 				return nextSegment;
 				
 			} catch (Exception e) {
+				System.out.println("transmission error");
 				errorCondition = 1;
 			}
 			txCount++;
@@ -59,6 +61,7 @@ public class Dist {
 		
 	public static Hashtable retrieve(Hashtable bufferDescriptor) throws NamingException, Exception {
 		Double length = Double.parseDouble(bufferDescriptor.get("bufferSize").toString());
+                bufferDescriptor.put("ErrorDefault",0);
 		int bufferSize = length.intValue();
 		String[] packageBuffer = new String[bufferSize];
 		int lastIndex = 0;
@@ -80,6 +83,15 @@ public class Dist {
 			//int segmentIndex = Integer.parseInt(nextSegment.get("index").toString());
 			
 			if (segmentIndex == -1) {
+				for (int c=0;c<packageBuffer.length;c++) {
+                                        if (packageBuffer[c] == null) {
+						//recover unretrieved segments
+						bufferDescriptor.put("ErrorDefault",1);
+                                                Hashtable recoverySegment = errorizer(bufferDescriptor,c);
+
+						packageBuffer[c] = recoverySegment.get("data").toString();
+					}
+				}
 				finalize(bufferDescriptor.get("bufferKey").toString());
 				String joinedBuffer = String.join("", packageBuffer);
 				return Util.tabify(joinedBuffer);

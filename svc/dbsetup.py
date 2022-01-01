@@ -66,9 +66,12 @@ def addCoreDatabase(engine,password):
 def addServiceAccount(engine):
     #this needs to change to vault eventually
     dbConf = json.load(open('../etc/db.json', 'r'))
-    svcPass = lycanthropy.crypto.mkRandom(24)
+    svcPass = '@'
+    while '@' in svcPass:
+    	svcPass = lycanthropy.crypto.mkRandom(24)
     svcParams = {'password': svcPass}
     print(svcParams)
+
     coupling = engine.connect()
     coupling.execute(text("""CREATE USER lycanthropy IDENTIFIED BY :password"""),**svcParams)
     coupling.execute("""GRANT ALL PRIVILEGES ON lycanthropy.* TO lycanthropy""")

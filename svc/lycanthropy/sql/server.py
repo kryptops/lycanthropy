@@ -39,7 +39,8 @@ def getTables():
     return tables
 
 def storeUser(username,password,campaigns,roles):
-    if lycanthropy.sql.interface.filterUser({'username':username})[0] != []:
+    print(lycanthropy.sql.interface.filterUser({'username':username}))
+    if lycanthropy.sql.interface.filterUser({'username':username}) != []:
         return {'error':'user already exists'}
     if lycanthropy.sql.security.chkOpid(username) == False:
         return {'error':'user does not adhere to character requirements'}

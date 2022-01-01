@@ -23,6 +23,7 @@ import os
 import uuid
 import sys
 import inspect
+from datetime import datetime
 
 app = Flask(__name__)
 lycanthropy.sql.broker.dbSetup()
@@ -52,11 +53,11 @@ class lycanthrope():
                 'privileged':True,
                 'events': []
             },
-            'httpd':{
+            'portal':{
                 'privileged':False,
                 'events': []
             },
-            'dns':{
+            'daemon':{
                 'privileged':False,
                 'events': []
             }
@@ -71,8 +72,8 @@ class lycanthrope():
         self.provisionerMap = {
             'auth':self.authStreamProvisioner,
             'data':self.dataStreamProvisioner,
-            'httpd':self.httpStreamProvisioner,
-            'dns':self.dnsStreamProvisioner
+            'portal':self.portalStreamProvisioner,
+            'daemon':self.daemonStreamProvisioner
         }
         for table in lycanthropy.sql.server.getTables():
             if table not in ['access','metadata','build']:
@@ -111,8 +112,8 @@ class lycanthrope():
             self.frontendConfig['secret']
         )
         acid = event['acid']
-        if event['class'] != 'metadata':
-            event.pop('acid')
+#        if event['class'] != 'metadata':
+#            event.pop('acid')
 
         if int(time.time()) <= tokenData['_expiry']:
             if tokenData['_stream'] == 'data':
@@ -122,16 +123,23 @@ class lycanthrope():
         return False
 
 
-    def httpStreamProvisioner(self,event,token):
+    def portalStreamProvisioner(self,event,token):
         #jwt structure :
         # - expiry
         # - streamid
         # - sha256 of event data
         # - sha256 of ssl key
         #make a jwt token for the event & the portal
-        pass
+        tokenData = jwt.decode(
+            token,
+            self.frontendConfig['secret']
+        )
+        if int(time.time()) <= tokenData['_expiry']:
+            if tokenData['_stream'] == 'portal':
+                return True
+        return False
 
-    def dnsStreamProvisioner(self,event,token):
+    def daemonStreamProvisioner(self,event,token):
         #jwt structure :
         # - expirty
         # - streamid
@@ -154,6 +162,21 @@ class lycanthrope():
             self.__dict__[targetVariable][key] = output
         print(json.dumps({'alert':'threaded operation complete'},indent=4))
 
+    def mkPortalEvent(self,acid,remote,apiData,campaignMembership):
+        monToken = lycanthropy.daemon.util.mkToken(apiData,acid,self.frontendConfig['secret'],'portal')
+        apiCookie = lycanthropy.auth.cookie.apify(monToken, remote, str(apiData))
+        self.ephemeral.append(apiCookie)
+        connector = {
+            'apiCookie': apiCookie,
+            'port': self.port,
+            'interface': self.interface
+        }
+        lycanthropy.portal.api.pushPortalEvent(
+            apiData,
+            monToken,
+            connector,
+            campaignMembership
+        )
 
 @app.errorhandler(400)
 def badRequest(e):
@@ -172,6 +195,7 @@ def accessDenied(e):
 @app.route('/lycanthropy/ui-handler/auth',methods=['POST'])
 def authenticatorMain():
     #lytty auth function
+
     loginData = {}
     user = ""
     try:
@@ -184,6 +208,11 @@ def authenticatorMain():
         remote = request.remote_addr
         lysessid = lycanthropy.auth.client.apiToken(user,lycan.config,remote)
         lycan.sessions.append(lysessid)
+        acidQuery = lycanthropy.sql.interface.filterAgents({})
+        for acidMeta in acidQuery:
+            apiData = {"alert":"ACID {} is inactive".format(acidMeta['acid']),'acid':acidMeta['acid'],"timestamp":datetime.now().strftime("%m/%d/%Y - %H:%M:%S")}
+            campaignMembership = lycanthropy.portal.categorize.find(acidMeta['acid'])
+            lycan.mkPortalEvent(acidMeta['acid'],request.remote_addr,apiData,campaignMembership)
         return lysessid
     else:
         abort(401)
@@ -283,6 +312,8 @@ def authenticatorSecondary():
 @app.route('/lycanthropy/data-handler/0',methods=['POST'])
 def retrieveMonitoring():
     #get monitoring for wolfmon
+    lycanthropy.portal.api.updateAgentStates(lycan.pulse)
+
     try:
         subscription = request.json
     except:
@@ -319,7 +350,6 @@ def retrieveMonitoring():
                                 lycan.monitoring[match['stream']]['events'].pop(mtcIdx)
 
                     if resultCount > 0:
-                        
                         return make_response(jsonify(subscriptionReceiver),200)
                     if int(time.time()) >= canaryStamp+15:
                         return make_response(jsonify([{'output':{'tags':[]}}]),200)
@@ -335,7 +365,7 @@ def receiveMonitoring(streamID):
     if request.json != None and '_lmt' in request.cookies:
         eventData = request.json
         streamProvisioner = lycan.provisionerMap[streamID]
-
+        
         if streamProvisioner(eventData,request.cookies['_lmt']):
             eventData['tags'] = []
             if eventData not in lycan.monitoring[streamID]['events']:
@@ -409,6 +439,7 @@ def portalData(acid):
         monToken = request.cookies.get('_lmt')
     except:
         return {'error':'invalid dataflow'}
+
     remote = request.remote_addr
     apiCookie = lycanthropy.auth.cookie.apify(monToken, remote, str(apiData))
     lycan.ephemeral.append(apiCookie)
@@ -419,6 +450,16 @@ def portalData(acid):
     }
     apiData['acid'] = acid
     campaignMembership = lycanthropy.portal.categorize.find(acid)
+    if 'jobID' in apiData:
+        if 'ROTID' in apiData['jobID']:
+            apiData = {"alert":"ACID {} has completed setup and is ready to accept directives".format(acid,nexti["jobID"]),'acid':acid,"timestamp":datetime.now().strftime("%m/%d/%Y - %H:%M:%S")}
+            lycan.mkPortalEvent(acid,request.remote_addr,apiData,campaignMembership)
+
+        for agentTask in lycan.api[campaignMembership][acid]:
+            if apiData['jobID'] == agentTask['jobID']:
+                popIndex = lycan.api[campaignMembership][acid].index(agentTask)
+                lycan.api[campaignMembership][acid].pop(popIndex)
+
     dbStore = lycanthropy.portal.api.data(campaignMembership,apiData)
     if json.loads(dbStore)['streamStatus'] == 'complete' and apiData not in lycan.monitoring['data']['events']:
         lycanthropy.portal.api.pushDataEvent(apiData,monToken,connector,campaignMembership)
@@ -435,8 +476,20 @@ def portalApi(ctrlKey,acid):
 
         try:
             nexti = lycan.api[campaignMembership][acid][0]
-            lycan.api[campaignMembership][acid].pop(0)
-        except:
+            apiData = {"alert":"ACID {} attempting to pull JobID {}".format(acid,nexti["jobID"]),'acid':acid,"timestamp":datetime.now().strftime("%m/%d/%Y - %H:%M:%S")}
+            lycan.mkPortalEvent(acid,request.remote_addr,apiData,campaignMembership)
+
+            if 'attempts' not in nexti:
+                lycan.api[campaignMembership][acid][0]['attempts'] = 1
+            else:
+                if nexti['attempts'] == 3:
+                    lycan.api[campaignMembership][acid].pop(0)
+                    nexti = {'error':'task was not found'}
+                else:
+                    lycan.api[campaignMembership][acid][0]['attempts'] += 1
+        except Exception as e:
+            print(e)
+            print('error, task not found')
             nexti = {'error':'task was not found'}
         return nexti
     else:
@@ -453,12 +506,18 @@ def authMain(acid):
 
     except:
         return {'error':'invalid auth request'}
+
     if lycanthropy.auth.login.verify(authData):
+        acidActual = lycanthropy.portal.categorize.findTemp(acid)
+        campaignMembership = lycanthropy.portal.categorize.find(acidActual)
+        apiData = {"alert":"ACID {} has successfully authenticated".format(acidActual),'acid':acidActual,'timestamp':datetime.now().strftime("%m/%d/%Y - %H:%M:%S")}
+        lycan.mkPortalEvent(acid,request.remote_addr,apiData,campaignMembership)
 
         return {
             'cookieDough':lycanthropy.auth.cookie.generate(
                 authData['password'],authData['acid']
             ),
+            'refStamp':str(int(time.time())),
             'key':base64.b64encode((lycanthropy.sql.interface.filterBuild({'tempAcid':authData['acid']})[0]['confKey']).encode('utf-8')).decode('utf-8')
         }
     else:
@@ -472,11 +531,13 @@ def distMain(acid,descriptor):
     fileType = request.args['_rtype']
     if lycanthropy.portal.agent.verify(acid,distKey,'distKey'):
         #I would put file upload here but it's probably better to have a separate handler for each control method instead
-        byteKey = lycanthropy.portal.agent.derive(descriptor, acid, 'distKey')
+        campaignMembership = lycanthropy.portal.categorize.find(acid)
+
+        byteKey = lycanthropy.portal.agent.derive(acid, 'distKey')
 
         if fileType == 'load':
             #pkg pull
-            byteKey = lycanthropy.portal.agent.derive(descriptor,acid,'distKey')
+            byteKey = lycanthropy.portal.agent.derive(acid,'distKey')
             pkgData = lycan.dist[byteKey]
             try:
                 pkgData = lycan.dist[byteKey]
@@ -493,7 +554,7 @@ def distMain(acid,descriptor):
             #filters by campaign
 
             #fileData = lycanthropy.dist.inventory.fileSearch(acid,descriptor)
-            byteKey = lycanthropy.portal.agent.derive(descriptor, acid, 'distKey')
+            byteKey = lycanthropy.portal.agent.derive(acid, 'distKey')
             try:
                 fileData = lycan.dist[byteKey]
                 if 'errorCode' not in fileData:
@@ -506,11 +567,15 @@ def distMain(acid,descriptor):
                 abort(400)
         else:
             if fileType == 'pull.queue':
+                apiData = {"alert":"ACID {} attempting to retrieve file {} via dist".format(acid,descriptor),'acid':acid,'timestamp':datetime.now().strftime("%m/%d/%Y - %H:%M:%S")}
                 retrThread = threading.Thread(target=lycan.threadedOperationHandler,args=('dist',lycanthropy.dist.inventory.fileSearch,[acid,descriptor],byteKey,))
             elif fileType == 'load.queue':
+                apiData = {"alert":"ACID {} attempting to retrieve module UUID {} via dist".format(acid,descriptor),'acid':acid,'timestamp':datetime.now().strftime("%m/%d/%Y - %H:%M:%S")}
                 retrThread = threading.Thread(target=lycan.threadedOperationHandler,args=('dist', lycanthropy.dist.inventory.pkgSearch,[acid,descriptor],byteKey,))
             else:
                 abort(400)
+            lycan.mkPortalEvent(acid,request.remote_addr,apiData,campaignMembership)
+
             retrThread.start()
             return {'dist':'ok'}
 
@@ -576,14 +641,24 @@ def portalBuild(buildID,buildKey):
         return buildApi
 
 
-
-
-
-
 if __name__=='__main__':
     global lycan
     lycan = lycanthrope()
     args = lycan.parseCmdLine()
     lycan.interface = args.interface
     lycan.port = 56114
-    app.run(host=args.interface,port=56114,ssl_context=(args.SSLCertFile,args.SSLKeyFile),use_reloader=False)
+    agentData = lycanthropy.sql.interface.filterAgents({})
+    for metaObj in agentData:
+        lycanthropy.sql.server.updateStatus(
+            metaObj['acid'],
+            'inactive'
+        )
+    acidQuery = lycanthropy.sql.interface.filterAgents({})
+    for acidMeta in acidQuery:
+        lycan.pulse[acidMeta['acid']] = int(time.time()-3000)
+
+    try:
+        app.run(host=args.interface,port=56114,ssl_context=(args.SSLCertFile,args.SSLKeyFile),use_reloader=False)
+    except KeyboardInterrupt:
+        print('caught portal shutdown, exiting...')
+        sys.exit(0)

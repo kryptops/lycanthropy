@@ -8,6 +8,7 @@ def listAgents(arguments,context,connector):
     agentData = lycanthropy.sql.interface.filterAgents({})
     for metaObject in agentData:
         buildConf = lycanthropy.sql.interface.filterBuild({'acid':metaObject['acid']})[0]
+        
         if buildConf['campaign'] in userData['campaigns'].split(','):
             agents.append(metaObject['acid'])
     return {'output':{'agents':agents}, 'context': 'database(list.agents)', 'form': arguments}

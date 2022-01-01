@@ -62,7 +62,7 @@ def getFile(acid,distKey,file,gateway):
 def postData(acid,secret,postData,gateway):
     #returns continue or ok
     uri = '/0/0/{}'.format(acid)
-    monToken = lycanthropy.daemon.util.mkToken(postData,acid,secret)
+    monToken = lycanthropy.daemon.util.mkToken(postData,acid,secret,'data')
     response = requests.post(
         'https://{}:56114{}'.format(gateway,uri),
         headers={'content-type': 'application/json'},

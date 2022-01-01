@@ -9,11 +9,14 @@ from PyQt5.QtGui import QFont
 import sys
 import lycanthropy.ui.graphic
 import lycanthropy.daemon.util
+import lycanthropy.ui.webClient
+import lycanthropy.ui.connectors
 
 wolfmonHandle = None
 controlHandle = None
 sessionHandle = None
 monitorHanlde = None
+shellHandle = None
 
 class LoginControl(QDialog):
     def __init__(self,parent=None):
@@ -68,7 +71,7 @@ class LoginControl(QDialog):
         global sessionHandle
 
         #login code
-        loginStatus,sessionHandle = lycanthropy.ui.connectors.ui().authenticate(self.username.text(),self.password.text())
+        loginStatus,sessionHandle = lycanthropy.ui.connectors.ui().authenticate(self.username.text(), self.password.text())
         if loginStatus == True:
             self.accept()
         else:
@@ -85,10 +88,11 @@ class TabInset(QWidget):
         global windowsHandle
         global posixHandle
         global manageHandle
+        global shellHandle
 
         super(QWidget, self).__init__(parent)
         self.layout = QVBoxLayout(self)
-        
+
         # Initialize tab screen
         self.tabs = QTabWidget()
         self.console = QWidget()
@@ -96,14 +100,22 @@ class TabInset(QWidget):
         self.manage = QWidget()
         self.windows = QWidget()
         self.posix = QWidget()
-        self.tabs.resize(300,200)
-        
+        self.shell = QWidget()
+        self.tabs.resize(610,200)
+
+
+
         # Add tabs
         self.tabs.addTab(self.console,"console")
         self.tabs.addTab(self.control,"control")
         self.tabs.addTab(self.manage,"manage")
         self.tabs.addTab(self.windows,"windows")
         self.tabs.addTab(self.posix,"posix")
+        self.tabs.addTab(self.shell,"shell")
+
+        self.shell.layout, self.shell.output, self.shell.form, self.shell.metadata = lycanthropy.ui.graphic.TabLayout().shellHandlerLayout(self.shell,self,sessionHandle)
+        self.shell.setLayout(self.shell.layout)
+        shellHandle = self.shell
 
         self.console.layout,self.console.wolfmon = lycanthropy.ui.graphic.TabLayout().consoleLayout(self.console,self)
         self.console.setLayout(self.console.layout)
@@ -131,14 +143,26 @@ class TabInset(QWidget):
         #self.tab1.layout.addWidget(self.pushButton1)
         #self.tab1.setLayout(self.tab1.layout)
 
-        lycanthropy.ui.connectors.initWolfmon()
+
         #threading.Thread(target=lycanthropy.ui.connectors.startMonitorThread, args=(sessionHandle,{"wolfmon":wolfmonHandle,"control":controlHandle,"manage":manageHandle,"windows":windowsHandle,"posix":posixHandle},))
-        lycanthropy.ui.connectors.startMonitorThread(sessionHandle,{"wolfmon":wolfmonHandle,"control":controlHandle,"manage":manageHandle,"windows":windowsHandle,"posix":posixHandle})
+        #lycanthropy.ui.connectors.startMonitorThread(sessionHandle,{"wolfmon":wolfmonHandle,"control":controlHandle,"manage":manageHandle,"windows":windowsHandle,"posix":posixHandle})
 
         # Add tabs to widget
         self.layout.addWidget(self.tabs)
+        self.alertDataBox = QPlainTextEdit(self)
+        self.alertDataBox.move(32, 680)
+        self.alertDataBox.resize(1333,190)
+        self.alertDataBox.setStyleSheet("background-color: rgb(245, 245, 245);border: 1px solid rgb(223, 223, 224);")
+        self.alertDataBox.setFont(QFont("JetBrains Mono NL"))
+        self.alertDataBox.insertPlainText("[ Agent Activity Alerts ]")
+        self.alertDataBox.insertPlainText("\n")
+        self.alertDataBox.insertPlainText("----------------------------------------------------------------------------------------------------------------------------------------------")
+        self.alertDataBox.insertPlainText("\n")
+        self.alertDataBox.setReadOnly(True)
+        lycanthropy.ui.connectors.initWolfmon(sessionHandle, {"alerts":self.alertDataBox,"shell":shellHandle, "wolfmon":wolfmonHandle, "control":controlHandle, "manage":manageHandle, "windows":windowsHandle, "posix":posixHandle})
+        lycanthropy.ui.webClient.monitorApiInit()
         self.setLayout(self.layout)
-  
+
 class Window(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -148,8 +172,9 @@ class Window(QMainWindow):
 
         self.tabnav = TabInset(self)
         self.setCentralWidget(self.tabnav)
-        self.setFixedSize(1400, 700)
+        self.setFixedSize(1400, 900)
         self.setWindowIcon(QIcon("../lycan_transparent.png"))
+
         self.show()
 
     def closeEvent(self,event):

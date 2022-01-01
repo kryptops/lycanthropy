@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QPushButton, QAction, QLineEdit, QMessageBox
+from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QPushButton, QAction, QLineEdit, QMessageBox, QComboBox
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtGui import QFont
@@ -20,21 +21,42 @@ class InterfaceDefault():
     def __init__(self,subTab):
         return
 
-    #def mkButton(self,name,subTab):
-    #    button1 = QPushButton(subTab)
-    #    button1.setStyleSheet("QPushButton{border-radius: 15px;border: 1px solid rgb(125, 125, 125);}QPushButton::pressed{border-radius: 15px;border: 1px solid rgb(88, 88, 88); background-color: rgb(245,245,245)}")
-    #    button1.resize(250,30)
-    #    button1.move(20,30)
-    #    button1.setEnabled(True)
-    #    button1.setText(name)
-    #    button1.clicked.connect(self.execCommand)
-    #    self.buttonSet[name] = button1
+class AlertDefault(QDialog):
+    #time to implement wolfmon eventing on server activity
+    # - httpStreamProvisioner should be changed to portalStreamProvisioner and contain data for agent-focused alerting
+    # - dnsStreamProvisioner should be changed to daemonStreamProvisioner and contain data related to errors on the daemon
+    def __init__(self,alertData):
+        super().__init__()
+        self.layout = QVBoxLayout(self)
+        self.setWindowTitle("Lycanthropy - Wolfmon Alert")
+        #self.pixmapprim = QPixmap('../Lycanthropy_logo.png')
+        #self.pixmap = self.pixmapprim.scaledToHeight(200)
+        #self.label = QLabel(self)
+        #self.label.setPixmap(self.pixmap)
 
-    #def parseDirectives(self):
-    #    pass
+        #self.label.resize(self.pixmap.width(),
+        #                  self.pixmap.height())
+        #self.setStyleSheet("background-color: rgb(245, 245, 245);font-size: large;")
+        #self.resize(500, 200)
+        #self.calculateCorner()
+        #self.alertLabel = QLabel(self)
+        #self.alertLabel.setFont(QFont("JetBrains Mono NL"))
+        #self.alertLabel.setText(alertData)
+        #self.alertLabel.setWordWrap(True)
+        #self.alertLabel.resize(250, 150)
+        #self.alertLabel.move(200, 20)
+        self.exec_()
 
-    #def execCommand(self):
-    #    print("Button 1 clicked")
+    def calculateCorner(self):
+        # I took this from stackoverflow (mostly)
+        # https://stackoverflow.com/questions/39046059/pyqt-location-of-the-window
+        maxGeo = QDesktopWidget().availableGeometry()
+        primeGeo = QDesktopWidget().screenGeometry()
+
+        windowGeometry = self.geometry()
+        x = maxGeo.width() - self.width()
+        y = 2 * maxGeo.height() - primeGeo.height() - self.height()
+        self.move(x - 10, y)
 
 
 class TabLayout():
@@ -72,7 +94,7 @@ class TabLayout():
         tab.wolfmon.resize(1050, 610)
         tab.wolfmon.setStyleSheet("background-color: rgb(245, 245, 245);border: 1px solid rgb(223, 223, 224);")
         tab.wolfmon.setFont(QFont("JetBrains Mono NL"))
-        tab.wolfmon.insertPlainText("ACID      Campaign        Operating System            User                   Integrity   Hostname")
+        tab.wolfmon.insertPlainText("ACID      Campaign        Operating System                    User                   Integrity   Hostname")
         tab.wolfmon.insertPlainText("\n")
         tab.wolfmon.insertPlainText("----------------------------------------------------------------------------------------------------------------------------------")
         tab.wolfmon.setReadOnly(True)
@@ -95,10 +117,83 @@ class TabLayout():
         tab = self.coreLayout(tab,tWidget)
         return tab.layout,tab.output,tab.form
 
+    def shellHandlerLayout(self, tab, tWidget, session):
+        tab.silentout = True
+        tab.layout = QVBoxLayout(tWidget)
+        tab.shellOut = QPlainTextEdit(tab)
+        tab.shellMeta = QPlainTextEdit(tab)
+
+        tab.shellCore = QWidget(tab)
+
+        shellForm = QFormLayout()
+        shellIn = QPlainTextEdit(tab)
+        shellSelect = QLineEdit(tab)
+        interpSelect = QComboBox(tab)
+        runShell = QPushButton("Run")
+
+        #output for shell
+        tab.shellOut.move(500, 20)
+        tab.shellOut.resize(850, 410)
+        tab.shellOut.setStyleSheet("background-color: rgb(100,100,100);border: 1px solid rgb(223, 223, 224); color: rgb(255,255,255);")
+        tab.shellOut.setFont(QFont("JetBrains Mono NL"))
+        tab.shellOut.setReadOnly(True)
+        
+        #agent metadata feed
+        tab.shellMeta.move(20, 20)
+        tab.shellMeta.resize(450, 410)
+        tab.shellMeta.setStyleSheet("background-color: rgb(245, 245, 245);border: 1px solid rgb(223, 223, 224);")
+        tab.shellMeta.setFont(QFont("JetBrains Mono NL"))
+        tab.shellMeta.insertPlainText("[ Agent Metadata ]")
+        tab.shellMeta.insertPlainText("\n")
+        tab.shellMeta.insertPlainText("------------------------------------------------------")
+        tab.shellMeta.setReadOnly(True)
+
+        #input for shell
+        shellIn.setStyleSheet("background-color: rgb(100,100,100);border: 1px solid rgb(223, 223, 224); color: rgb(255,255,255);")
+        shellIn.setFont(QFont("JetBrains Mono NL"))
+        shellIn.setPlaceholderText("Shell command to run...")
+        shellIn.setOverwriteMode(True)
+        
+        #agent select input
+        shellSelect.setFont(QFont("JetBrains Mono NL"))
+        shellSelect.setPlaceholderText("agent to interact with")
+
+        #interpret select input
+        interpSelect.setFont(QFont("JetBrains Mono NL"))
+        interpSelect.addItem("/bin/bash")
+        interpSelect.addItem("/bin/sh")
+        interpSelect.addItem("python")
+        interpSelect.addItem("powershell")
+        interpSelect.addItem("cmd")
+
+        #shellForm binding to qwidget
+
+        tab.shellCore.setLayout(shellForm)
+        tab.shellCore.resize(1330, 180)
+        tab.shellCore.move(20,450)
+        tab.shellCore.setStyleSheet("border: 1px solid rgb(223, 223, 224);")
+
+        runShell.setFont(QFont("JetBrains Mono NL"))
+        runShell.setFixedSize(100,30)
+        runShell.setStyleSheet("QPushButton{border-radius: 15px;border: 1px solid rgb(125, 125, 125);}QPushButton::pressed{border-radius: 15px;border: 1px solid rgb(88, 88, 88); background-color: rgb(245,245,245)}")
+        runShell.clicked.connect(lambda: btnCoreFunctions().shellConnect(shellSelect.text(), interpSelect.currentText(), shellIn.toPlainText().replace("[lycanthropy]::shell > ",""), shellIn, tab, session))
+
+        shellForm.addRow(shellSelect)
+        shellForm.addRow(interpSelect)
+        shellForm.addRow(shellIn)
+        shellForm.addRow(runShell)
+
+        return tab.layout, tab.shellOut, shellForm, tab.shellMeta
+
+    def fileHandlerLayout(self, tab, tWidget):
+
+        return tab.layout, tab.output, tab.form
+
     def updateInterface(self, tabHandle, view, viewConfig,session):
 
         for directive in viewConfig[view]:
             self.mkTab(directive,tabHandle,view,session)
+
 
     def mkTab(self,name,subTab,view,session):
         #make tab for command
@@ -112,6 +207,7 @@ class TabLayout():
 
         formTab = QWidget()
         tabLayout = QFormLayout()
+        tabLayout.setLabelAlignment(Qt.AlignRight)
         formTab.setLayout(tabLayout)
         #formTab.setStyleSheet("background-color: rgb(245, 245, 245);border: 1px solid rgb(223, 223, 224);font: JetBrains MonoNL;")
         output = lycanthropy.ui.webClient.getGranularForm(
@@ -131,20 +227,25 @@ class TabLayout():
         layout.addRow(dirLabel,None)
 
         for lineItem in form[name]:
-            #formRow = QLineEdit()
             lineText = QLabel(lineItem)
-            #QLabel.setStyleSheet()
             lineText.setFont(QFont("JetBrains Mono NL"))
-            lineBox = QLineEdit(form[name][lineItem])
+
+            lineBox = QLineEdit()
+            lineBox.setPlaceholderText(form[name][lineItem])
             lineBox.setFont(QFont("JetBrains Mono NL"))
+
             formFields[lineItem] = lineBox
             layout.addRow(lineText, lineBox)
         runButton = QPushButton('Run')
+        runButton.setFixedSize(100,30)
+        runButton.setStyleSheet("QPushButton{border-radius: 15px;border: 1px solid rgb(125, 125, 125);}QPushButton::pressed{border-radius: 15px;border: 1px solid rgb(88, 88, 88); background-color: rgb(245,245,245)}")
         #runButton.setStyleSheet("QPushButton::hover{background-color: red}")
         runButton.clicked.connect(lambda: btnCoreFunctions().runConnect(view,name,formFields,session,tabParent))
         layout.addRow(runButton)
 
         clearButton = QPushButton('Clear')
+        clearButton.setFixedSize(100,30)
+        clearButton.setStyleSheet("QPushButton{border-radius: 15px;border: 1px solid rgb(125, 125, 125);}QPushButton::pressed{border-radius: 15px;border: 1px solid rgb(88, 88, 88); background-color: rgb(245,245,245)}")
         clearButton.clicked.connect(lambda: btnCoreFunctions().clearConnect(tabParent))
         layout.addRow(clearButton)
 
@@ -168,15 +269,32 @@ class btnCoreFunctions():
     def runConnect(self,view,name,fields,session,subTab):
         session.form = {}
         session.form[name] = {}
+        #if type(fields) == dict:
+        #    session.form[name] = fields
+        #else:
         for item in fields:
-            session.form[name][item] = fields[item].text()
+            if type(fields[item]) != str:
+                session.form[name][item] = fields[item].text()
+            else:
+                session.form[name][item] = fields[item]
+
         runRes = lycanthropy.ui.directiveProcessor.process(
             "run",
             view,
             session
-        )[0][0]
-        subTab.output.appendPlainText(runRes)
+        )
+        #lycanthropy.ui.util.chkModLocals(runRes[0], session)
+        print("fields: {}".format(str(fields)))
+        if type(fields) != dict:
+            subTab.output.appendPlainText(runRes[0][0])
+        else:
+            if 'jobID' not in runRes[0][0]:
+                subTab.output.appendPlainText(runRes[0][0])
 
+    def shellConnect(self,acid,interpreter,command,inputObj, tab,session):
+        inputObj.clear()
+        inputObj.setPlaceholderText("Shell command to run...")
+        self.runConnect("control","exec.command",{"shell":"SEJID","acid":acid,"interpreter":interpreter,"command":command},session,tab)
 
     def clearConnect(self,subTab):
         subTab.output.clear()

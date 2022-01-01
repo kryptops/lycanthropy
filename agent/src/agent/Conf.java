@@ -32,27 +32,25 @@ public class Conf {
 		int bufferSize = length.intValue();
 		String[] packageBuffer = new String[bufferSize];
 		
-		while (true) {
+		for (int e=0;e<packageBuffer.length;e++) {
 			//get buffers based on buffer Descriptor
+			
 			String nonce = Util.strand(12);
-			String data = "_PCR|"+bufferDescriptor.get("bufferKey").toString(); 
+			String data = "_PCR|"+bufferDescriptor.get("bufferKey").toString()+"|"+Integer.toString(e); 
 			ArrayList<String> made = broker(data,Crypt.bake(),nonce);
 			Hashtable nextSegment = receive(Netw.onomancy(made),nonce);
 			
-			Double index = Double.parseDouble(nextSegment.get("index").toString());
-			int segmentIndex = index.intValue();
-			//int segmentIndex = Integer.parseInt(nextSegment.get("index").toString());
-			
-			if (segmentIndex == -1) {
-				finalize(bufferDescriptor.get("bufferKey").toString());
-				String joinedBuffer = String.join("", packageBuffer);
-				return Util.tabify(joinedBuffer);
-			} else {
-				packageBuffer[segmentIndex] = nextSegment.get("data").toString();
+			//Double index = Double.parseDouble(nextSegment.get("index").toString());
+			//int segmentIndex = index.intValue();
+			if (nextSegment.get("data").toString() == null) {
+				nextSegment = receive(Netw.onomancy(made),nonce);
 			}
-			//int jitterActual = Util.numrand((int) Main.config.get("jitterMin"), (int) Main.config.get("jitterMax"));
-			//TimeUnit.MILLISECONDS.sleep(jitterActual);
+			packageBuffer[e] = nextSegment.get("data").toString();
 		}
+			
+		finalize(bufferDescriptor.get("bufferKey").toString());
+		String joinedBuffer = String.join("", packageBuffer);
+		return Util.tabify(joinedBuffer);
 		
 	}
 
@@ -62,7 +60,8 @@ public class Conf {
 		//String cleanRebuilt = Util.clean(rebuilt);
 		//convert raw array to hashtable
 		String decryptedResponse = new String(Crypt.decrypt(Base64.getDecoder().decode(rebuilt), nonce.getBytes()));
-		return decryptedResponse;
+	        
+         	return decryptedResponse;
 	}
 	
 	public static Hashtable receive(ArrayList<String> response, String nonce) throws Exception {

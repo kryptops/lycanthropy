@@ -13,6 +13,11 @@ public class Ctrl {
 
 	public static Hashtable receive(ArrayList<String> response,String nonce) throws Exception {
 		String rebuilt = new String(Util.rebuild(response));
+		if (rebuilt == new String(new byte[] {(byte) 0x41, (byte) 0x41})) {
+			Hashtable errorTable = new Hashtable();
+			errorTable.put("error","0x9320085296");
+			return errorTable;
+		}
 		//clean up the response
 		String cleanRebuilt = Util.clean(rebuilt);
 		//convert raw array to hashtable
@@ -23,7 +28,7 @@ public class Ctrl {
 		return tabifiedResponse;
 	}
 	
-	public static String make(String cookie, String msgID) {
+	public static String make(String cookie, String msgID) throws NoSuchAlgorithmException {
 		String compiled = "." + Crypt.distort("ctrlKey") + ".5." + msgID;
 		return compiled;
 	}

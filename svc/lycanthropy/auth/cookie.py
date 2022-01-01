@@ -3,21 +3,21 @@ import os
 import time
 import datetime
 
-def verify(cookie,cookieDough):
+def verify(cookie,cookieDoughContainer):
     #verify cookie
-
-    for skewer in skew():
-        if derive(cookieDough,skewer) == cookie:
-            return True
+    for cookieDough in cookieDoughContainer:
+    	for skewer in skew():
+            if derive(cookieDough,skewer) == cookie:
+                return True
     return False
 
 def skew():
     #get skews
     skewers = []
     currentEpoch = int(time.time())
-    diffEpoch = datetime.datetime.fromtimestamp(time.time()) - datetime.timedelta(seconds=20)
+    diffEpoch = datetime.datetime.fromtimestamp(time.time()) - datetime.timedelta(seconds=30)
     earliestEpoch = int(time.mktime(diffEpoch.timetuple()))
-    for epoch in range(earliestEpoch,currentEpoch+5):
+    for epoch in range(earliestEpoch,currentEpoch+20):
         skewers.append(epoch)
     return skewers
 

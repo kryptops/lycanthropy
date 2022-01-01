@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Random;
 import java.util.Enumeration;
-
+import java.time.Instant;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -35,6 +35,12 @@ public class Util {
 	}
 	
 	
+	public static int skewer(String refStamp) {
+		long epochNow = Instant.now().getEpochSecond();
+		int epochDiff = (int) (Long.parseLong(refStamp)-epochNow);
+		return epochDiff;
+	}
+
 	public static void detask(String taskHandle) {
 		Hashtable jobOut = (Hashtable) Main.schtasks.get(taskHandle);
 		Main.schtasks.remove(taskHandle);
@@ -115,11 +121,16 @@ public class Util {
 		String[] hexArray = new String[dataStream.size()];
 		for (int i=0; i<dataStream.size(); i++) {
 			String charSeq = dataStream.get(i);
-			
 			String[] subset = charSeq.split("\\:");
-            StringBuilder hexOut = new StringBuilder();
-            int buffIndex = Integer.parseInt(subset[2])-1;
-            
+           		StringBuilder hexOut = new StringBuilder();
+                        int buffIndex;
+			try {
+				buffIndex = Integer.parseInt(subset[2])-1;
+			} catch (ArrayIndexOutOfBoundsException e) {
+				byte[] errorArray = new byte[] {(byte) 0x41, (byte) 0x41};
+				return errorArray;
+			}
+
 			for (int n=3; n<subset.length; n++) {
 				if (!subset[n].equals("0")) {
 					hexOut.append(subset[n]);

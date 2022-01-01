@@ -79,7 +79,6 @@ class objStructure():
         }
 
     def data(self,msgObj,unpacked):
-        print('MESSAGING')
         if unpacked['part'] == '0':
             msgObj['action'] = 'update'
             #initialize the buffer at a set length
@@ -209,7 +208,6 @@ def makeRecordArray(data,acid,nonce,keyType,prefix):
 
 def remakeObj(msgObj,unpacked):
     #preps the message to be added back
-    print(objStructure().functionMap[unpacked['type']])
     return objStructure().functionMap[unpacked['type']](msgObj,unpacked)
 
 def makeResponse(msgObj,gateway):

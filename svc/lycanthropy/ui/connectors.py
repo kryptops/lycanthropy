@@ -1,7 +1,9 @@
 import requests
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QMessageBox
+from datetime import datetime
 import lycanthropy.ui.webClient
 import lycanthropy.ui.directiveProcessor
+import lycanthropy.ui.graphic
 import json
 import threading
 from flask import Flask,request,abort,make_response,jsonify
@@ -32,11 +34,14 @@ class wolfmonVault():
         self.handles = handles
         self.sessionHandle = sessionData
         self.formConfigs = getFormConfigs()
+        self.subscriptions = [{'filter':{},'stream':'portal','temp':'false'}]
+        self._running = True
 
-def initWolfmon():
+def initWolfmon(sessionData,handles):
     global wolfObjInstance
     wolfObjInstance = wolfmonVault()
     threading.Thread(target=app.run,kwargs=({'host':'127.0.0.1', 'port':56091, 'ssl_context':'adhoc','debug':False})).start()
+    wolfObjInstance.instantiateVault(sessionData,handles)
 
 @app.errorhandler(403)
 def forbidden(e):
@@ -67,6 +72,7 @@ def updateSubscriptions():
     except:
         abort(400)
     wolfObjInstance.subscriptions.append(subscriptionData)
+    print(wolfObjInstance.subscriptions)
     return make_response(jsonify({'200': 'ok'}), 200)
 
 @app.route('/wolfmon/api/formconfig/<viewSet>', methods=['GET'])
@@ -88,17 +94,17 @@ def directiveForms(viewSet,directive):
     )
     return make_response(jsonify(formOut[1].form))
 
-
-
-def startMonitorThread(sessionData,handles):
-    wolfObjInstance.instantiateVault(sessionData,handles)
+@app.route('/wolfmon/api/monitoring/initiateThread', methods=['GET'])
+def startMonitorThread():
     enterMonitorLoop()
+    return 200
 
 
 def getView(rawOutput):
     #code to parse json module configs goes here
     #parses configs, check for module / view to push output towards
-    pass
+    outSplit = rawOutput["output"]["class"]
+    return outSplit
 
 def getFormConfigs():
     configSet = {}
@@ -166,7 +172,7 @@ def parseAgents(cmpAgents):
     for agent in cmpAgents:
         acidField = "{}{}".format(agent['acid'],"   ")
         campaignField = "{}{}".format(agent['campaign']," "*(16-len(agent['campaign'])))
-        osField = "{}[{}]{}".format(agent['os'],agent['arch']," "*(28-(len(agent['os'])+5)))
+        osField = "{}[{}]{}".format(agent['os'],agent['arch']," "*(36-(len(agent['os'])+5)))
         userField = "{}{}".format(agent['user']," "*(23-len(agent['user'])))
         intField = "{}{}".format(agent['integrity']," "*(12-len(agent['integrity'])))
         hostField = "{}".format(agent['hostname'])
@@ -184,8 +190,10 @@ def enterMonitorLoop():
     retrieveMonitorLogs()
 
 def retrieveMonitorLogs():
+    print("entering loop")
     while True:
         if wolfObjInstance._running == False:
+            print("breaking loop")
             break
 
         monitorSession = {
@@ -197,6 +205,7 @@ def retrieveMonitorLogs():
         }
 
         monitorStream = lycanthropy.ui.webClient.monitorApiBroker(monitorSession)
+        #print(monitorStream)
         if monitorStream.status_code == 401:
             wolfObjInstance.token,wolfObjInstance.identity = lycanthropy.ui.webClient.authWolfmon({
                 'username':wolfObjInstance.username,
@@ -204,6 +213,7 @@ def retrieveMonitorLogs():
                 'api':wolfObjInstance.api
             })
         monitorOut = json.loads(monitorStream.content.decode('utf-8'))
+        print("monitor: {}".format(monitorOut))
         #need to add a step to push additional subscriptions
         for match in monitorOut:
             if len(match) > 1:
@@ -214,9 +224,40 @@ def retrieveMonitorLogs():
                 except:
                     pass
 
-                getHandle = wolfObjInstance.handles[wolfObjInstance.getView(match)]
+                if match['stream'] == 'portal':
+                    wolfObjInstance.handles["alerts"].insertPlainText("[ {} ]: {} ".format(match['output']['timestamp'],match['output']['alert']))
+                    wolfObjInstance.handles["alerts"].insertPlainText('\n')
+                    #this will eventually go to the alertDataBox
+
+                elif 'SEJID' in match['output']['jobID']:
+                    getHandle = wolfObjInstance.handles['shell']
+                    getHandle.output.insertPlainText('[ {} ]'.format(datetime.now().strftime("%m/%d/%Y - %H:%M:%S")))
+                    getHandle.output.insertPlainText('\n')
+                    getHandle.output.insertPlainText(match['output']['output'])
+                    getHandle.output.insertPlainText('\n')
+
+                    shellMeta = getHandle.shellMeta
+                    if match['output']['acid'] not in shellMeta.toPlainText():
+                        acidMeta = retrieveCampaignAgents()
+                        finalMeta = ""
+                        for objMeta in acidMeta:
+                            if objMeta['acid'] == match['output']['acid']:
+                                finalMeta = objMeta
+                        shellMeta.clear()
+                        shellMeta.insertPlainText("[ Agent Metadata ]")
+                        shellMeta.insertPlainText("\n")
+                        shellMeta.insertPlainText("------------------------------------------------------")
+                        shellMeta.insertPlainText("\n")
+                        shellMeta.insertPlainText(json.dumps(finalMeta,indent=4))
+
+                else:
+
+                    view = getView(match)
+                    if view != 'metadata':
+                        getHandle = wolfObjInstance.handles[view]
                 #print(json.dumps(match['output'],indent=4).replace('\\n','\n').replace('\\r','\r'))
-                getHandle.output.insertPlainText(json.dumps(match['output'],indent=4).replace('\\n','\n').replace('\\r','\r'))
+
+                        getHandle.output.insertPlainText(json.dumps(match['output'],indent=4).replace('\\n','\n').replace('\\r','\r'))
 
 
 class ui():
