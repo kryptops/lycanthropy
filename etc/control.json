@@ -73,17 +73,6 @@
 			"acid"
 		]
 	},
-	"exec.shell":{
-		"description":"execute interactive shell",
-		"arguments":{
-			"acid":"agent to interact with",
-			"interpreter":"interpreter to use for the command ['/bin/bash','/bin/sh','powershell','python','cmd'](interpreter must be available on the system)"
-		},
-		"required":[
-			"acid",
-			"interpreter"
-		]
-	},
 	"exec.command":{
 		"description":"execute non-interactive command",
 		"arguments":{
@@ -142,28 +131,5 @@
 			"acid",
 			"file"
 		]
-	},
-	"file.stage":{
-		"description":"send file to server for push to agent",
-		"arguments":{
-			"file":"full path of local file to stage",
-			"campaign":"campaign to stage the file for"
-		},
-		"required":[
-			"campaign",
-			"file"
-		]
-	},
-	"file.sync":{
-		"description":"pull file from the campaign warehouse",
-		"arguments":{
-			"file":"name of file to sync",
-			"campaign":"campaign to sync file from"
-		},
-		"required":[
-			"campaign",
-			"file"
-		]
 	}
-
 }
