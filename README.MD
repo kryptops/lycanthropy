@@ -29,7 +29,7 @@ cd lycanthropy
 cd svc
 python3 lysys.py
 ```
-On an install that can access the api server (or from a terminal on the api server), run...
+On an install that can access the api server (or from a terminal on the api server), switch to the dev branch and run...
 
 ```
 cd svc
