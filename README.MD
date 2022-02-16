@@ -17,7 +17,7 @@ Lycanthropy is a modular post-exploitation tool instrumented with DNS and writte
 ## Architecture
 When a lycanthropy agent is executed on a target, it uses recursive lookups to route back to the DNS C2. The DNS daemon ingests and parses the requests before forwarding them onto the API backend or storing them as necessary. The API backend stores data, provides authentication and authorization, brokers configuration and package distribution, and distributes command tasks to the agents via the DNS daemon. Operators and managers send instructions to the server and receive direct output via lytty. Wolfmon runs as a seperate terminal and manages alerting for commands that won't complete immediately.
 
-<img src="lycanthropy_diagram.PNG" width=600>
+![image](https://user-images.githubusercontent.com/47731694/154203878-276af4e7-0601-4b0a-8d4b-2e9e313dfd61.png)
 
 ## Installation
 For quick installation, run the following. The installer will prompt you to create an administrative user, who can add operators to the server.
