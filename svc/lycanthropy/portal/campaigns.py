@@ -8,6 +8,8 @@ import secrets
 import os
 import shutil
 import time
+import crypt
+import subprocess
 
 class util():
     def generateCampaignName(self):
@@ -85,7 +87,7 @@ def updateAccess(accessObject,nameObject,context):
             userData = lycanthropy.sql.interface.filterUser({'username':operator})[0]
         except:
             accessReturns.append({'error':'could not resolve user {}'.format(operator)})
-        if len(userData['campaigns'].split(',')) > 1:
+        if len(userData['campaigns']) > 1:
             campaigns = userData['campaigns'].split(',')
             campaigns.append(nameObject)
         else:
@@ -109,6 +111,13 @@ def buildPackages(campaignObject):
             campaignObject['moniker']
         )
 
+def mkServiceAccount(name):
+    svcAccountPass = lycanthropy.crypto.mkRandom(14)
+    encPass = crypt.crypt(svcAccountPass,"22")
+    lyPath = os.getcwd()
+    subprocess.Popen(["useradd","-p",encPass,"-d","{}/campaign/{}".format(lyPath,name),name])
+    return svcAccountPass
+
 def mkCampaign(arguments,context):
     if 'campaign' not in os.listdir('.'):
         os.mkdir('./campaign')
@@ -127,11 +136,16 @@ def mkCampaign(arguments,context):
 
     mkTree(campaign)
     buildPackages(campaign)
+
+    svcPass = mkServiceAccount(campaign['moniker'])
+
     for accessStatus in updateAccess(arguments['operators'],campaign['moniker'],context):
         if 'error' in accessStatus:
             errors.append(accessStatus)
     return {
         'name':campaign['moniker'],
+        'ftpuser':campaign['moniker'],
+        'ftppass':svcPass,
         'state':'deployed',
         'errors':errors
     }

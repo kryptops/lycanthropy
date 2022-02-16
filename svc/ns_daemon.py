@@ -64,7 +64,7 @@ class coreServer():
 
         self.soa_record = SOA(
             mname=self.D.ns1,  # primary name server
-            # rname=self.D.andrei,  # email of the domain administrator
+            
             times=(
                 201307231,  # serial number
                 60 * 60 * 1,  # refresh
@@ -111,6 +111,8 @@ class coreServer():
             acid = unpackedReq['acid']
             if lycanthropy.auth.cookie.verify(unpackedReq['cookie'], self.sessions[acid]) == False:
                 # return error, encrypted using the acid and nonce associated with the message ID
+                # make this so that it will try several times
+                print("invalid token : {}".format(unpackedReq['cookie']))
                 return 1,lycanthropy.daemon.messager.makeRecordArray('{"error":"invalid token"}',
                                                                 acid,
                                                                 self.messages[unpackedReq['msgID']]['nonce'],
@@ -190,11 +192,18 @@ class coreServer():
             print(json.dumps({'error':'nonce unavailable, retrieving from archive'},indent=4))
             msgStatus['nonce'] = self.archive[msgStatus['msgID']]['nonce']
         else:
+            if msgStatus['acid'] not in self.sessions:
+                self.sessions [msgStatus['acid']] = []
             msgResponse = self.getResponse(msgStatus)
+            print(msgResponse)
+            print(self.sessions)
+            print(msgStatus)
             jsonMsg = json.loads(msgResponse)
-            #commented out line 196 because of conf crash issue
+
+            
             #if unpackedReq['acid'] not in self.sessions and 'cookieDough' in jsonMsg:
-            self.sessions[unpackedReq['acid']] = jsonMsg['cookieDough']
+            self.sessions[unpackedReq['acid']].append(jsonMsg['cookieDough'])
+
             return self.makeResponseGeneric(msgStatus,msgResponse)
 
     def dist(self,unpackedReq,msgStatus):
@@ -228,9 +237,9 @@ class coreServer():
             self.responseBuffer.pop(referencedReq['distKey'])
             return self.makeResponseGeneric(msgStatus, '{"index":-1}')
         elif 'PRR' in unpackedReq['pkgID'].split('|'):
-            requiredIndex = unpackedReq['pkgID'].split('|')[1]
+            requiredIndex = int(unpackedReq['pkgID'].split('|')[1])
             responseBuffer = self.responseBuffer[referencedReq['distKey']]
-            if requiredIndex == len(responseBuffer['data']):
+            if requiredIndex >= len(responseBuffer['data']):
                 #segment final, send conclusion
                 return self.makeResponseGeneric(msgStatus, '{"index":-1}')
             nextBuffer = responseBuffer['data'][int(requiredIndex)]
@@ -245,7 +254,7 @@ class coreServer():
             else:
                 requiredIndex = int(responseBuffer['index'])
                 self.responseBuffer[referencedReq['distKey']]['index'] += 1
-            if requiredIndex == len(responseBuffer['data']):
+            if requiredIndex >= len(responseBuffer['data'])-1:
                 #segment final, send conclusion
                 return self.makeResponseGeneric(msgStatus, '{"index":-1}')
             nextBuffer = responseBuffer['data'][requiredIndex]
@@ -275,7 +284,6 @@ class coreServer():
         status,referencedReq = self.makeAuthSuccess(msgStatus)
         if status == 1:
             return referencedReq
-
         msgResponse = self.getResponse(referencedReq)
         return self.makeResponseGeneric(msgStatus,msgResponse)
 
@@ -308,16 +316,19 @@ class coreServer():
         elif confObj[0] == '_PCR':
             responseBuffer = self.responseBuffer[confObj[1]]
             #find the next buffer segment and tag it with its position in the buffer
-            if 'index' in self.archive[msgStatus['msgID']]:
-                requiredIndex = int(self.archive[msgStatus['msgID']]['index'])
-            else:
-                requiredIndex = int(responseBuffer['index'])
-                self.responseBuffer[confObj[1]]['index'] += 1
+            #if 'index' in self.archive[msgStatus['msgID']]:
+                #requiredIndex = int(self.archive[msgStatus['msgID']]['index'])
+            #else:
+                #requiredIndex = int(responseBuffer['index'])
+                #self.responseBuffer[confObj[1]]['index'] += 1
+            requiredIndex = int(confObj[2])
 
-            if requiredIndex == len(responseBuffer['data']):
+
+            #if requiredIndex >= len(responseBuffer['data']):
                 #segment final, send conclusion
 
-                return self.makeResponseGeneric(msgStatus, '{"index":-1}')
+              #  return self.makeResponseGeneric(msgStatus, '{"index":-1}')
+            print("configuration progress: {}/{}".format(requiredIndex+1,len(responseBuffer['data'])))
             nextBuffer = responseBuffer['data'][requiredIndex]
             msgResponse = {'index':str(requiredIndex),'data':nextBuffer}
 
@@ -395,6 +406,7 @@ class coreServer():
 
         qname = request.q.qname
         qn = str(qname)
+        print(qn)
         qtype = request.q.qtype
         qt = QTYPE[qtype]
         qa = qn.split('.')

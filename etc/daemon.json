@@ -1,19 +1,49 @@
 {
-	"secret":"Qx02hb#@7845asdH23mCdF56><?",
-	"prefixes":[
-		"6c79"
-	],
-	"domain":{
-		"name":"ly.canthropy.com",
-		"subdomain":"ly"
-	},
-	"keytypes":{
-		"data":"ccKey",
-		"auth":"tcKey",
-		"dist":"ccKey",
-		"heartbeat":"ccKey",
-		"kex":"tcKey",
-		"ctrl":"ccKey",
-		"conf":"tcKey"
-	}
+    "secret": "RIKVa$y*3&lnV%UAecNqk2eZH$JRqtby",
+    "prefixes": [
+        "7d47",
+        "81a0",
+        "d64c",
+        "15b7",
+        "a8b0",
+        "8c9c",
+        "f36a",
+        "77df",
+        "64eb",
+        "6a81",
+        "6af3",
+        "5604",
+        "9b35",
+        "02d5",
+        "44bb",
+        "2f70",
+        "a36c",
+        "d374",
+        "9553",
+        "b49d",
+        "ccea",
+        "97ce",
+        "a210",
+        "cdec",
+        "2549",
+        "81ae",
+        "1019",
+        "04a5",
+        "0ae6",
+        "49db",
+        "1d13"
+    ],
+    "domain": {
+        "name": "eb.git-monitor.com",
+        "subdomain": "eb"
+    },
+    "keytypes": {
+        "data": "ccKey",
+        "auth": "tcKey",
+        "dist": "ccKey",
+        "heartbeat": "ccKey",
+        "kex": "tcKey",
+        "ctrl": "ccKey",
+        "conf": "tcKey"
+    }
 }

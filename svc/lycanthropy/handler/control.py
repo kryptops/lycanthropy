@@ -122,19 +122,19 @@ def filePull(arguments,context,connector):
     apiResponse = lycanthropy.portal.api.apiBroker().passGeneric(arguments,connector,'filePull',lycanthropy.crypto.mkRandom(6),'control')
     return {'output': apiResponse.content.decode('utf-8'), 'context': 'control(file.pull)', 'form': restoredForm}
 
-def fileStage(arguments,context,connector):
-    restoredForm = lycanthropy.portal.api.restoreForm('file.stage', context, arguments)
-    if not lycanthropy.portal.api.accessChk(connector,'operator'):
-        return {'output': {'error': 'you do not have the correct role to run this command'}, 'context': 'control(file.stage)', 'form': restoredForm}
-    #apiResponse = lycanthropy.portal.api.apiBroker().passGeneric(arguments,connector,'fileStage',lycanthropy.crypto.mkRandom(6),'control')
-    return {'output': 'fileStage', 'context': 'control(file.stage)', 'form': restoredForm, 'retargs': arguments}
+#def fileStage(arguments,context,connector):
+#    restoredForm = lycanthropy.portal.api.restoreForm('file.stage', context, arguments)
+#    if not lycanthropy.portal.api.accessChk(connector,'operator'):
+#        return {'output': {'error': 'you do not have the correct role to run this command'}, 'context': 'control(file.stage)', 'form': restoredForm}
+#    #apiResponse = lycanthropy.portal.api.apiBroker().passGeneric(arguments,connector,'fileStage',lycanthropy.crypto.mkRandom(6),'control')
+#    return {'output': 'fileStage', 'context': 'control(file.stage)', 'form': restoredForm, 'retargs': arguments}
 
-def fileSync(arguments,context,connector):
-    restoredForm = lycanthropy.portal.api.restoreForm('file.sync', context, arguments)
-    if not lycanthropy.portal.api.accessChk(connector,'operator'):
-        return {'output': {'error': 'you do not have the correct role to run this command'}, 'context': 'control(file.sync)', 'form': restoredForm}
-    #apiResponse = lycanthropy.portal.api.apiBroker().passGeneric(arguments,connector,'fileSync',lycanthropy.crypto.mkRandom(6),'control')
-    return {'output': 'fileSync', 'context': 'control(file.sync)', 'form': restoredForm, 'retargs': arguments}
+#def fileSync(arguments,context,connector):
+#    restoredForm = lycanthropy.portal.api.restoreForm('file.sync', context, arguments)
+#    if not lycanthropy.portal.api.accessChk(connector,'operator'):
+#        return {'output': {'error': 'you do not have the correct role to run this command'}, 'context': 'control(file.sync)', 'form': restoredForm}
+#    #apiResponse = lycanthropy.portal.api.apiBroker().passGeneric(arguments,connector,'fileSync',lycanthropy.crypto.mkRandom(6),'control')
+#    return {'output': 'fileSync', 'context': 'control(file.sync)', 'form': restoredForm, 'retargs': arguments}
 
 def execCommand(arguments,context,connector):
     restoredForm = lycanthropy.portal.api.restoreForm('exec.command', context, arguments)
@@ -145,7 +145,11 @@ def execCommand(arguments,context,connector):
     flags,modCommand = lycanthropy.ui.util.interpreterFormatting().functionMap[arguments['interpreter']](arguments.get('command'))
     finalArguments = arguments
     finalArguments['flags'] = flags
-    jobID = lycanthropy.crypto.mkRandom(6)
+    if 'shell' in arguments:
+        jobID = "{}{}".format(lycanthropy.crypto.mkRandom(6),arguments['shell'])
+    else:
+        jobID = lycanthropy.crypto.mkRandom(6)
+
 
     if len(modCommand) > 50:
         #stage long commands so they can be safely transferred to the agent

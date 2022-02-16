@@ -61,11 +61,9 @@ class modLocals():
     def fileSync(self,arguments,session):
         out = lycanthropy.ui.webClient.syncFile(session,arguments['campaign'],arguments['file'])
         lycanthropy.ui.util.writeFile(json.loads(out.content))
-
         return {'success':'wrote {} to the working directory'.format(arguments['file'])}
 
 def writeFile(fileObj):
-
     filePath = fileObj['path']
     fileData = base64.b64decode(fileObj['data'])
     fileHandle = open(filePath,'wb')
@@ -93,9 +91,10 @@ def mkSubscription(filter,stream,temp):
     return reducer
 
 def startWolfmon():
-    subprocess.Popen(['/bin/bash', '-c', "xterm -maximized -sl 10000 -fa 'Monospace' -fs 11 -e /bin/bash -c 'python3 wolfmon.py'"])
+    subprocess.Popen(['/bin/bash', '-c', "xterm -maximized -sl 10000 -fa 'Monospace' -fs 11 -e /bin/bash -c 'python3 connectors.py'"])
 
 def chkModLocals(output,session):
+    print(output)
     retargs = output[2]
     outFunc = output[0]
     if type(outFunc) == dict:

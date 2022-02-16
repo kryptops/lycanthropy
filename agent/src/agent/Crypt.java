@@ -29,7 +29,9 @@ public class Crypt {
 	public static String bake() throws NoSuchAlgorithmException {
 		//use lysessid "cookie dough" to make session cookies
 		String msgCookie = new String();
-		String epochNow = Long.toString(Instant.now().getEpochSecond());
+		String epochNow = Long.toString(Instant.now().getEpochSecond()+Main.skew);
+		System.out.println(epochNow);
+                System.out.println(Main.config.get("lysessid").toString());
 		String hashable = epochNow + "." + Main.config.get("lysessid").toString();
 		String rawCookie = Util.hashify(hashable.getBytes());
 		msgCookie = rawCookie.substring(0,16);
@@ -38,14 +40,11 @@ public class Crypt {
 	}
 	
 	
-	public static String distort(String keyType) {
-		byte[] epochNow = Long.toString(Instant.now().getEpochSecond()).getBytes();
-		byte[] distKey = Main.config.get(keyType).toString().getBytes();
-		for (int i=0; i < epochNow.length; i++) {
-			epochNow[i] ^= distKey[i];
-		}
-		String encodedKey = Base64.getEncoder().encodeToString(epochNow);
-		return encodedKey;
+	public static String distort(String keyType) throws NoSuchAlgorithmException {
+		String epochNow = Long.toString(Instant.now().getEpochSecond()+Main.skew);
+                String hashable = epochNow + "." + Main.config.get(keyType).toString();
+		String encodedKey = Util.hashify(hashable.getBytes());
+                return encodedKey.substring(0,16);
 	}
 	
 	public static byte[] encrypt(byte[] plaintext, byte[] nonce) throws Exception {

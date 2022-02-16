@@ -1,4 +1,5 @@
 import lycanthropy.ui.webClient
+from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QPushButton, QAction, QLineEdit, QMessageBox, QComboBox
 
 import sys
 import json
@@ -42,6 +43,7 @@ class localDirectives():
         except:
             return {'error':'the command form needs to be reloaded','solution':'re-run the \'load\' command and try again'}
         runForm['args'] = session.form[dictKeys[0]]
+        print(runForm)
         fwdDir = lycanthropy.ui.webClient.sendDirective(runForm,parentContext,session)
 
 
@@ -67,8 +69,10 @@ def process(directive,context,session):
                 redirect['args'][str(dirLine.index(word))] = word
     else:
         redirect['args'] = {}
-    return interpret(redirect,context,session)
-
+    try:
+        return interpret(redirect,context,session)
+    except:
+        return json.dumps({"error":"command error, re-enter parameters and try again"},indent=4)
 
 def interpret(directive,context,session):
     #return output

@@ -34,12 +34,12 @@ def chkRtype(fileRaw):
             return 'pull.queue'
         return 'pull'
 
-def mkToken(data,acid,key):
+def mkToken(data,acid,key,type):
     #the key is the ccKey of the agent
 
     token = jwt.encode({
         '_expiry':(int(time.time()) + 10),
-        '_stream':'data',
+        '_stream':type,
         '_hash':getHash(str(data)),
         '_acid':acid
     },

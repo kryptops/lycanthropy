@@ -14,6 +14,7 @@ public class Main {
 	static public Hashtable schtasks = new Hashtable();
 	static public Hashtable metadata = new Hashtable();
 	static public ArrayList taskManifest = new ArrayList();
+        static public int skew = 0;
 	static public int egress = 0;
 	static public int session = 0;
 	static public int channels = 0;

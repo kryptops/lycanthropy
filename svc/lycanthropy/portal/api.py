@@ -77,7 +77,8 @@ class buildBroker():
 class streamAccessManager():
     def __init__(self):
         self.functionMap = {
-            'data':self.data
+            'data':self.data,
+            'portal':self.portal
         }
 
     def data(self,map,reducer,roles,campaigns,identity):
@@ -90,6 +91,17 @@ class streamAccessManager():
                     finalObj['output'] = retrObj
                     finalObj['stream'] = reducer['stream']
                     return finalObj
+        return {'state':'false'}
+
+
+    def portal(self,map,reducer,roles,campaigns,identity):
+        finalObj = {}
+        for retrObj in map:
+            if retrObj['campaign'] in campaigns and identity not in retrObj['tags']:
+                finalObj['state'] ='true'
+                finalObj['output'] = retrObj
+                finalObj['stream'] = reducer['stream']
+                return finalObj
         return {'state':'false'}
 
 class dataProcessingHandlers():
@@ -247,10 +259,16 @@ def taskMetadata(config):
         'pkgName':'metadata'
     }
 
-
 def pushDataEvent(data,token,connector,campaignMemberShip):
+    return pushGenericEvent(data,token,connector,campaignMemberShip,'data')
+
+def pushPortalEvent(data,token,connector,campaignMemberShip):
+    return pushGenericEvent(data, token, connector, campaignMemberShip,'portal')
+
+
+def pushGenericEvent(data,token,connector,campaignMemberShip,stream):
     data['campaign'] = campaignMemberShip
-    uri = '/lycanthropy/data-handler/1/data'
+    uri = '/lycanthropy/data-handler/1/{}'.format(stream)
     response = requests.post(
         'https://{}:{}{}'.format(connector['interface'],connector['port'],uri),
         headers={'content-type': 'application/json'},
@@ -302,6 +320,7 @@ def getSubscriptionObjects(apiUser,config,token,remote,identity,objType):
             for build in subObjects['builds']:
                 if build['acid'] == acidic['acid']:
                     if build['campaign'] in subObjects['partitions']:
+                        acidic['campaign'] = build['campaign']
                         availableAcids['agents'].append(acidic)
         return availableAcids
     elif objType == 'builds':
@@ -318,6 +337,7 @@ def getSubscriptionObjects(apiUser,config,token,remote,identity,objType):
         return availableBuilds
 
 def updateAgentStates(heartbeats):
+    print(heartbeats)
     for agent in heartbeats:
         diff = (int(time.time()) - heartbeats[agent])
         if diff > 300 and diff < 1800:
@@ -328,8 +348,16 @@ def updateAgentStates(heartbeats):
         elif diff > 1800:
             lycanthropy.sql.server.updateStatus(
                 agent,
-                'lost'
+                'inactive'
             )
+        else:
+            lycanthropy.sql.server.updateStatus(
+                agent,
+                'active'
+            )
+
+def parseAgentLast():
+    pass
 
 def restoreForm(command,context,arguments):
     fmtContext = context.split('(')[0]
@@ -383,3 +411,4 @@ def chkSatisfied(jobItem,acid):
             return False
         else:
             return True
+

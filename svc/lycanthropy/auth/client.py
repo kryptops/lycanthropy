@@ -23,8 +23,11 @@ def monitoringToken(user,config,remote,identity):
     },
     config['secret'],
     algorithm='HS256'
-    ).decode('utf-8')
-    return token
+    )
+    try:
+        return token.decode('utf-8')
+    except:
+        return token
 
 def apiToken(user,config,remote):
     userData = lycanthropy.sql.interface.filterUser({'username':user})[0]
@@ -36,8 +39,11 @@ def apiToken(user,config,remote):
     },
     config['secret'],
     algorithm='HS256'
-    ).decode('utf-8')
-    return token
+    )
+    try:
+        return token.decode('utf-8')
+    except:
+        return token
 
 def getCampaignAccess(user,config,token,remote,wolfmon):
     decoded = decodeToken(token,config)
