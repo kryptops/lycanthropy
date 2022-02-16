@@ -3,8 +3,6 @@
 # L Y C A N T H R O P Y
 [![forthebadge](https://forthebadge.com/images/badges/made-with-java.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/gluten-free.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com)
 
-Note: The current version of Lycanthropy is in an extremely fragile state due to over-engineering on networking components. Efforts are being made to re-engineer broken code to be more stable. 
-
 Lycanthropy is a modular post-exploitation tool instrumented with DNS and written in Java, with a distributable client to enable collaborative Red Teaming and Penetration Testing.
 
 ## Features
@@ -13,6 +11,8 @@ Lycanthropy is a modular post-exploitation tool instrumented with DNS and writte
 * C2 access management
 * Per engagement data partitioning system
 * Distributable client for collaborative testing
+
+![image](https://user-images.githubusercontent.com/47731694/154202430-77312004-df75-4f44-80d2-cdee1ff2ffc0.png)
 
 ## Architecture
 When a lycanthropy agent is executed on a target, it uses recursive lookups to route back to the DNS C2. The DNS daemon ingests and parses the requests before forwarding them onto the API backend or storing them as necessary. The API backend stores data, provides authentication and authorization, brokers configuration and package distribution, and distributes command tasks to the agents via the DNS daemon. Operators and managers send instructions to the server and receive direct output via lytty. Wolfmon runs as a seperate terminal and manages alerting for commands that won't complete immediately.
