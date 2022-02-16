@@ -199,9 +199,11 @@ class coreServer():
             print(self.sessions)
             print(msgStatus)
             jsonMsg = json.loads(msgResponse)
+
             
             #if unpackedReq['acid'] not in self.sessions and 'cookieDough' in jsonMsg:
             self.sessions[unpackedReq['acid']].append(jsonMsg['cookieDough'])
+
             return self.makeResponseGeneric(msgStatus,msgResponse)
 
     def dist(self,unpackedReq,msgStatus):
