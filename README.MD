@@ -21,7 +21,7 @@ When a lycanthropy agent is executed on a target, it uses recursive lookups to r
 ![image](https://user-images.githubusercontent.com/47731694/154203949-8c4818dd-c45b-4715-b8a3-751e6872e046.png)
 
 ## Installation
-For quick installation, run the following. The installer will prompt you to create an administrative user, who can add operators to the server.
+For quick installation, run the following. It is recommended that you turn off command line history before running the installer.sh script.
 
 ```
 git clone https://github.com/kryptops/lycanthropy
