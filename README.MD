@@ -6,7 +6,7 @@
 Lycanthropy is a modular post-exploitation tool instrumented with DNS and written in Java, with a distributable client to enable collaborative Red Teaming and Penetration Testing.
 
 ## Features
-* DNS communication with AES-GCM-256 encryption
+* DNS communication with AES-GCM-256 encryption via AAAA lookup
 * Ephemeral final config and per-build password distribution
 * C2 access management
 * Per engagement data partitioning system
