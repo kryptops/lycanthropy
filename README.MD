@@ -26,7 +26,7 @@ For quick installation, run the following. The installer will prompt you to crea
 ```
 git clone https://github.com/kryptops/lycanthropy
 cd lycanthropy
-./installer.sh
+./installer.sh -u <UI admin username> -p <UI admin password> -d <<subdomain>.<domain>.<tld>> 
 cd svc
 python3 lysys.py
 ```
