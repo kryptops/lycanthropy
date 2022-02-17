@@ -68,7 +68,7 @@ def addServiceAccount(engine):
     dbConf = json.load(open('../etc/db.json', 'r'))
     svcPass = '@'
     while '@' in svcPass:
-    	svcPass = lycanthropy.crypto.mkRandom(24)
+        svcPass = lycanthropy.crypto.mkRandom(24)
     svcParams = {'password': svcPass}
     print(svcParams)
 
@@ -87,23 +87,6 @@ def addCliUser(username,password,engine):
     coupling.execute(text("""INSERT INTO lycanthropy.access(username, password, campaigns, roles) VALUES(:username, :password, :campaigns, :roles)"""),**userParams)
     coupling.close()
 
-def lycanthropyUser(engine):
-
-    user = input('[>] enter name for C2 admin user: ')
-    finalPassword = None
-    print('[!] REMINDER! The password you are about to enter will NOT be preserved in plaintext by the server, so remember what you enter')
-    time.sleep(3)
-    while True:
-        password = getpass.getpass('[>] enter password of admin user: ')
-        passmatch = getpass.getpass('[>] re-enter password for confirmation: ')
-        if password == passmatch:
-            finalPassword = lycanthropy.auth.client.mkUser(user,password)
-            break
-        else:
-            print('[!] ERROR! Passwords do not match!')
-
-
-    addCliUser(user,finalPassword,engine)
 
 def chkStatus():
     serviceStatus = os.popen('service mysql status | grep active').read()
@@ -116,6 +99,8 @@ def chkStatus():
 if __name__=='__main__':
     status = chkStatus()
     rootPass = sys.argv[1]
+    userA = sys.argv[2]
+    passA = sys.argv[3]
     if not status:
         os.popen('service mysql start')
 
@@ -128,5 +113,5 @@ if __name__=='__main__':
     print('[!] adding lycanthropy service account ... ')
     addServiceAccount(engine1)
     print('[!] adding initial cli user ... ')
-    lycanthropyUser(engine1)
+    addCliUser(userA,passA,engine1)
     engine1.dispose()

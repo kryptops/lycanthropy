@@ -1,4 +1,5 @@
 import os
+import sys
 import json
 import binascii
 import lycanthropy.crypto
@@ -24,16 +25,7 @@ def configDns(domainStr):
     json.dump(dnsConfiguration,open('../etc/daemon.json','w'),indent=4)
 
 
-def requestConfig():
-    while True:
-        domainStr = input('[>] enter the domain string as <sub>.<domain>.<tld> : ')
-        domainConfirm = input('[>] re-enter the domain string to confirm : ')
-        if domainStr != domainConfirm:
-            print('[!] ERROR! The domains do not match')
-        else:
-            return domainStr
-
 if __name__=='__main__':
-    domainStr = requestConfig()
+    domainStr = sys.argv[1]
     print('[!] configuring the daemon ... ')
     configDns(domainStr)
