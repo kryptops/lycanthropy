@@ -11,7 +11,7 @@ Lycanthropy is a modular post-exploitation tool instrumented with DNS and writte
 * C2 access management
 * Per engagement data partitioning system
 * Distributable client for collaborative testing
-* New GUI
+* New GUI (NOTE: The new gui is better on windows than in a linux graphical interface)
 
 ![image](https://user-images.githubusercontent.com/47731694/154202430-77312004-df75-4f44-80d2-cdee1ff2ffc0.png)
 
