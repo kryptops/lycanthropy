@@ -403,7 +403,6 @@ class coreServer():
 
         qname = request.q.qname
         qn = str(qname)
-        print(qn)
         qtype = request.q.qtype
         qt = QTYPE[qtype]
         qa = qn.split('.')
