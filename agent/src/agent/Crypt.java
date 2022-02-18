@@ -30,8 +30,6 @@ public class Crypt {
 		//use lysessid "cookie dough" to make session cookies
 		String msgCookie = new String();
 		String epochNow = Long.toString(Instant.now().getEpochSecond()+Main.skew);
-		System.out.println(epochNow);
-                System.out.println(Main.config.get("lysessid").toString());
 		String hashable = epochNow + "." + Main.config.get("lysessid").toString();
 		String rawCookie = Util.hashify(hashable.getBytes());
 		msgCookie = rawCookie.substring(0,16);
