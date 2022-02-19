@@ -452,8 +452,9 @@ def portalData(acid):
     campaignMembership = lycanthropy.portal.categorize.find(acid)
     if 'jobID' in apiData:
         if 'ROTID' in apiData['jobID']:
-            apiData = {"alert":"ACID {} has completed setup and is ready to accept directives".format(acid,nexti["jobID"]),'acid':acid,"timestamp":datetime.now().strftime("%m/%d/%Y - %H:%M:%S")}
-            lycan.mkPortalEvent(acid,request.remote_addr,apiData,campaignMembership)
+
+            apiDataQ = {"alert":"ACID {} has completed setup and is ready to accept directives".format(acid),'acid':acid,"timestamp":datetime.now().strftime($
+            lycan.mkPortalEvent(acid,request.remote_addr,apiDataQ,campaignMembership)
 
         for agentTask in lycan.api[campaignMembership][acid]:
             if apiData['jobID'] == agentTask['jobID']:
@@ -464,6 +465,7 @@ def portalData(acid):
     if json.loads(dbStore)['streamStatus'] == 'complete' and apiData not in lycan.monitoring['data']['events']:
         lycanthropy.portal.api.pushDataEvent(apiData,monToken,connector,campaignMembership)
     return dbStore
+
 
 @app.route('/0/1/<acid>/<ctrlKey>',methods=['GET'])
 def portalApi(ctrlKey,acid):
