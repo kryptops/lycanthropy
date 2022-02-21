@@ -6,12 +6,12 @@
 Lycanthropy is a modular post-exploitation tool instrumented with DNS and written in Java, with a distributable client to enable collaborative Red Teaming and Penetration Testing.
 
 ## Features
-* DNS communication with AES-GCM-256 encryption
+* DNS communication with AES-GCM-256 encryption via AAAA lookup
 * Ephemeral final config and per-build password distribution
 * C2 access management
 * Per engagement data partitioning system
 * Distributable client for collaborative testing
-* New GUI
+* New GUI (NOTE: The new gui is better on windows than in a linux graphical interface)
 
 ![image](https://user-images.githubusercontent.com/47731694/154202430-77312004-df75-4f44-80d2-cdee1ff2ffc0.png)
 
@@ -21,16 +21,16 @@ When a lycanthropy agent is executed on a target, it uses recursive lookups to r
 ![image](https://user-images.githubusercontent.com/47731694/154203949-8c4818dd-c45b-4715-b8a3-751e6872e046.png)
 
 ## Installation
-For quick installation, run the following. The installer will prompt you to create an administrative user, who can add operators to the server.
+For quick installation, run the following. It is recommended that you turn off command line history before running the installer.sh script.
 
 ```
 git clone https://github.com/kryptops/lycanthropy
 cd lycanthropy
-./installer.sh
+./installer.sh -u <UI admin username> -p <UI admin password> -d <<subdomain>.<domain>.<tld>> 
 cd svc
 python3 lysys.py
 ```
-On an install that can access the api server (or from a terminal on the api server), switch to the dev branch and run...
+On an install that can access the api server (or from a terminal on the api server), run...
 
 ```
 cd svc

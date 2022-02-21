@@ -195,9 +195,6 @@ class coreServer():
             if msgStatus['acid'] not in self.sessions:
                 self.sessions [msgStatus['acid']] = []
             msgResponse = self.getResponse(msgStatus)
-            print(msgResponse)
-            print(self.sessions)
-            print(msgStatus)
             jsonMsg = json.loads(msgResponse)
 
             
@@ -406,7 +403,6 @@ class coreServer():
 
         qname = request.q.qname
         qn = str(qname)
-        print(qn)
         qtype = request.q.qtype
         qt = QTYPE[qtype]
         qa = qn.split('.')
