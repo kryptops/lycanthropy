@@ -453,7 +453,7 @@ def portalData(acid):
     if 'jobID' in apiData:
         if 'ROTID' in apiData['jobID']:
 
-            apiDataQ = {"alert":"ACID {} has completed setup and is ready to accept directives".format(acid),'acid':acid,"timestamp":datetime.now().strftime($
+            apiDataQ = {"alert":"ACID {} has completed setup and is ready to accept directives".format(acid),'acid':acid,"timestamp":datetime.now().strftime("%m/%d/%Y - %H:%M:%S")}
             lycan.mkPortalEvent(acid,request.remote_addr,apiDataQ,campaignMembership)
 
         for agentTask in lycan.api[campaignMembership][acid]:
