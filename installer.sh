@@ -13,8 +13,8 @@ print_usage() {
 
 while getopts 'u:p:d:' flag; do
   case "${flag}" in
-    u) adminpass="$OPTARG" ;;
-    p) sqlpass="$OPTARG" ;;
+    u) adminuser="$OPTARG" ;;
+    p) adminpass="$OPTARG" ;;
     d) fqdn="$OPTARG" ;;
     *) print_usage
        exit 1 ;;
