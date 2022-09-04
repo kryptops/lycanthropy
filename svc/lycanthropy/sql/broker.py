@@ -13,10 +13,10 @@ import lycanthropy.daemon.util
 
 def mkEngine():
     addrFile = open('../etc/sqladdr.cnf','r')
-    addrLocal = addrFile.read()
+    addrLocal = addrFile.read().splitlines()
     addrFile.close()
     sqlConfig = json.load(open('../etc/db.json','r'))
-    engine = create_engine('mysql://lycanthropy:{}@{}:3306/lycanthropy'.format(sqlConfig['password'],addrLocal))
+    engine = create_engine('mysql://lycanthropy:{}@{}:3306/lycanthropy'.format(sqlConfig['password'],addrLocal[0]))
     return engine
 
 def getTables():
