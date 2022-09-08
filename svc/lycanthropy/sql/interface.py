@@ -11,13 +11,15 @@ def jsonit(sqlOut,tableType):
     tableMap = tableStruct(tableType)
     jsonOut = []
     for row in sqlOut:
+        inc = 0
         jsonOut.append({})
         for column in row:
             if type(column) == bytes:
                 fmtColumn = column.decode('utf-8')
             else:
                 fmtColumn = column
-            jsonOut[-1][tableMap[list(row).index(column)]] = fmtColumn
+            jsonOut[-1][tableMap[inc]] = fmtColumn
+            inc += 1
     return jsonOut
 
 
