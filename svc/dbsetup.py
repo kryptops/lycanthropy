@@ -83,7 +83,7 @@ def addServiceAccount(engine):
 
 def addCliUser(username,password,engine):
     coupling = engine.connect()
-    userParams = {'username': username, 'password': password, 'campaigns': '', 'roles': 'manager'}
+    userParams = {'username': username, 'password': lycanthropy.auth.client.mkHash(password,lycanthropy.auth.client.mkSalt()), 'campaigns': '', 'roles': 'manager'}
     coupling.execute(text("""INSERT INTO lycanthropy.access(username, password, campaigns, roles) VALUES(:username, :password, :campaigns, :roles)"""),**userParams)
     coupling.close()
 
