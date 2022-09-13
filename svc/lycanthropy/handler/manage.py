@@ -93,6 +93,14 @@ def addUser(arguments,context,connector):
         'form':arguments
     }
 
+def modLoad(arguments,context,connector):
+    restoredForm = lycanthropy.portal.api.restoreForm('del.campaign', context, arguments)
+    if not lycanthropy.portal.api.accessChk(connector,'manager'):
+        return {'output': {'error': 'you do not have the correct role to run this command'}, 'context': 'manage(mod.load)', 'form': restoredForm}
+    modStatus = lycanthropy.portal.api.loadUserMod(arguments)
+    return {'output': modStatus, 'context': 'manage(del.campaign)', 'form': restoredForm}
+
+
 
 def delCampaign(arguments,context,connector):
     restoredForm = lycanthropy.portal.api.restoreForm('del.campaign', context, arguments)
