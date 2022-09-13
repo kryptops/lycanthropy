@@ -427,6 +427,8 @@ def loadUserMod(arguments):
     appendModData('/tmp/lycanthropy/java.txt',viewModPath)
     appendJsonData('/tmp/lycanthropy/json.txt',viewJsonPath)
     
+    return "Successfully installed module"
+    
 def appendJsonData(sPath,tPath):
     sJson = open(sPath)
     sData = json.load(sJson)
