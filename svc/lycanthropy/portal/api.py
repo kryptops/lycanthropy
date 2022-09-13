@@ -417,9 +417,22 @@ def loadUserMod(arguments):
     viewModPath = "./dist/src/{}.java".format(arguments['view'])
     viewJsonPath = "../etc/{}.json".format(arguments['view'])
     
-    
-    
-    
-    
-    
-    
+def appendModData(sPath,tPath):
+    target = open(tFile, 'r+')
+    source = open(sFile, 'r')
+
+    sourceLines = source.readlines()
+    targetLines = target.readlines()[:-1]
+
+    source.close()
+
+
+    for x in sourceLines:
+        targetLines.append(x)
+
+    targetLines.append("}\n")
+
+    target.seek(0)
+    for y in targetLines:
+        target.write(y)
+    target.close()
