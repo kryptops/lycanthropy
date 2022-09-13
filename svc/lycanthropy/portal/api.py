@@ -6,11 +6,13 @@ import lycanthropy.sql.server
 import lycanthropy.auth.client
 import lycanthropy.crypto
 import datetime
+import zipfile
 import requests
 import hashlib
 import urllib3
 import json
 import time
+import os
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -412,3 +414,71 @@ def chkSatisfied(jobItem,acid):
         else:
             return True
 
+def loadUserMod(arguments):
+    viewSrvPath = "./lycanthropy/handler/{}.py".format(arguments['view'])
+    viewModPath = "./dist/src/{}.java".format(arguments['view'])
+    viewJsonPath = "../etc/{}.json".format(arguments['view'])
+    
+    os.mkdir('/tmp/lycanthropy')
+
+    zipfile.ZipFile(arguments['file'],"r").extractall('/tmp/lycanthropy')
+    
+    appendSrvData('/tmp/lycanthropy/handler.txt',viewSrvPath)
+    appendModData('/tmp/lycanthropy/java.txt',viewModPath)
+    appendJsonData('/tmp/lycanthropy/json.txt',viewJsonPath)
+    
+    return "Successfully installed module"
+    
+def appendJsonData(sPath,tPath):
+    sJson = open(sPath)
+    sData = json.load(sJson)
+
+    tJson = open(tPath,'r+')
+    tData = json.load(tJson)
+    
+    tData.update(sData)
+    
+    json.dump(tData, tJson)
+    
+    tJson.close()
+    sJson.close()
+    
+    
+    
+def appendModData(sPath,tPath):
+    target = open(tFile, 'r+')
+    source = open(sFile, 'r')
+
+    sourceLines = source.readlines()
+    targetLines = target.readlines()[:-1]
+
+    source.close()
+
+
+    for x in sourceLines:
+        targetLines.append(x)
+
+    targetLines.append("}\n")
+
+    target.seek(0)
+    for y in targetLines:
+        target.write(y)
+    target.close()
+
+def appendSrvData(sPath,tPath):
+    target = open(tFile, 'r+')
+    source = open(sFile, 'r')
+
+    sourceLines = source.readlines()
+    targetLines = target.readlines()
+
+    source.close()
+
+
+    for x in sourceLines:
+        targetLines.append(x)
+
+    target.seek(0)
+    for y in targetLines:
+        target.write(y)
+    target.close()

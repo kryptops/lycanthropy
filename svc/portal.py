@@ -109,7 +109,8 @@ class lycanthrope():
         #uses the daemon secret
         tokenData = jwt.decode(
             token,
-            self.frontendConfig['secret']
+            self.frontendConfig['secret'],
+            algorithms=["HS256"]
         )
         acid = event['acid']
 #        if event['class'] != 'metadata':
@@ -132,7 +133,8 @@ class lycanthrope():
         #make a jwt token for the event & the portal
         tokenData = jwt.decode(
             token,
-            self.frontendConfig['secret']
+            self.frontendConfig['secret'],
+            algorithms=["HS256"]
         )
         if int(time.time()) <= tokenData['_expiry']:
             if tokenData['_stream'] == 'portal':
