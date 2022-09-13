@@ -412,3 +412,14 @@ def chkSatisfied(jobItem,acid):
         else:
             return True
 
+def loadUserMod(arguments):
+    viewSrvPath = "./lycanthropy/handler/{}.py".format(arguments['view'])
+    viewModPath = "./dist/src/{}.java".format(arguments['view'])
+    viewJsonPath = "../etc/{}.json".format(arguments['view'])
+    
+    
+    
+    
+    
+    
+    
