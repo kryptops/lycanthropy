@@ -446,8 +446,8 @@ def appendJsonData(sPath,tPath):
     
     
 def appendModData(sPath,tPath):
-    target = open(tFile, 'r+')
-    source = open(sFile, 'r')
+    target = open(tPath, 'r+')
+    source = open(sPath, 'r')
 
     sourceLines = source.readlines()
     targetLines = target.readlines()[:-1]
@@ -466,8 +466,8 @@ def appendModData(sPath,tPath):
     target.close()
 
 def appendSrvData(sPath,tPath):
-    target = open(tFile, 'r+')
-    source = open(sFile, 'r')
+    target = open(tPath, 'r+')
+    source = open(sPath, 'r')
 
     sourceLines = source.readlines()
     targetLines = target.readlines()
