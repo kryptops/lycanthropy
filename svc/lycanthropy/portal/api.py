@@ -438,7 +438,7 @@ def appendJsonData(sPath,tPath):
     
     tData.update(sData)
     
-    json.dump(tData, tJson)
+    json.dump(tData, tJson, indent=4)
     
     tJson.close()
     sJson.close()
