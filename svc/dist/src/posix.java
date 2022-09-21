@@ -174,4 +174,80 @@ public class posix {
 		return taskOut;
 	}
 
+	
+    public static Hashtable systemProcess(Hashtable args) throws IOException {
+        String procOut = new String();
+        Hashtable taskOut = new Hashtable();
+
+        //gather up pid directories
+        ArrayList pidDirectories = new ArrayList();
+
+        File procRoot = new File("/proc/");
+        File[] procList = procRoot.listFiles();
+        for (int p=0; p<procList.length; p++) {
+            if (procList[p].isDirectory()) {
+                try {
+                    //should throw exception if not a valid int
+                    Integer.parseInt(procList[p].getName());
+                    pidDirectories.add(procList[p].getAbsolutePath());
+                } catch (Exception e) {
+
+                }
+            }
+        }
+
+        String[] procFiles = new String[] {"stat","status","cmdline"};
+	
+	ArrayList procResult = new ArrayList();
+	
+        for (int q=0; q<pidDirectories.size();q++) {
+            Hashtable procFields = new Hashtable();
+            for (int t=0; t<procFiles.length; t++) {
+                try {
+                    BufferedReader fileReader = new BufferedReader(new FileReader(String.format("%s/%s",pidDirectories.get(q),procFiles[t])));
+                    String nextLine = fileReader.readLine();
+
+                    if (procFiles[t] == "stat") {
+                        System.out.println("stat");
+                        //while (nextLine != null) {
+                        String[] statData = nextLine.split("\\s");
+                        String procPid = statData[0];
+                        String procPpid = statData[3];
+                        String procTty = statData[6];
+                        
+                        procFields.put("pid",procPid);
+                        procFields.put("ppid",procPpid);
+                        procFields.put("tty",procTty);
+
+                        //}
+                    } else if (procFiles[t] == "status") {
+                        System.out.println("status");
+                        while (nextLine != null) {
+                            if (nextLine.contains("Uid")) {
+                                String procUid = nextLine.split("\\t")[1];
+                                procFields.put("uid",procUid);
+                                break;
+                            }
+                            nextLine = fileReader.readLine();
+                        }
+                    } else if (procFiles[t] == "cmdline") {
+                        //while (nextLine != null) {
+                        System.out.println("cmdline");
+                        String procCmdline = nextLine;
+                        procFields.put("cmdline",procCmdline);
+                        //}
+                    }
+			procResult.add(Util.untabify(procFields))
+                }
+                catch (Exception e) {
+
+                }
+                
+            }
+            procOut = procResult.toString();
+        }
+        taskOut.put("output",procOut);
+        return taskOut;
+    }
+
 }
