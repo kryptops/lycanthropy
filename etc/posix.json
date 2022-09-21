@@ -43,5 +43,15 @@
                 "required":[
                         "acid"
                 ]
-	}
+	},
+	"system.process":{
+                "description":"list processes (collects pid, ppid, uid, cmdline, tty)",
+                "arguments":{
+                        "acid":"agent to run method"
+                },
+                "required":[
+                        "acid"
+                ]
+        }
+
 }
