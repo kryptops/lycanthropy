@@ -35,3 +35,10 @@ def fileSensitive(arguments,context,connector):
         return {'output': {'error': 'you do not have the correct role to run this command'}, 'context': 'posix(file.sensitive)', 'form': restoredForm}
     apiResponse = lycanthropy.portal.api.apiBroker().passGeneric(arguments,connector,'fileSensitive',lycanthropy.crypto.mkRandom(6),'posix')
     return {'output': apiResponse.content.decode('utf-8'), 'context': 'posix(file.sensitive)', 'form': restoredForm}
+
+def systemProcess(arguments,context,connector):
+    restoredForm = lycanthropy.portal.api.restoreForm('system.process', context, arguments)
+    if not lycanthropy.portal.api.accessChk(connector,'operator'):
+        return {'output': {'error': 'you do not have the correct role to run this command'}, 'context': 'posix(system.groups)', 'form': restoredForm}
+    apiResponse = lycanthropy.portal.api.apiBroker().passGeneric(arguments,connector,'systemProcess',lycanthropy.crypto.mkRandom(6),'posix')
+    return {'output': apiResponse.content.decode('utf-8'), 'context': 'posix(system.process)', 'form': restoredForm}
