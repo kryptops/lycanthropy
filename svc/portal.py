@@ -426,6 +426,9 @@ def apiMain(acid):
             if acid not in lycan.api[campaign]:
                 lycan.api[campaign][acid] = []
             lycan.api[campaign][acid].append(taskDef)
+            apiData = {"alert":"jobID {} was created for {}.{} on acid {}".format(taskDef['jobID'],taskDef['pkgName'],taskDef['pkgMeth'],acid),'acid':acid,"timestamp":datetime.now().strfti>
+            campaignMembership = lycanthropy.portal.categorize.find(acid)
+            lycan.mkPortalEvent(acid,request.remote_addr,apiData,campaignMembership)
             return taskDef
         else:
             return {'error':'task definition is null'}
