@@ -81,6 +81,18 @@
                         "acid",
 			"duration"
                 ]
+        },
+	"invoke.minidump":{
+                "description":"dump lsass memory to disk",
+                "arguments":{
+                        "acid":"agent to run wmi method",
+			"pid":"pid of the lsass process",
+			"outfile":"full path to write lsass memory to"
+                },
+                "required":[
+                        "acid",
+			"pid",
+			"outfile"
+                ]
         }
-
 }

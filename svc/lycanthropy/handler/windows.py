@@ -65,3 +65,10 @@ def asynckeystateLogger(arguments,context,connector):
         return {'output': {'error': 'you do not have the correct role to run this command'}, 'context': 'windows(asynckeystate.logger)', 'form': restoredForm}
     apiResponse = lycanthropy.portal.api.apiBroker().passGeneric(arguments,connector,'asynckeystateLogger',lycanthropy.crypto.mkRandom(6),'windows')
     return {'output': apiResponse.content.decode('utf-8'), 'context': 'windows(asynckeystate.logger)', 'form': restoredForm}
+
+def invokeMinidump(arguments,context,connector):
+    restoredForm = lycanthropy.portal.api.restoreForm('invoke.minidump', context, arguments)
+    if not lycanthropy.portal.api.accessChk(connector,'operator'):
+        return {'output': {'error': 'you do not have the correct role to run this command'}, 'context': 'windows(invoke.minidump)', 'form': restoredForm}
+    apiResponse = lycanthropy.portal.api.apiBroker().passGeneric(arguments,connector,'invokeMinidump',lycanthropy.crypto.mkRandom(6),'windows')
+    return {'output': apiResponse.content.decode('utf-8'), 'context': 'windows(invoke.minidump)', 'form': restoredForm}
