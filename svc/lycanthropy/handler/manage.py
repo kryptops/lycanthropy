@@ -98,6 +98,14 @@ def modLoad(arguments,context,connector):
     if not lycanthropy.portal.api.accessChk(connector,'operator'):
         return {'output': {'error': 'you do not have the correct role to run this command'}, 'context': 'manage(mod.load)', 'form': restoredForm}
     modStatus = lycanthropy.portal.api.loadUserMod(arguments)
+    config = json.load(
+        open(
+            '../etc/app.json',
+            'r'
+        )
+    )
+    for campaignName in os.listdir('./campaigns'):
+        lycanthropy.dist.builder.buildMod(arguments["view"],config['javahome'],campaignName)
     return {'output': modStatus, 'context': 'manage(del.campaign)', 'form': restoredForm}
 
 
