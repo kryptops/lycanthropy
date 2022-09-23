@@ -59,6 +59,12 @@ def secureServer(password,engine):
         coupling.execute("""SET PASSWORD FOR 'root'@'%'=PASSWORD(':password')""",{'password':password})
     except:
         pass
+    try:
+        coupling.execute("""SET PASSWORD FOR 'root'@'%'=PASSWORD(':password')""",{'password':password})
+    except:
+        pass
+    
+    coupling.execute("""UPDATE mysql.user SET plugin = '' WHERE user = 'root' AND host = 'localhost'""")
     coupling.execute("""FLUSH PRIVILEGES""")
 
     
