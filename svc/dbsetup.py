@@ -46,7 +46,22 @@ def secureServer(password,engine):
     #coupling.execute("""CREATE USER root""")
     #coupling.execute("""DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost','127.0.0.1','::1')""")
     coupling.execute("""SET PASSWORD FOR 'root'@'localhost'=PASSWORD(':password')""",{'password':password})
+    
+    try:
+        coupling.execute("""SET PASSWORD FOR 'root'@'127.0.0.1'=PASSWORD(':password')""",{'password':password})
+    except:
+        pass
+    try:
+        coupling.execute("""SET PASSWORD FOR 'root'@'::1'=PASSWORD(':password')""",{'password':password})
+    except:
+        pass
+    try:
+        coupling.execute("""SET PASSWORD FOR 'root'@'%'=PASSWORD(':password')""",{'password':password})
+    except:
+        pass
     coupling.execute("""FLUSH PRIVILEGES""")
+
+    
     coupling.close()
     engine.dispose()
     newEngine = startEngine(password,'','localhost')
