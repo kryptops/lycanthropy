@@ -64,7 +64,7 @@ def secureServer(password,engine):
     except:
         pass
     
-    coupling.execute("""UPDATE mysql.user SET plugin = '' WHERE user = 'root' AND host = 'localhost'""")
+
     coupling.execute("""FLUSH PRIVILEGES""")
 
     
