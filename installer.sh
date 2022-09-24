@@ -77,7 +77,7 @@ if ! cat /etc/mysql/my.cnf | grep '\[mysqld\]'; then
   echo "[mysqld]" >> /etc/mysql/my.cnf
   echo "    bind-address = 0.0.0.0" >> /etc/mysql/my.cnf
 fi
-echo `echo $LOCALADDR` >> ../etc/sqladdr.cnf
+echo `echo $LOCALADDR` > ../etc/sqladdr.cnf
 service mysql start
 python3 dbsetup.py $RAND $adminuser $adminpass
 service mysql stop
