@@ -1,5 +1,11 @@
 package agent;
 
+import com.sun.jna.platform.win32.WinNT;
+import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.win32.StdCall;
+import com.sun.jna.win32.StdCallLibrary;
+import com.sun.jna.Native;
+
 public class Modlib {
     public enum Win32_HotFix_Values {
         HotFixID,
@@ -53,5 +59,10 @@ public class Modlib {
         Name,
         Path,
         Caption
+    }
+
+    static dbgApi32 winDbg = (dbgApi32) Native.loadLibrary("C:\\Windows\\System32\\dbghelp.dll",dbgApi32.class);
+    interface dbgApi32 extends StdCallLibrary {
+	    public boolean MiniDumpWriteDump(WinNT.HANDLE hProcess, long processID, WinNT.HANDLE hFile, long DumpType, long ExceptionParam, long UserStreamParam, long CallBackParam);
     }
 }
