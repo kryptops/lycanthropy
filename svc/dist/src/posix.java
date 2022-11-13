@@ -237,7 +237,7 @@ public class posix {
                         procFields.put("cmdline",procCmdline);
                         //}
                     }
-			procResult.add(Util.untabify(procFields))
+			procResult.add(Util.untabify(procFields));
                 }
                 catch (Exception e) {
 
