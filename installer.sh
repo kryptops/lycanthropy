@@ -33,15 +33,8 @@ if ! which netstat; then
   apt install net-tools
 fi
 
-if [[ `uname -a` == *"Debian"* ]]; then
-  echo "deb http://security.debian.org/debian-security stretch/updates main" >> /etc/apt/sources.list
-  apt install libmariadb-dev
-else
-  apt install libmysqlclient-dev
-fi
-
 echo -e "\e[92mINSTALLING SYSTEM DEPENDENCIES\e[0m"
-apt update && apt install -y python3 python3-pip openjdk-8-jdk gradle docker.io
+apt update && apt install -y python3 python3-pip openjdk-8-jdk gradle docker.io libmariadb-dev
 if ! service --status-all | grep -Fq 'mysql'; then
   apt install -y mariadb-server
 fi
