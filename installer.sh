@@ -34,7 +34,7 @@ if ! which netstat; then
 fi
 
 echo -e "\e[92mINSTALLING SYSTEM DEPENDENCIES\e[0m"
-apt update && apt install -y python3 python3-pip openjdk-8-jdk gradle docker.io libmariadb-dev
+apt update && apt install -y python3 python3-pip openjdk-8-jdk gradle libmariadb-dev
 if ! service --status-all | grep -Fq 'mysql'; then
   apt install -y mariadb-server
 fi
@@ -50,13 +50,13 @@ cd agent
 gradle clean build -PrscDirPath=src/resources -PbuildDir=../svc/dist/refClassPath
 cd ..
 
-echo -e "\e[92mPERFORMING DOCKER SETUP\e[0m"
-cd svc
-if ! service docker status | grep '\(running\)'; then
-  service docker start
-fi
-docker build -t moonlightsrv - < moonlight.docker
-cd ..
+# echo -e "\e[92mPERFORMING DOCKER SETUP\e[0m"
+# cd svc
+# if ! service docker status | grep '\(running\)'; then
+#  service docker start
+# fi
+# docker build -t moonlightsrv - < moonlight.docker
+# cd ..
 
 echo -e "\e[92mTHE ROOT PASSWORD FOR THE DATABASE SERVER WILL BE RESET\e[0m"
 echo -e "\e[92mNEW PASSWORD FOLLOWS :\e[0m $RAND"
