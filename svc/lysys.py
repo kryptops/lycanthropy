@@ -35,8 +35,9 @@ for running in dockerPS:
         finalCount += 1
 
 if finalCount == 0:
-    print(colored("STARTING DOCKERIZED BUILD SERVER ... ","red"))
-    subprocess.Popen(['/bin/bash','-c','docker run --name moonlightsrv -v `pwd`/..:/opt -p 56111:56111 -d=true --rm moonlightsrv'])
+    print(colored("STARTING BUILD SERVER ... ","red"))
+#    subprocess.Popen(['/bin/bash','-c','docker run --name moonlightsrv -v `pwd`/..:/opt -p 56111:56111 -d=true --rm moonlightsrv'])
+    subprocess.Popen(['/bin/bash','-c','python3 moonlight.py'])
 
 #wait to start ns_daemon
 time.sleep(2)
