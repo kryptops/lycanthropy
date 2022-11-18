@@ -26,17 +26,18 @@ daemonThread = threading.Thread(target=ns_daemon.runServer,args=('127.0.0.1',))
 print(colored("STARTING API AS SUBPROCESSES ... ","red"))
 subprocess.Popen(['/bin/bash','-c','python3 portal.py'])
 
-dockerClient = docker.from_env()
-dockerPS = dockerClient.containers.list()
-finalCount = 0
-for running in dockerPS:
-    if running.attrs['Config']['Image'] == 'moonlightsrv':
-        print(colored("BUILD SERVER IS ALREADY RUNNING","green"))
-        finalCount += 1
+# dockerClient = docker.from_env()
+# dockerPS = dockerClient.containers.list()
+# finalCount = 0
+# for running in dockerPS:
+#    if running.attrs['Config']['Image'] == 'moonlightsrv':
+#        print(colored("BUILD SERVER IS ALREADY RUNNING","green"))
+#        finalCount += 1
 
-if finalCount == 0:
-    print(colored("STARTING DOCKERIZED BUILD SERVER ... ","red"))
-    subprocess.Popen(['/bin/bash','-c','docker run --name moonlightsrv -v `pwd`/..:/opt -p 56111:56111 -d=true --rm moonlightsrv'])
+#if finalCount == 0:
+print(colored("STARTING BUILD SERVER ... ","red"))
+#    subprocess.Popen(['/bin/bash','-c','docker run --name moonlightsrv -v `pwd`/..:/opt -p 56111:56111 -d=true --rm moonlightsrv'])
+subprocess.Popen(['/bin/bash','-c','python3 moonlight.py'])
 
 #wait to start ns_daemon
 time.sleep(2)
