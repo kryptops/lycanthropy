@@ -45,7 +45,7 @@ def mkToken(data,acid,key,type):
     },
     key,
     algorithm='HS256'
-    ).decode('utf-8')
+    )
     return token
 
 
