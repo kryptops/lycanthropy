@@ -17,13 +17,16 @@ class protoDefs():
         ]
 
     def kex(self,q,msgTable):
-        return {
-            'nonce':q[0],
-            'acid':q[1],
-            'checksum':q[2],
-            'type':'kex',
-            'msgID':q[4]
-        }
+        try:
+            return {
+                'nonce':q[0],
+                'acid':q[1],
+                'checksum':q[2],
+                'type':'kex',
+                'msgID':q[4]
+            }
+        except:
+            return {"error":"incorrectly formated kex request", "reqdata":"{}".format(q), "msgtable":"{}".format(msgTable)}
 
 
     def data(self,q,msgTable):
@@ -45,44 +48,59 @@ class protoDefs():
         }
 
     def auth(self,q,msgTable):
-        return {
-            'password':q[0],
-            'acid':q[1],
-            'type':'auth',
-            'msgID':q[3]
-        }
+        try:
+            return {
+                'password':q[0],
+                'acid':q[1],
+                'type':'auth',
+                'msgID':q[3]
+            }
+        except:
+            return {"error":"incorrectly formatted auth request"}
 
     def ctrl(self,q,msgTable):
-        return {
-            'cookie':q[0],
-            'ctrlKey':q[1],
-            'type':'ctrl',
-            'msgID':q[3]
-        }
+        try:
+            return {
+                'cookie':q[0],
+                'ctrlKey':q[1],
+                'type':'ctrl',
+                'msgID':q[3]
+            }
+        except:
+            return {"error":"incorrectly formatted ctrl request"}
 
     def dist(self,q,msgTable):
-        return {
-            'cookie':q[0],
-            'distKey':q[1],
-            'pkgID':q[2],
-            'type':'dist',
-            'msgID':q[4]
-        }
+        try:
+            return {
+                'cookie':q[0],
+                'distKey':q[1],
+                'pkgID':q[2],
+                'type':'dist',
+                'msgID':q[4]
+            }
+        except:
+            return {"error":"incorrectly formatted dist request"}
 
     def heartbeat(self,q,msgTable):
-        return {
-            'cookie':q[0],
-            'type':'heartbeat',
-            'msgID':q[3]
-        }
+        try:
+            return {
+                'cookie':q[0],
+                'type':'heartbeat',
+                'msgID':q[3]
+            }
+        except:
+            return {"error":"incorrectly formatted heartbeat request"}
 
     def conf(self,q,msgTable):
-       return {
-           'cookie': q[0],
-           'confKey': q[1],
-           'type': 'conf',
-           'msgID': q[3]
-       }
+       try:
+           return {
+               'cookie': q[0],
+               'confKey': q[1],
+               'type': 'conf',
+               'msgID': q[3]
+           }
+       except:
+           return {"error":"incorrectly formatted heartbeat request"}
 
 def parseIdentify(q):
     query = ''.join(q)
