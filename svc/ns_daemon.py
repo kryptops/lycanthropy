@@ -64,7 +64,7 @@ class coreServer():
 
         self.soa_record = SOA(
             mname=self.D.ns1,  # primary name server
-            
+
             times=(
                 201307231,  # serial number
                 60 * 60 * 1,  # refresh
@@ -169,6 +169,7 @@ class coreServer():
         )
 
     def kex(self,unpackedReq,msgStatus):
+
         garbageDisposal = []
         msgResponse = self.getResponse(unpackedReq)
         msgStamped = msgStatus
@@ -179,7 +180,7 @@ class coreServer():
         for oldMsg in self.archive:
             if int(self.archive[oldMsg]['archived']) < int(time.time())-10:
                 garbageDisposal.append(oldMsg)
-        
+
         for archivedMsg in garbageDisposal:
             if archivedMsg in self.archive:
                 self.archive.pop(archivedMsg)
@@ -197,7 +198,7 @@ class coreServer():
             msgResponse = self.getResponse(msgStatus)
             jsonMsg = json.loads(msgResponse)
 
-            
+
             #if unpackedReq['acid'] not in self.sessions and 'cookieDough' in jsonMsg:
             self.sessions[unpackedReq['acid']].append(jsonMsg['cookieDough'])
 
@@ -367,6 +368,10 @@ class coreServer():
         acid = None
         unpackedReq = lycanthropy.daemon.parser.dispatchParse(query, self.messages)
 
+        if 'error' in unpackedReq:
+        #   return []
+           return ['::1']
+
         # add new message ids
         if unpackedReq['msgID'] not in self.messages:
             if unpackedReq['type'] != 'kex':
@@ -409,6 +414,7 @@ class coreServer():
 
         #reply.add_question(DNSQuestion(qn))
 
+
         try:
             replyData = self.processRequest(
                 qa[0:qa.index(
@@ -416,15 +422,19 @@ class coreServer():
                 )
                 ]
             )
-        
+
         except:
             traceback.print_exc()
             replyData = ['::1']
 
-        for rdata in replyData:
-            reply.add_answer(RR(rname=qn, rtype=QTYPE.AAAA, rclass=1, ttl=self.TTL, rdata=AAAA(rdata)))
-        reply.add_answer(RR(rname=self.D, rtype=QTYPE.SOA, rclass=1, ttl=self.TTL, rdata= self.soa_record))
-        return reply.pack()
+
+        if replyData == []:
+            print(qa)
+        else:
+            for rdata in replyData:
+                reply.add_answer(RR(rname=qn, rtype=QTYPE.AAAA, rclass=1, ttl=self.TTL, rdata=AAAA(rdata)))
+            reply.add_answer(RR(rname=self.D, rtype=QTYPE.SOA, rclass=1, ttl=self.TTL, rdata= self.soa_record))
+            return reply.pack()
 
 def runServer(apiBackend):
     global werewolf
