@@ -424,7 +424,7 @@ class coreServer():
             )
 
         except:
-            traceback.print_exc()
+            print({"alert":"unexpected DNS record lookup","data":qa})
             replyData = ['::1']
 
 
