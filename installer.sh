@@ -9,14 +9,17 @@ print_usage() {
   echo "Usage: "
   echo "   -u : admin user to instantiate for the gui"
   echo "   -p : password for the admin user"
-  echo "   -d : domain and subdomain for C2, formatted as <subdomain>.<domain>.<tld>"
+  echo "   -d : domains and subdomains for C2, formatted as <subdomain1>.<domain1>.<tld>,<subdomain2>.<domain2>.<tld>"
+  echo "   -D : file containing line-separated list of domains and subdomains for C2"
+
 }
 
-while getopts 'u:p:d:' flag; do
+while getopts 'u:p:d:D:' flag; do
   case "${flag}" in
     u) adminuser="$OPTARG" ;;
     p) adminpass="$OPTARG" ;;
     d) fqdn="$OPTARG" ;;
+	D) fqdn=cat "$OPTARG" | tr '\n' ',' ;;
     *) print_usage
        exit 1 ;;
   esac

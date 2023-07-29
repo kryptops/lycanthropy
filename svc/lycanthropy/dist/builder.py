@@ -51,9 +51,12 @@ def pareConfig(jsonConfig):
     newConfig['jitterMin'] = '100'
     newConfig['jitterMax'] = '1000'
     newConfig['threadsMax'] = '4'
-    newConfig['tld'] = domainName[2]
-    newConfig['domain'] = domainName[1]
-    newConfig['subDomain'] = domainName[0]
+    
+    domainStr = []
+	for recordData in domainConfig['domain']:
+	    domainStr.append(recordData["name"])
+	
+	newConfig['srv'] = ','.join(domainStr)
     return newConfig
 
 def idBuild(sequenceNum):

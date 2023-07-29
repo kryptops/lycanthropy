@@ -17,8 +17,13 @@ def getConfig():
 def configDns(domainStr):
     dnsConfiguration = getConfig()
     dnsConfiguration['prefixes'] = generatePrefixes()
-    dnsConfiguration['domain']['name'] = domainStr
-    dnsConfiguration['domain']['subdomain'] = domainStr.split('.')[0]
+    
+    dnsObj = {}
+    for lbDomain in domainStr:
+        dnsObj['name'] = domainStr
+	    dnsObj['subdomain'] = domainStr.split('.')[0]
+        dnsConfiguration['domain'].append(dnsObj)
+
     print('[!] generating secret ... ')
     dnsConfiguration['secret'] = lycanthropy.crypto.mkRandom(32)
     print('[!] writing config to file ... ')

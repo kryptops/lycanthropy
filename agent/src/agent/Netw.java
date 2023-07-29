@@ -56,11 +56,12 @@ public class Netw {
 			nsUri.append(chunkify.get(i));
 			nsUri.append(".");
 		}
-		nsUri.append(Main.config.get("subDomain").toString());
+		Hashtable randDomain = nominae();
+        nsUri.append(randDomain.get("subdomain").toString());
 		nsUri.append(".");
-		nsUri.append(Main.config.get("domain").toString());
+		nsUri.append(randDomain.get("domain").toString());
 		nsUri.append(".");
-		nsUri.append(Main.config.get("tld").toString());
+		nsUri.append(randDomain.get("tld").toString());
 		return nsUri.toString();
 	}
 	
@@ -70,6 +71,11 @@ public class Netw {
 		return protoMethod;
 	}
 	
+	public static int nominae() {
+        ArrayList<Hashtable> domainData = Main.config.get("srv");
+		int newRand = Util.numrand(0,domainData.size()-1);
+		return (Hashtable) domainData.get(newRand)
+    }
 	
 	public static Hashtable send(String protoType, String msgID, String data, String etc) throws ClassNotFoundException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		Hashtable protoRSP = new Hashtable();

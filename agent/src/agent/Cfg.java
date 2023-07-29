@@ -59,9 +59,19 @@ public class Cfg {
 		confTemplate.put("jitterMin",Integer.parseInt(configTable.get("jitterMin").toString()));
 		confTemplate.put("jitterMax",Integer.parseInt(configTable.get("jitterMax").toString()));
 		confTemplate.put("threadsMax",Integer.parseInt(configTable.get("threadsMax").toString()));
-		confTemplate.put("tld",configTable.get("tld"));
-		confTemplate.put("domain",configTable.get("domain").toString());
-		confTemplate.put("subDomain",configTable.get("subDomain").toString());
+		
+		ArrayList<Hashtable> lyDaemonDNS = new ArrayList<Hashtable>();
+	    dnsRecordSet = configTable.get("srv");
+	    String[] dnsParse = dnsRecordSet.split(",");
+	    for (int d=0;d<dnsParse.length;d++) {
+	        Hashtable dnsDataParsed = new Hashtable();
+		    String[] subRecord = dnsParse[d].split(".")
+		    dnsDataParsed["tld"] = subRecord[2];
+		    dnsDataParsed["domain"] = subRecord[1];
+		    dnsDataParsed["subdomain"] = subRecord[0];
+		    lyDaemonDNS.add(dnsDataParsed)
+	    }
+	    confTemplate.put("srv",lyDaemonDns);
 		return confTemplate;
 	}
 }
