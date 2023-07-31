@@ -19,7 +19,7 @@ while getopts 'u:p:d:D:' flag; do
     u) adminuser="$OPTARG" ;;
     p) adminpass="$OPTARG" ;;
     d) fqdn="$OPTARG" ;;
-	D) fqdn=cat "$OPTARG" | tr '\n' ',' ;;
+	D) fqdn=cat "$OPTARG" | sed -n 'H;${x;s/\n/,/g;s/^,//;p;}'
     *) print_usage
        exit 1 ;;
   esac
