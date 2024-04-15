@@ -71,10 +71,10 @@ public class Netw {
 		return protoMethod;
 	}
 	
-	public static int nominae() {
-        ArrayList<Hashtable> domainData = Main.config.get("srv");
+	public static Hashtable nominae() throws NoSuchAlgorithmException {
+                ArrayList<Hashtable> domainData = (ArrayList<Hashtable>) Main.config.get("srv");
 		int newRand = Util.numrand(0,domainData.size()-1);
-		return (Hashtable) domainData.get(newRand)
+		return (Hashtable) domainData.get(newRand);
     }
 	
 	public static Hashtable send(String protoType, String msgID, String data, String etc) throws ClassNotFoundException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {

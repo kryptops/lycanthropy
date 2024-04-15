@@ -14,13 +14,18 @@ print_usage() {
 
 }
 
-while getopts 'u:p:d:D:' flag; do
+while getopts ':u:p:d:D:' flag; do
   case "${flag}" in
-    u) adminuser="$OPTARG" ;;
-    p) adminpass="$OPTARG" ;;
-    d) fqdn="$OPTARG" ;;
-	D) fqdn=cat "$OPTARG" | sed -n 'H;${x;s/\n/,/g;s/^,//;p;}'
-    *) print_usage
+    u)
+       adminuser="$OPTARG" ;;
+    p)
+       adminpass="$OPTARG" ;;
+    d)
+       fqdn="$OPTARG" ;;
+    D)
+       fqdn=`cat "$OPTARG" | sed -n 'H;${x;s/\n/,/g;s/^,//;p;}'` ;;
+    *)
+       print_usage
        exit 1 ;;
   esac
 done
@@ -37,7 +42,7 @@ if ! which netstat; then
 fi
 
 echo -e "\e[92mINSTALLING SYSTEM DEPENDENCIES\e[0m"
-apt update && apt install -y python3 python3-pip openjdk-8-jdk gradle libmariadb-dev
+apt update && apt install -y python3 python3-pip openjdk-8-jdk gradle libmariadb-dev pkg-config
 if ! service --status-all | grep -Fq 'mysql'; then
   apt install -y mariadb-server
 fi

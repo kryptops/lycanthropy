@@ -61,17 +61,17 @@ public class Cfg {
 		confTemplate.put("threadsMax",Integer.parseInt(configTable.get("threadsMax").toString()));
 		
 		ArrayList<Hashtable> lyDaemonDNS = new ArrayList<Hashtable>();
-	    dnsRecordSet = configTable.get("srv");
+	    String dnsRecordSet = configTable.get("srv").toString();
 	    String[] dnsParse = dnsRecordSet.split(",");
 	    for (int d=0;d<dnsParse.length;d++) {
 	        Hashtable dnsDataParsed = new Hashtable();
-		    String[] subRecord = dnsParse[d].split(".")
-		    dnsDataParsed["tld"] = subRecord[2];
-		    dnsDataParsed["domain"] = subRecord[1];
-		    dnsDataParsed["subdomain"] = subRecord[0];
-		    lyDaemonDNS.add(dnsDataParsed)
+		    String[] subRecord = dnsParse[d].split(".");
+		    dnsDataParsed.put("tld",subRecord[2]);
+		    dnsDataParsed.put("domain",subRecord[1]);
+		    dnsDataParsed.put("subdomain",subRecord[0]);
+		    lyDaemonDNS.add(dnsDataParsed);
 	    }
-	    confTemplate.put("srv",lyDaemonDns);
-		return confTemplate;
+	    confTemplate.put("srv",lyDaemonDNS);
+	    return confTemplate;
 	}
 }
