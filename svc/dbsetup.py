@@ -13,7 +13,10 @@ import lycanthropy.crypto
 
 
 def getTables(engine):
-    return engine.execute("""SHOW TABLES IN lycanthropy""").fetchall()
+    coupling = engine.connect()
+    cres = coupling.execute("""SHOW TABLES IN lycanthropy""").fetchall()
+    coupling.close()
+    return cres
 
 def mkTable(table,engine):
     table[0].create_all(engine)
@@ -41,31 +44,31 @@ def secureServer(password,engine):
     #DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost','127.0.0.1','::1');
     #FLUSH PRIVILEGES
     coupling = engine.connect()
-    coupling.execute("""DELETE FROM mysql.user WHERE User=''""")
+    coupling.execute(text("""DELETE FROM mysql.user WHERE User=''"""))
     #try creating the database without adding root@%
     #coupling.execute("""CREATE USER root""")
     #coupling.execute("""DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost','127.0.0.1','::1')""")
-    coupling.execute("""SET PASSWORD FOR 'root'@'localhost'=PASSWORD(':password')""",{'password':password})
+    coupling.execute(text("""SET PASSWORD FOR 'root'@'localhost'=PASSWORD(:password)"""),{'password':password})
     
     try:
-        coupling.execute("""SET PASSWORD FOR 'root'@'127.0.0.1'=PASSWORD(':password')""",{'password':password})
+        coupling.execute(text("""SET PASSWORD FOR 'root'@'127.0.0.1'=PASSWORD(:password)"""),{'password':password})
     except:
         pass
     try:
-        coupling.execute("""SET PASSWORD FOR 'root'@'::1'=PASSWORD(':password')""",{'password':password})
+        coupling.execute(text("""SET PASSWORD FOR 'root'@'::1'=PASSWORD(:password)"""),{'password':password})
     except:
         pass
     try:
-        coupling.execute("""SET PASSWORD FOR 'root'@'%'=PASSWORD(':password')""",{'password':password})
+        coupling.execute(text("""SET PASSWORD FOR 'root'@'%'=PASSWORD(:password)"""),{'password':password})
     except:
         pass
     try:
-        coupling.execute("""SET PASSWORD FOR 'root'@'%'=PASSWORD(':password')""",{'password':password})
+        coupling.execute(text("""SET PASSWORD FOR 'root'@'%'=PASSWORD(:password)"""),{'password':password})
     except:
         pass
     
 
-    coupling.execute("""FLUSH PRIVILEGES""")
+    coupling.execute(text("""FLUSH PRIVILEGES"""))
 
     
     coupling.close()
@@ -77,7 +80,7 @@ def secureServer(password,engine):
 
 def addCoreDatabase(engine,password):
     coupling = engine.connect()
-    coupling.execute("""CREATE DATABASE lycanthropy""")
+    coupling.execute(text("""CREATE DATABASE lycanthropy"""))
     coupling.close()
     setupEngine = startEngine(password,'lycanthropy','localhost')
     dbSetup(setupEngine)
@@ -95,7 +98,7 @@ def addServiceAccount(engine):
 
     coupling = engine.connect()
     coupling.execute(text("""CREATE USER lycanthropy IDENTIFIED BY :password"""),**svcParams)
-    coupling.execute("""GRANT ALL PRIVILEGES ON lycanthropy.* TO lycanthropy""")
+    coupling.execute(text("""GRANT ALL PRIVILEGES ON lycanthropy.* TO lycanthropy"""))
     coupling.close()
     dbConf['password'] = svcPass
     json.dump(dbConf, open('../etc/db.json','w'), indent=4)
