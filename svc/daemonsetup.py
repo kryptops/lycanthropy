@@ -21,7 +21,7 @@ def configDns(domainStr):
     dnsObj = {}
     for lbDomain in domainStr:
         dnsObj['name'] = domainStr
-            dnsObj['subdomain'] = domainStr.split('.')[0]
+        dnsObj['subdomain'] = domainStr.split('.')[0]
         dnsConfiguration['domain'].append(dnsObj)
 
     print('[!] generating secret ... ')

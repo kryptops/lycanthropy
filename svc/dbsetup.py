@@ -14,7 +14,7 @@ import lycanthropy.crypto
 
 def getTables(engine):
     coupling = engine.connect()
-    cres = coupling.execute("""SHOW TABLES IN lycanthropy""").fetchall()
+    cres = coupling.execute(text("""SHOW TABLES IN lycanthropy""")).fetchall()
     coupling.close()
     return cres
 
