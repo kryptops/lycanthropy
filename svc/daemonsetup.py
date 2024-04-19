@@ -17,9 +17,10 @@ def getConfig():
 def configDns(domainStr):
     dnsConfiguration = getConfig()
     dnsConfiguration['prefixes'] = generatePrefixes()
-    
-    dnsObj = {}
+    dnsConfiguration['domain'] = []
+
     for lbDomain in domainStr:
+        dnsObj={}
         dnsObj['name'] = lbDomain
         dnsObj['subdomain'] = lbDomain.split('.')[0]
         dnsConfiguration['domain'].append(dnsObj)
