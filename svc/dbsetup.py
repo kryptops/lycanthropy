@@ -93,11 +93,9 @@ def addServiceAccount(engine):
     svcPass = '@'
     while '@' in svcPass:
         svcPass = lycanthropy.crypto.mkRandom(24)
-    svcParams = {'password': svcPass}
-    print(svcParams)
 
     coupling = engine.connect()
-    coupling.execute(text("""CREATE USER lycanthropy IDENTIFIED BY :password"""),**svcParams)
+    coupling.execute(text("""CREATE USER lycanthropy IDENTIFIED BY :password"""),{'password':svcPass})
     coupling.execute(text("""GRANT ALL PRIVILEGES ON lycanthropy.* TO lycanthropy"""))
     coupling.close()
     dbConf['password'] = svcPass
@@ -108,7 +106,7 @@ def addServiceAccount(engine):
 def addCliUser(username,password,engine):
     coupling = engine.connect()
     userParams = {'username': username, 'password': lycanthropy.auth.client.mkHash(password,lycanthropy.auth.client.mkSalt()), 'campaigns': '', 'roles': 'manager'}
-    coupling.execute(text("""INSERT INTO lycanthropy.access(username, password, campaigns, roles) VALUES(:username, :password, :campaigns, :roles)"""),**userParams)
+    coupling.execute(text("""INSERT INTO lycanthropy.access(username, password, campaigns, roles) VALUES(:username, :password, :campaigns, :roles)"""),userParams)
     coupling.close()
 
 

@@ -20,8 +20,8 @@ def configDns(domainStr):
     
     dnsObj = {}
     for lbDomain in domainStr:
-        dnsObj['name'] = domainStr
-        dnsObj['subdomain'] = domainStr.split('.')[0]
+        dnsObj['name'] = lbDomain
+        dnsObj['subdomain'] = lbDomain.split('.')[0]
         dnsConfiguration['domain'].append(dnsObj)
 
     print('[!] generating secret ... ')
@@ -33,4 +33,4 @@ def configDns(domainStr):
 if __name__=='__main__':
     domainStr = sys.argv[1]
     print('[!] configuring the daemon ... ')
-    configDns(domainStr)
+    configDns(domainStr.split(','))
