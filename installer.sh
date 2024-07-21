@@ -9,15 +9,23 @@ print_usage() {
   echo "Usage: "
   echo "   -u : admin user to instantiate for the gui"
   echo "   -p : password for the admin user"
-  echo "   -d : domain and subdomain for C2, formatted as <subdomain>.<domain>.<tld>"
+  echo "   -d : domains and subdomains for C2, formatted as <subdomain1>.<domain1>.<tld>,<subdomain2>.<domain2>.<tld>"
+  echo "   -D : file containing line-separated list of domains and subdomains for C2"
+
 }
 
-while getopts 'u:p:d:' flag; do
+while getopts ':u:p:d:D:' flag; do
   case "${flag}" in
-    u) adminuser="$OPTARG" ;;
-    p) adminpass="$OPTARG" ;;
-    d) fqdn="$OPTARG" ;;
-    *) print_usage
+    u)
+       adminuser="$OPTARG" ;;
+    p)
+       adminpass="$OPTARG" ;;
+    d)
+       fqdn="$OPTARG" ;;
+    D)
+       fqdn=`cat "$OPTARG" | sed -n 'H;${x;s/\n/,/g;s/^,//;p;}'` ;;
+    *)
+       print_usage
        exit 1 ;;
   esac
 done
@@ -34,9 +42,14 @@ if ! which netstat; then
 fi
 
 echo -e "\e[92mINSTALLING SYSTEM DEPENDENCIES\e[0m"
-apt update && apt install -y python3 python3-pip openjdk-8-jdk gradle libmariadb-dev
+apt update && apt install -y python3 python3-pip openjdk-8-jdk gradle libmariadb-dev pkg-config
+if ! service --status-all | grep -Fq 'mysql'; then
+  apt install -y mariadb-server
+fi
 
 echo -e "\e[92mINSTALLING PIP DEPENDENCIES\e[0m"
+python3 -m venv .venv
+source .venv/bin/activate
 python3 -m pip install -r svc/requirements.txt
 cd svc
 LOCALADDR=`python3 -c "import lycanthropy.daemon.util;print(lycanthropy.daemon.util.getAddr())"`
@@ -47,13 +60,6 @@ cd agent
 gradle clean build -PrscDirPath=src/resources -PbuildDir=../svc/dist/refClassPath
 cd ..
 
-# echo -e "\e[92mPERFORMING DOCKER SETUP\e[0m"
-# cd svc
-# if ! service docker status | grep '\(running\)'; then
-#  service docker start
-# fi
-# docker build -t moonlightsrv - < moonlight.docker
-# cd ..
 echo -e "\e[92mINSTALLING DATABASE IMAGE\e[0m"
 docker pull mariadb:latest
 docker run --name lysql -e MARIADB_ROOT_PASSWORD=$RAND -p 127.0.0.1:5506:3306 -d mariadb:latest
