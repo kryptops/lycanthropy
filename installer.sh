@@ -35,9 +35,6 @@ fi
 
 echo -e "\e[92mINSTALLING SYSTEM DEPENDENCIES\e[0m"
 apt update && apt install -y python3 python3-pip openjdk-8-jdk gradle libmariadb-dev
-if ! service --status-all | grep -Fq 'mysql'; then
-  apt install -y mariadb-server
-fi
 
 echo -e "\e[92mINSTALLING PIP DEPENDENCIES\e[0m"
 python3 -m pip install -r svc/requirements.txt
@@ -57,27 +54,11 @@ cd ..
 # fi
 # docker build -t moonlightsrv - < moonlight.docker
 # cd ..
+echo -e "\e[92mINSTALLING DATABASE IMAGE\e[0m"
+docker pull mariadb:latest
+docker run --name lysql -e MARIADB_ROOT_PASSWORD=$RAND -p 127.0.0.1:5506:3306 -d mariadb:latest
 
-echo -e "\e[92mTHE ROOT PASSWORD FOR THE DATABASE SERVER WILL BE RESET\e[0m"
-echo -e "\e[92mNEW PASSWORD FOLLOWS :\e[0m $RAND"
-echo -e "\e[92mSLEEPING SO YOU CAN COPY IT\e[0m"
-sleep 10
-
-echo -e "\e[92mPERFORMING DATABASE SETUP\e[0m"
-cd svc
-service mysql stop
-if ! cat /etc/mysql/my.cnf | grep '\[mysqld\]'; then
-  echo "[mysqld]" >> /etc/mysql/my.cnf
-  echo "    bind-address = 127.0.0.1" >> /etc/mysql/my.cnf
-fi
-service mysql start
 python3 dbsetup.py $RAND $adminuser $adminpass
-service mysql stop
-if ! cat /etc/mysql/my.cnf | grep '\[mysqld\]'; then
-  echo "    wait_timeout = 60" >> /etc/mysql/my.cnf
-fi
-service mysql start
-cd ..
 
 echo -e "\e[92mCONFIGURING NS DAEMON\e[0m"
 cd svc
